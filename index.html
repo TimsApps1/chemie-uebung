@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Chemie üben</title>
+  <meta name="description" content="Chemie üben mit Bausteinen – Klasse 9">
+  <meta name="theme-color" content="#1f6f78">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Chemie">
+  <meta name="format-detection" content="telephone=no">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="bilder/icon-192.png">
+  <link rel="apple-touch-icon" href="bilder/icon-180.png">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <header class="kopf">
+    <h1 class="kopf-titel">Chemie üben</h1>
+  </header>
+
+  <main id="inhalt" class="inhalt" aria-live="polite">
+    <p class="laedt">Die App startet …</p>
+  </main>
+
+  <div id="update-hinweis" class="update-hinweis" hidden>
+    <button type="button" id="update-knopf" class="knopf knopf-haupt">Neue Version – tippen zum Laden</button>
+  </div>
+
+  <footer class="fuss">
+    <span id="version">Version –</span>
+  </footer>
+
+  <noscript>
+    <p class="fehler-kasten">Diese App braucht JavaScript. Bitte in Safari einschalten.</p>
+  </noscript>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

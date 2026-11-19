@@ -1,0 +1,17 @@
+{
+  "name": "Chemie üben",
+  "short_name": "Chemie",
+  "description": "Chemie üben mit Bausteinen – Klasse 9",
+  "lang": "de",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f5f6fa",
+  "theme_color": "#1f6f78",
+  "icons": [
+    { "src": "bilder/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "bilder/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "bilder/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

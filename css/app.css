@@ -1,0 +1,127 @@
+/* Aussehen der App. Nur Systemschrift, nichts aus dem Internet. */
+:root {
+  --hintergrund: #f5f6fa;
+  --flaeche: #ffffff;
+  --text: #1d2430;
+  --text-leise: #566070;
+  --haupt: #1f6f78;
+  --haupt-dunkel: #164f56;
+  --rand: #d5dae3;
+  --gut: #1b7a3a;
+  --gut-flaeche: #e3f4e8;
+  --schlecht: #b3261e;
+  --schlecht-flaeche: #fbe6e4;
+  --radius: 14px;
+  --tippflaeche: 48px;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--hintergrund);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  font-size: 19px;
+  line-height: 1.45;
+  -webkit-tap-highlight-color: transparent;
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+em, i { font-style: normal; font-weight: 700; }
+
+.kopf {
+  background: var(--haupt);
+  color: #fff;
+  padding: calc(env(safe-area-inset-top) + 10px) 16px 10px;
+}
+.kopf-titel { margin: 0; font-size: 1.25rem; }
+
+.inhalt {
+  flex: 1;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.karte {
+  background: var(--flaeche);
+  border: 1px solid var(--rand);
+  border-radius: var(--radius);
+  padding: 16px 20px 20px;
+}
+.karte h2 { margin: 0 0 6px; }
+.karte h3 { margin: 18px 0 6px; font-size: 1rem; color: var(--text-leise); }
+
+.knopf {
+  min-height: var(--tippflaeche);
+  min-width: var(--tippflaeche);
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: 2px solid var(--haupt);
+  background: var(--flaeche);
+  color: var(--haupt-dunkel);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.knopf:active { transform: translateY(1px); }
+.knopf:disabled { opacity: 0.55; }
+.knopf-haupt { background: var(--haupt); color: #fff; }
+
+.status-liste { list-style: none; padding: 0; margin: 0 0 12px; }
+.status-liste li { display: flex; gap: 10px; align-items: center; padding: 4px 0; }
+.status-zeichen {
+  display: inline-grid; place-items: center;
+  width: 28px; height: 28px; border-radius: 50%;
+  font-weight: 700;
+}
+.status-ok .status-zeichen { background: var(--gut-flaeche); color: var(--gut); }
+.status-offen .status-zeichen { background: var(--schlecht-flaeche); color: var(--schlecht); }
+
+.tipp { color: var(--text-leise); font-size: 0.95rem; }
+
+.fehler-kasten {
+  background: var(--schlecht-flaeche);
+  border: 2px solid var(--schlecht);
+  color: var(--text);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+}
+
+.buehne-test { margin-top: 12px; }
+.buehne-test canvas {
+  display: block;
+  width: 100%;
+  border-radius: var(--radius);
+  touch-action: none;
+}
+
+.update-hinweis {
+  position: fixed;
+  left: 16px; right: 16px;
+  bottom: calc(env(safe-area-inset-bottom) + 44px);
+  display: flex; justify-content: center;
+  z-index: 50;
+}
+.update-hinweis .knopf { box-shadow: 0 4px 18px rgba(0,0,0,0.18); }
+
+.fuss {
+  text-align: center;
+  color: var(--text-leise);
+  font-size: 0.8rem;
+  padding: 8px 16px calc(env(safe-area-inset-bottom) + 8px);
+}
+
+.laedt { color: var(--text-leise); }
