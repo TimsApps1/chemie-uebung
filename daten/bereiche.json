@@ -1,0 +1,81 @@
+{
+  "bereiche": [
+    {
+      "id": "B4",
+      "titel": "Symbole und Formeln lesen",
+      "kurse": ["G", "E"],
+      "bildzeichen": "lupe",
+      "geschichte": {
+        "titel": "Eine Schrift für alle",
+        "text": "Vor 200 Jahren schrieb jeder Forscher die Stoffe anders auf. Der Schwede Jöns Jakob Berzelius hatte 1814 eine Idee: Jedes Element bekommt ein kurzes Zeichen aus einem oder zwei Buchstaben. Seitdem schreiben alle Forscher auf der Welt dieselbe Schrift. Wasser ist überall H2O.",
+        "bild": null
+      },
+      "niveaus": {
+        "1": "Symbole zuordnen und Atome in kurzen Formeln zählen.",
+        "2": "Mehr Elemente, Formeln wie Al2O3 und Elemente am Namen erkennen.",
+        "3": "Zählen mit Zahl davor, zum Beispiel 2 H2O."
+      },
+      "ich_kann": [
+        { "id": "symbole", "text": "Ich kann Elementsymbole richtig schreiben und lesen." },
+        { "id": "zaehlen", "text": "Ich kann die Atome in einer Formel zählen." },
+        { "id": "namen", "text": "Ich kann am Namen erkennen, welche Elemente in einem Stoff stecken." },
+        { "id": "zahl_davor", "text": "Ich weiß, was die große Zahl vor einer Formel bedeutet." }
+      ]
+    },
+    {
+      "id": "B3",
+      "titel": "Reaktivitätsreihe und Redox",
+      "kurse": ["G", "E"],
+      "bildzeichen": "flamme",
+      "geschichte": {
+        "titel": "Ötzi und sein Kupferbeil",
+        "text": "Ötzi lebte vor 5300 Jahren in den Alpen. Er hatte ein Beil aus Kupfer dabei. Kupfer findet man fast nie rein, sondern als Erz mit Sauerstoff. Die Menschen erhitzten das Erz mit Holzkohle im Feuer, und die Kohle nahm den Sauerstoff weg.",
+        "bild": null
+      },
+      "niveaus": {
+        "1": "Wenige Karten sortieren und einfache Fragen zu „Klappt es?“.",
+        "2": "Die ganze Reihe, Wortgleichungen ergänzen und „Wer gibt, wer nimmt?“.",
+        "3": "Wie ★★, dazu „Warum?“ mit Begründungen und ein Zeitbalken."
+      },
+      "ich_kann": [
+        { "id": "reihe", "text": "Ich kann Metalle von edel nach unedel sortieren." },
+        { "id": "klappt", "text": "Ich kann vorhersagen, ob ein Stoff einem Oxid den Sauerstoff wegnimmt." },
+        { "id": "wortgleichung", "text": "Ich kann Wortgleichungen für Redoxreaktionen ergänzen." },
+        { "id": "redox", "text": "Ich kann sagen, welcher Stoff reduziert und welcher oxidiert wird." },
+        { "id": "mittel", "text": "Ich kann Reduktionsmittel und Oxidationsmittel benennen.", "kurs": "E" }
+      ]
+    },
+    {
+      "id": "B1",
+      "titel": "Formeln bauen",
+      "kurse": ["E"],
+      "bildzeichen": "baustein",
+      "geschichte": null,
+      "niveaus": {
+        "1": "„Fülle alle Noppen“ mit kleinen Modellen aus zwei Steinarten.",
+        "2": "Bauen nach Namen, wenn mehrere gleiche Atome nötig sind.",
+        "3": "Eisen(II)/(III) und Kupfer(I)/(II) unterscheiden, Fehler verbessern."
+      },
+      "ich_kann": [],
+      "kommt_bald": true
+    },
+    {
+      "id": "B2",
+      "titel": "Reaktionen ausgleichen",
+      "kurse": ["E"],
+      "bildzeichen": "waage",
+      "geschichte": {
+        "titel": "Schienen schweißen mit Feuer",
+        "text": "Bahnschienen werden oft mit Thermit verschweißt. Dabei nimmt Aluminium dem Eisenoxid den Sauerstoff weg. Es wird so heiß, dass flüssiges Eisen entsteht. Das Eisen fließt in die Lücke zwischen zwei Schienen.",
+        "bild": null
+      },
+      "niveaus": {
+        "1": "Wenige Stoffe, kleine Zahlen davor, auch nur prüfen.",
+        "2": "Zahlen davor bei zwei Stoffen gleichzeitig.",
+        "3": "Thermit, Hochofen und größere Zahlen."
+      },
+      "ich_kann": [],
+      "kommt_bald": true
+    }
+  ]
+}

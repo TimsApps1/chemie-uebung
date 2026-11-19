@@ -1,4 +1,11 @@
 {
   "titel": "Chemie üben",
-  "begruessung": "Hier entsteht deine Übungs-App für Chemie."
+  "admin_pin_pruefsumme": "FCSD2HJVTP",
+  "codes_ab_serie": 1,
+  "zeitlimit": true,
+  "lob": {
+    "erster": ["Richtig!", "Stimmt genau!", "Gut gemacht!", "Sehr gut!", "Genau so!"],
+    "zweiter": ["Beim 2. Versuch richtig – gut nachgedacht!", "Richtig! Der Denkanstoß hat geholfen.", "Gut, dass du drangeblieben bist!"],
+    "ausgebessert": ["Ausgebessert! Diesmal hat es geklappt.", "Super, jetzt sitzt es!"]
+  }
 }

@@ -1,127 +1,777 @@
-/* Aussehen der App. Nur Systemschrift, nichts aus dem Internet. */
+/* =====================================================================
+   Chemie üben – Design-Grundlage (Tokens + Grundstile)
+   Nur Systemschrift, keine externen Dateien, kein Dark Mode.
+   Kontraste sind mit kontrast.js geprüft (WCAG AA, Text >= 4.5:1).
+   ===================================================================== */
+
 :root {
-  --hintergrund: #f5f6fa;
-  --flaeche: #ffffff;
-  --text: #1d2430;
-  --text-leise: #566070;
-  --haupt: #1f6f78;
-  --haupt-dunkel: #164f56;
-  --rand: #d5dae3;
-  --gut: #1b7a3a;
-  --gut-flaeche: #e3f4e8;
-  --schlecht: #b3261e;
-  --schlecht-flaeche: #fbe6e4;
-  --radius: 14px;
-  --tippflaeche: 48px;
   color-scheme: light;
+
+  /* ---------- Hauptfarbe: Indigo („Labor-Tinte“) ---------- */
+  --haupt: #4f46e5;          /* Knöpfe, Kopfzeile; weißer Text 6.3:1 */
+  --haupt-dunkel: #3730a3;   /* Kante unter Knöpfen, Text auf Hell */
+  --haupt-hell: #e0e7ff;     /* Flächen, ausgewählt */
+  --haupt-zart: #f1f3ff;
+
+  /* ---------- Neutrale Farben ---------- */
+  --hintergrund: #f4f5fb;
+  --flaeche: #ffffff;
+  --text: #1c2033;
+  --text-leise: #545b73;     /* 6.6:1 auf Weiß, 6.1:1 auf Hintergrund */
+  --rand: #d3d7e6;
+  --rand-kraeftig: #a9b0c8;
+  --kante: #c3c8db;          /* „Unterkante“ heller Knöpfe */
+
+  /* ---------- Rückmeldung (immer zusammen mit ✓ / ✗) ---------- */
+  --gut: #15803d;
+  --gut-dunkel: #0f5f2c;
+  --gut-flaeche: #dcfce7;
+  --schlecht: #b91c1c;
+  --schlecht-dunkel: #8a1414;
+  --schlecht-flaeche: #fee2e2;
+  --hinweis: #92400e;        /* Denkanstoß-Text, Rekord */
+  --hinweis-flaeche: #fef3c7;
+
+  /* ---------- Sterne (Niveaus ★ ★★ ★★★) ---------- */
+  --stern: #f5b700;          /* Füllung der Stern-Plakette */
+  --stern-text: #3d2c00;     /* Text auf Stern-Gold 9:1 */
+  --stern-leer: #c9cedd;
+
+  /* ---------- Bereichsfarben (je ein Akzent) ---------- */
+  --b4: #0f766e;  --b4-hell: #ccfbf1;  --b4-dunkel: #0b524c;  /* Symbole und Formeln lesen – Türkis */
+  --b3: #c2410c;  --b3-hell: #ffedd5;  --b3-dunkel: #8a2e08;  /* Reaktivitätsreihe und Redox – Flammen-Orange */
+  --b1: #be185d;  --b1-hell: #fce7f3;  --b1-dunkel: #86103f;  /* Formeln bauen – Baustein-Magenta */
+  --b2: #0369a1;  --b2-hell: #e0f2fe;  --b2-dunkel: #024a72;  /* Reaktionen ausgleichen – Waagen-Blau */
+
+  /* ---------- Elementfarben (angelehnt an CPK/Jmol) ----------
+     --el-X = Steinfarbe, --el-X-text = Symbolfarbe, --el-X-kante = Rand/Noppen-Schatten */
+  --el-H: #ffffff;   --el-H-text: #1c2033;  --el-H-kante: #737c97;
+  --el-O: #d62839;   --el-O-text: #ffffff;  --el-O-kante: #9c1626;
+  --el-C: #343a46;   --el-C-text: #ffffff;  --el-C-kante: #1b1f27;
+  --el-N: #2f5fd0;   --el-N-text: #ffffff;  --el-N-kante: #1f418f;
+  --el-Cl: #2fb350;  --el-Cl-text: #08240f; --el-Cl-kante: #1d7a35;
+  --el-S: #f7d02c;   --el-S-text: #3a2e00;  --el-S-kante: #937400;
+  --el-Na: #8b47c8;  --el-Na-text: #ffffff; --el-Na-kante: #5f2c8d;
+  --el-Mg: #bde35f;  --el-Mg-text: #1f2e05; --el-Mg-kante: #66881c;
+  --el-Al: #dcc3c7;  --el-Al-text: #2a1c1f; --el-Al-kante: #93757a;
+  --el-Zn: #a9b5dc;  --el-Zn-text: #18203f; --el-Zn-kante: #6f7cab;
+  --el-Pb: #5a627c;  --el-Pb-text: #ffffff; --el-Pb-kante: #383e52;
+  --el-Cu: #a9531f;  --el-Cu-text: #ffffff; --el-Cu-kante: #723511;
+  --el-Fe: #e8803c;  --el-Fe-text: #2b1203; --el-Fe-kante: #a9541b;
+  --el-Ag: #d6dce4;  --el-Ag-text: #1c2033; --el-Ag-kante: #76819a;
+
+  /* ---------- Schrift ---------- */
+  --schrift: -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", sans-serif;
+  --schrift-code: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --text-klein: 1rem;        /* 16 px – nur Nebensachen */
+  --text-normal: 1.1875rem;  /* 19 px – Fließtext */
+  --text-gross: 1.375rem;    /* 22 px – Anweisungen, Antworten */
+  --text-titel: 1.75rem;     /* 28 px */
+  --text-riesig: 2.75rem;    /* 44 px – Punktzahl, Formel */
+  --zeile: 1.45;
+
+  /* ---------- Abstände (4er-Raster) ---------- */
+  --a1: 4px;  --a2: 8px;  --a3: 12px;  --a4: 16px;  --a5: 24px;  --a6: 32px;  --a7: 48px;
+
+  /* ---------- Radien ---------- */
+  --r-klein: 8px;
+  --r-mittel: 14px;
+  --r-gross: 20px;
+  --r-rund: 999px;
+
+  /* ---------- Schatten: nur kleine, scharfe Schatten (schnell auf alten iPads) ---------- */
+  --schatten-karte: 0 1px 2px rgba(28, 32, 51, 0.08), 0 2px 6px rgba(28, 32, 51, 0.06);
+  --schatten-knopf: 0 4px 0;         /* Farbe wird je Knopf ergänzt: „Tasten-Kante“ */
+  --schatten-gedrueckt: 0 1px 0;
+
+  /* ---------- Tippflächen ---------- */
+  --tipp: 48px;
+  --tipp-gross: 64px;
+
+  /* ---------- Bewegung ---------- */
+  --dauer: 160ms;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  :root { --dauer: 0ms; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* =====================================================================
+   Grundlage
+   ===================================================================== */
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-
 html { -webkit-text-size-adjust: 100%; }
 
 body {
   margin: 0;
-  min-height: 100vh;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: var(--hintergrund);
+  font-family: var(--schrift);
+  font-size: var(--text-normal);
+  line-height: var(--zeile);
   color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-  font-size: 19px;
-  line-height: 1.45;
+  background-color: var(--hintergrund);
+  /* Dezentes Molekül-Muster: winzige SVG-Kachel, wird nur einmal dekodiert */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cg fill='none' stroke='%234f46e5' stroke-opacity='.07' stroke-width='2'%3E%3Cpath d='M30 20l17 10v20l-17 10-17-10V30z'/%3E%3Cpath d='M47 50l22 12M69 62v22'/%3E%3Ccircle cx='69' cy='88' r='5'/%3E%3Cpath d='M100 96h22M111 96v-14'/%3E%3Ccircle cx='111' cy='78' r='4'/%3E%3Ccircle cx='96' cy='96' r='4'/%3E%3Ccircle cx='126' cy='96' r='4'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 140px 140px;
   -webkit-tap-highlight-color: transparent;
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
 }
 
-em, i { font-style: normal; font-weight: 700; }
+em, i { font-style: normal; font-weight: 700; }   /* Hervorhebung fett, nie kursiv */
+b, strong { font-weight: 700; }
 
-.kopf {
-  background: var(--haupt);
-  color: #fff;
-  padding: calc(env(safe-area-inset-top) + 10px) 16px 10px;
-}
-.kopf-titel { margin: 0; font-size: 1.25rem; }
-
-.inhalt {
-  flex: 1;
-  width: 100%;
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 16px;
-}
-
-.karte {
-  background: var(--flaeche);
-  border: 1px solid var(--rand);
-  border-radius: var(--radius);
-  padding: 16px 20px 20px;
-}
-.karte h2 { margin: 0 0 6px; }
-.karte h3 { margin: 18px 0 6px; font-size: 1rem; color: var(--text-leise); }
-
-.knopf {
-  min-height: var(--tippflaeche);
-  min-width: var(--tippflaeche);
-  padding: 10px 20px;
-  border-radius: 12px;
-  border: 2px solid var(--haupt);
-  background: var(--flaeche);
-  color: var(--haupt-dunkel);
+/* Fachwort: unterstrichen, antippbar (öffnet Erklärung). Tippfläche über Polster vergrößert. */
+.fachwort {
   font: inherit;
-  font-weight: 600;
+  color: var(--haupt-dunkel);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+  background: none;
+  border: 0;
+  padding: 10px 2px;
+  margin: -10px 0;
   cursor: pointer;
   touch-action: manipulation;
 }
-.knopf:active { transform: translateY(1px); }
-.knopf:disabled { opacity: 0.55; }
-.knopf-haupt { background: var(--haupt); color: #fff; }
 
-.status-liste { list-style: none; padding: 0; margin: 0 0 12px; }
-.status-liste li { display: flex; gap: 10px; align-items: center; padding: 4px 0; }
-.status-zeichen {
-  display: inline-grid; place-items: center;
-  width: 28px; height: 28px; border-radius: 50%;
+/* =====================================================================
+   Kopfzeile
+   ===================================================================== */
+.kopf {
+  display: flex;
+  align-items: center;
+  gap: var(--a3);
+  min-height: 60px;
+  padding: calc(env(safe-area-inset-top) + 6px) var(--a4) 6px;
+  background: var(--haupt);
+  color: #fff;
+}
+.kopf-logo { width: 34px; height: 34px; flex: none; }
+.kopf-titel { margin: 0; font-size: 1.25rem; font-weight: 700; flex: 1; }
+.kopf-name {
+  display: inline-flex; align-items: center; gap: 6px;
+  min-height: 40px; padding: 4px 14px;
+  border-radius: var(--r-rund);
+  background: rgba(255, 255, 255, 0.16);
+  font-weight: 700; letter-spacing: 0.04em;
+}
+
+/* =====================================================================
+   Karte
+   ===================================================================== */
+.karte {
+  background: var(--flaeche);
+  border: 1px solid var(--rand);
+  border-radius: var(--r-gross);
+  box-shadow: var(--schatten-karte);
+  padding: var(--a5);
+}
+.karte > :first-child { margin-top: 0; }
+.karte > :last-child { margin-bottom: 0; }
+.titel { font-size: var(--text-titel); line-height: 1.2; margin: 0 0 var(--a4); }
+.leise { color: var(--text-leise); }
+
+/* =====================================================================
+   Knöpfe – „griffig“: feste Unterkante wie eine Taste, kein Blur
+   ===================================================================== */
+.knopf {
+  --k-flaeche: var(--flaeche);
+  --k-text: var(--haupt-dunkel);
+  --k-rand: var(--rand-kraeftig);
+  --k-kante: var(--kante);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: var(--tipp);
+  min-width: var(--tipp);
+  padding: 10px 22px;
+  margin-bottom: 4px;              /* Platz für die Kante */
+  border: 2px solid var(--k-rand);
+  border-radius: var(--r-mittel);
+  background: var(--k-flaeche);
+  color: var(--k-text);
+  font: inherit;
   font-weight: 700;
-}
-.status-ok .status-zeichen { background: var(--gut-flaeche); color: var(--gut); }
-.status-offen .status-zeichen { background: var(--schlecht-flaeche); color: var(--schlecht); }
-
-.tipp { color: var(--text-leise); font-size: 0.95rem; }
-
-.fehler-kasten {
-  background: var(--schlecht-flaeche);
-  border: 2px solid var(--schlecht);
-  color: var(--text);
-  border-radius: var(--radius);
-  padding: 12px 16px;
-}
-
-.buehne-test { margin-top: 12px; }
-.buehne-test canvas {
-  display: block;
-  width: 100%;
-  border-radius: var(--radius);
-  touch-action: none;
-}
-
-.update-hinweis {
-  position: fixed;
-  left: 16px; right: 16px;
-  bottom: calc(env(safe-area-inset-bottom) + 44px);
-  display: flex; justify-content: center;
-  z-index: 50;
-}
-.update-hinweis .knopf { box-shadow: 0 4px 18px rgba(0,0,0,0.18); }
-
-.fuss {
+  line-height: 1.2;
   text-align: center;
-  color: var(--text-leise);
-  font-size: 0.8rem;
-  padding: 8px 16px calc(env(safe-area-inset-bottom) + 8px);
+  text-decoration: none;
+  cursor: pointer;
+  touch-action: manipulation;
+  box-shadow: var(--schatten-knopf) var(--k-kante);
+  transition: transform var(--dauer) ease-out, box-shadow var(--dauer) ease-out;
+}
+.knopf:active { transform: translateY(3px); box-shadow: var(--schatten-gedrueckt) var(--k-kante); }
+.knopf:focus-visible { outline: 3px solid var(--haupt); outline-offset: 3px; }
+.knopf:disabled { opacity: 0.5; cursor: default; }
+.knopf svg { width: 26px; height: 26px; flex: none; }
+
+.knopf-haupt { --k-flaeche: var(--haupt); --k-text: #fff; --k-rand: var(--haupt); --k-kante: var(--haupt-dunkel); }
+.knopf-leise { --k-flaeche: var(--haupt-zart); --k-rand: var(--haupt-hell); --k-kante: var(--haupt-hell); }
+.knopf-gross { min-height: var(--tipp-gross); font-size: var(--text-gross); padding: 12px 28px; border-radius: var(--r-gross); }
+.knopf-breit { width: 100%; }
+.knopf-rund { padding: 0; width: 56px; height: 56px; border-radius: 50%; flex: none; }
+
+/* =====================================================================
+   „Wer übt?“ – Namensknöpfe
+   ===================================================================== */
+.namen { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: var(--a4); }
+.knopf-name {
+  flex-direction: column;
+  gap: 6px;
+  min-height: 112px;
+  font-size: 1.5rem;
+  letter-spacing: 0.06em;
+  --k-text: var(--text);
+}
+.namen-kreis {
+  display: grid; place-items: center;
+  width: 46px; height: 46px; border-radius: 50%;
+  font-size: 1.25rem; color: #fff;
+  background: var(--haupt);
+}
+.knopf-neu { --k-flaeche: transparent; --k-rand: var(--rand-kraeftig); --k-kante: transparent; border-style: dashed; color: var(--haupt-dunkel); }
+
+/* =====================================================================
+   Fortschrittsbalken („3 von 8“)
+   ===================================================================== */
+.fortschritt { display: flex; align-items: center; gap: var(--a3); }
+.fortschritt-text { font-weight: 700; white-space: nowrap; }
+.fortschritt-balken {
+  flex: 1;
+  height: 16px;
+  border-radius: var(--r-rund);
+  background: var(--haupt-hell);
+  overflow: hidden;
+}
+.fortschritt-balken > span {
+  display: block;
+  height: 100%;
+  width: var(--wert, 0%);
+  border-radius: inherit;
+  background: var(--balken, var(--haupt));
+  transition: width 250ms ease-out;
+}
+/* Segmentierte Variante: jedes Kästchen eine Aufgabe, ✓/✗ als Zeichen */
+.schritte { display: flex; gap: 6px; list-style: none; margin: 0; padding: 0; flex: 1; }
+.schritte li {
+  flex: 1; height: 16px; border-radius: 5px; background: var(--haupt-hell);
+}
+.schritte li.fertig { background: var(--balken, var(--haupt)); }
+.schritte li.jetzt { background: #fff; box-shadow: inset 0 0 0 3px var(--balken, var(--haupt)); }
+
+/* =====================================================================
+   Aufgabe
+   ===================================================================== */
+.anweisung {
+  display: flex; align-items: center; gap: var(--a3);
+  font-size: var(--text-gross); font-weight: 700; line-height: 1.3;
+  margin: 0;
+}
+.anweisung-zeichen {
+  display: grid; place-items: center; flex: none;
+  width: 52px; height: 52px; border-radius: var(--r-mittel);
+  background: var(--haupt-hell);
+  font-size: 1.75rem;
+}
+.formel-gross {
+  font-size: var(--text-riesig); font-weight: 700; text-align: center;
+  letter-spacing: 0.02em; margin: var(--a4) 0;
+}
+.formel-gross sub, .formel-gross sup { font-size: 0.55em; }
+
+.antworten { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--a3); }
+.antwort {
+  position: relative;
+  min-height: 72px;
+  font-size: 1.75rem;
+  --k-text: var(--text);
+}
+.antwort.gewaehlt { --k-rand: var(--haupt); --k-flaeche: var(--haupt-zart); }
+.antwort.ist-richtig { --k-rand: var(--gut); --k-flaeche: var(--gut-flaeche); --k-kante: var(--gut); --k-text: var(--gut-dunkel); border-width: 3px; }
+.antwort.ist-falsch  { --k-rand: var(--schlecht); --k-flaeche: var(--schlecht-flaeche); --k-kante: var(--schlecht); --k-text: var(--schlecht-dunkel); border-width: 3px; }
+/* Das Zeichen ✓/✗ steht als echtes Element im Knopf (nicht nur Farbe) */
+.marke {
+  display: inline-grid; place-items: center;
+  width: 32px; height: 32px; border-radius: 50%;
+  font-size: 1.125rem; font-weight: 800; color: #fff;
+}
+.ist-richtig .marke, .rueckmeldung.richtig .marke { background: var(--gut); }
+.ist-falsch .marke, .rueckmeldung.falsch .marke { background: var(--schlecht); }
+
+/* =====================================================================
+   Rückmeldung ✓ / ✗
+   ===================================================================== */
+.rueckmeldung {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--a2) var(--a3);
+  align-items: center;
+  padding: var(--a4);
+  border-radius: var(--r-mittel);
+  border: 3px solid;
+  animation: auftauchen 180ms ease-out;
+}
+.rueckmeldung .marke { width: 48px; height: 48px; font-size: 1.75rem; }
+.rueckmeldung-titel { font-size: var(--text-gross); font-weight: 800; margin: 0; }
+.rueckmeldung p { margin: 0; }
+.rueckmeldung .breit { grid-column: 1 / -1; }
+.rueckmeldung.richtig { background: var(--gut-flaeche); border-color: var(--gut); color: var(--gut-dunkel); }
+.rueckmeldung.falsch  { background: var(--schlecht-flaeche); border-color: var(--schlecht); color: var(--schlecht-dunkel); }
+.punkte-plus {
+  justify-self: end;
+  padding: 4px 14px; border-radius: var(--r-rund);
+  background: var(--gut); color: #fff; font-weight: 800; font-size: var(--text-gross);
+}
+.denkanstoss {
+  display: flex; gap: var(--a3); align-items: flex-start;
+  padding: var(--a3) var(--a4);
+  border-radius: var(--r-klein);
+  background: #fff;
+  color: var(--text);
+  border-left: 6px solid var(--hinweis);
+}
+.denkanstoss-zeichen { font-size: 1.5rem; line-height: 1.2; }
+
+@keyframes auftauchen {
+  from { transform: scale(0.97); opacity: 0; }
+  to   { transform: none; opacity: 1; }
 }
 
+/* =====================================================================
+   Sterne / Niveaus
+   ===================================================================== */
+.stufen { display: flex; flex-direction: column; gap: 6px; }
+.stufe { display: grid; grid-template-columns: 4.6em 1fr auto; align-items: center; gap: var(--a2); font-size: var(--text-klein); }
+.sterne {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 4.4em; padding: 2px 8px;
+  border-radius: var(--r-rund);
+  background: var(--stern);
+  color: var(--stern-text);
+  font-weight: 800; letter-spacing: 0.08em; line-height: 1.4;
+}
+.sterne.offen { background: #eef0f6; color: var(--text-leise); }
+.stufe .fortschritt-balken { height: 12px; }
+.stufe-wert { font-weight: 700; min-width: 2.6em; text-align: right; }
+
+/* =====================================================================
+   Bereichskarte – wie eine Kachel im Periodensystem
+   ===================================================================== */
+.bereiche { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--a4); }
+.bereich {
+  --farbe: var(--haupt); --farbe-hell: var(--haupt-hell); --farbe-dunkel: var(--haupt-dunkel);
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: var(--a4);
+  align-items: start;
+  padding: var(--a4);
+  border-radius: var(--r-gross);
+  background: var(--flaeche);
+  border: 2px solid var(--farbe);
+  box-shadow: 0 5px 0 var(--farbe-dunkel);
+  margin-bottom: 5px;
+  color: var(--text);
+  text-decoration: none;
+  touch-action: manipulation;
+  transition: transform var(--dauer) ease-out, box-shadow var(--dauer) ease-out;
+}
+.bereich:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--farbe-dunkel); }
+.bereich.b4 { --farbe: var(--b4); --farbe-hell: var(--b4-hell); --farbe-dunkel: var(--b4-dunkel); }
+.bereich.b3 { --farbe: var(--b3); --farbe-hell: var(--b3-hell); --farbe-dunkel: var(--b3-dunkel); }
+.bereich.b1 { --farbe: var(--b1); --farbe-hell: var(--b1-hell); --farbe-dunkel: var(--b1-dunkel); }
+.bereich.b2 { --farbe: var(--b2); --farbe-hell: var(--b2-hell); --farbe-dunkel: var(--b2-dunkel); }
+
+/* Die „Element-Kachel“ links: Ordnungszahl oben, großes Kürzel, Masse-Zeile unten */
+.kachel {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: var(--r-mittel);
+  background: var(--farbe);
+  color: #fff;
+  display: grid;
+  place-items: center;
+}
+.kachel-nr { position: absolute; top: 6px; left: 9px; font-size: 0.9375rem; font-weight: 700; }
+.kachel-zeichen { width: 52px; height: 52px; }
+.bereich-name { font-size: 1.25rem; font-weight: 800; line-height: 1.2; margin: 2px 0 var(--a3); color: var(--farbe-dunkel); }
+.bereich .stufe .fortschritt-balken { background: var(--farbe-hell); }
+.bereich .stufe .fortschritt-balken > span { background: var(--farbe); }
+.bereich.gesperrt { border-style: dashed; border-color: var(--rand-kraeftig); box-shadow: none; background: rgba(255,255,255,0.6); }
+.bereich.gesperrt .kachel { background: #e7e9f1; color: var(--text-leise); }
+.bereich.gesperrt .bereich-name { color: var(--text-leise); }
+
+/* =====================================================================
+   Element-Baustein (flach, 2D). 3D-Steine nutzen dieselben Farben.
+   <span class="baustein el-O" data-noppen="2"><span class="noppen"><i></i><i></i></span><b>O</b></span>
+   ===================================================================== */
+.baustein {
+  --e: var(--el-H); --e-text: var(--el-H-text); --e-kante: var(--el-H-kante);
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  min-width: max(64px, calc(14px + var(--noppen, 1) * 26px));   /* breiter bei mehr Noppen */
+  height: 56px;
+  margin-top: 12px;                  /* Platz für die Noppen */
+  padding: 0 12px 6px;
+  border-radius: 8px;
+  border: 2px solid var(--e-kante);
+  background: var(--e);
+  color: var(--e-text);
+  box-shadow: inset 0 -6px 0 rgba(0, 0, 0, 0.14);   /* Unterkante wie Lego */
+  font-weight: 800;
+  font-size: 1.75rem;
+  line-height: 1;
+}
+.baustein > b { font-weight: 800; }
+.noppen {
+  position: absolute; left: 6px; right: 6px; top: -12px; height: 12px;
+  display: flex; justify-content: space-evenly;
+}
+.noppen i {
+  width: 18px; height: 12px;
+  border: 2px solid var(--e-kante); border-bottom: 0;
+  border-radius: 5px 5px 0 0;
+  background: var(--e);
+}
+/* Metalle: kleiner Glanzstreifen oben links – unterscheidet Metall/Nichtmetall auch ohne Farbe */
+.baustein.metall {
+  background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.55) 0, rgba(255, 255, 255, 0.55) 9px, rgba(255, 255, 255, 0) 10px);
+}
+.el-H  { --e: var(--el-H);  --e-text: var(--el-H-text);  --e-kante: var(--el-H-kante); }
+.el-O  { --e: var(--el-O);  --e-text: var(--el-O-text);  --e-kante: var(--el-O-kante); }
+.el-C  { --e: var(--el-C);  --e-text: var(--el-C-text);  --e-kante: var(--el-C-kante); }
+.el-N  { --e: var(--el-N);  --e-text: var(--el-N-text);  --e-kante: var(--el-N-kante); }
+.el-Cl { --e: var(--el-Cl); --e-text: var(--el-Cl-text); --e-kante: var(--el-Cl-kante); }
+.el-S  { --e: var(--el-S);  --e-text: var(--el-S-text);  --e-kante: var(--el-S-kante); }
+.el-Na { --e: var(--el-Na); --e-text: var(--el-Na-text); --e-kante: var(--el-Na-kante); }
+.el-Mg { --e: var(--el-Mg); --e-text: var(--el-Mg-text); --e-kante: var(--el-Mg-kante); }
+.el-Al { --e: var(--el-Al); --e-text: var(--el-Al-text); --e-kante: var(--el-Al-kante); }
+.el-Zn { --e: var(--el-Zn); --e-text: var(--el-Zn-text); --e-kante: var(--el-Zn-kante); }
+.el-Pb { --e: var(--el-Pb); --e-text: var(--el-Pb-text); --e-kante: var(--el-Pb-kante); }
+.el-Cu { --e: var(--el-Cu); --e-text: var(--el-Cu-text); --e-kante: var(--el-Cu-kante); }
+.el-Fe { --e: var(--el-Fe); --e-text: var(--el-Fe-text); --e-kante: var(--el-Fe-kante); }
+.el-Ag { --e: var(--el-Ag); --e-text: var(--el-Ag-text); --e-kante: var(--el-Ag-kante); }
+
+/* =====================================================================
+   Rundenende
+   ===================================================================== */
+.ergebnis { text-align: center; }
+.ergebnis-punkte { font-size: 4rem; font-weight: 800; line-height: 1; color: var(--haupt-dunkel); margin: var(--a2) 0 0; }
+.ergebnis-einheit { font-size: var(--text-gross); font-weight: 700; color: var(--text-leise); }
+.rekord {
+  display: inline-flex; align-items: center; gap: var(--a2);
+  margin: var(--a4) 0;
+  padding: 8px 18px;
+  background: var(--hinweis-flaeche);
+  border: 2px solid var(--stern);
+  color: var(--hinweis);
+  font-weight: 800;
+  font-size: var(--text-gross);
+  line-height: 1.25;
+  border-radius: var(--r-mittel);
+}
+.rekord svg { width: 30px; height: 30px; flex: none; }
+.code-feld {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+  gap: var(--a3);
+  padding: var(--a3);
+  border-radius: var(--r-mittel);
+  background: var(--haupt-zart);
+  border: 2px dashed var(--haupt-hell);
+}
+.code {
+  font-family: var(--schrift-code);
+  font-size: clamp(1rem, 4.2vw, 1.3rem);   /* passt bei 375 px in eine Zeile */
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text);
+  overflow-wrap: anywhere;
+  user-select: all;
+  -webkit-user-select: all;
+}
+
+/* =====================================================================
+   Beamer-Rangliste (Querformat, große Schrift)
+   ===================================================================== */
+.rangliste { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.4%; }
+.rang {
+  display: grid;
+  grid-template-columns: 1.6em 1fr auto;
+  align-items: center;
+  gap: 0.6em;
+  padding: 0.18em 0.6em;
+  border-radius: 0.35em;
+  background: #fff;
+  border: 2px solid var(--rand);
+  font-weight: 800;
+}
+.rang-platz {
+  display: grid; place-items: center;
+  width: 1.4em; height: 1.4em; border-radius: 50%;
+  background: var(--haupt-hell); color: var(--haupt-dunkel);
+}
+.rang:nth-child(1) .rang-platz { background: var(--stern); color: var(--stern-text); }
+.rang:nth-child(2) .rang-platz { background: #d6dce4; color: var(--text); }
+.rang:nth-child(3) .rang-platz { background: #e8a46c; color: #2b1203; }
+.rang-name { letter-spacing: 0.04em; }
+.rang-punkte { font-variant-numeric: tabular-nums; color: var(--haupt-dunkel); }
+
+/* =====================================================================
+   Schmale Bildschirme (Handy, iPad geteilt)
+   ===================================================================== */
+@media (max-width: 480px) {
+  .karte { padding: var(--a4); }
+  .titel { font-size: 1.5rem; }
+  .bereich { grid-template-columns: 64px 1fr; gap: var(--a3); padding: var(--a3); }
+  .kachel { padding-top: 10px; }
+  .kachel-nr { top: 3px; left: 7px; font-size: 0.8125rem; }
+  .kachel-zeichen { width: 34px; height: 34px; }
+  .bereich-name { font-size: 1.125rem; }
+  .rekord { font-size: 1.125rem; }
+  .anweisung { font-size: 1.25rem; }
+}
+
+/* =====================================================================
+   Beamer-Rangliste
+   ===================================================================== */
+/* Beamer: ganze Fläche im Querformat, Schrift wächst mit dem Bildschirm */
+.beamer {
+  aspect-ratio: 16 / 9;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 3%;
+  padding: 3% 4%;
+  font-size: min(3.6vw, 6.4vh);
+  background-color: var(--haupt-zart);
+}
+.beamer-kopf { display: flex; align-items: center; gap: 0.5em; flex-wrap: wrap; }
+.beamer-logo { width: 1.6em; height: 1.6em; color: var(--haupt); flex: none; }
+.beamer-titel { font-size: 1.5em; font-weight: 800; color: var(--haupt-dunkel); line-height: 1.1; flex: 1; }
+.beamer-bereich { display: inline-flex; align-items: center; gap: 0.4em; font-size: 0.7em; font-weight: 700; color: var(--b3-dunkel); }
+.beamer .rangliste { align-content: space-between; }
+
+/* =====================================================================
+   App-Gerüst
+   ===================================================================== */
+body { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; }
+.inhalt { flex: 1; width: 100%; max-width: 920px; margin: 0 auto; padding: var(--a4); display: grid; gap: var(--a4); align-content: start; }
+.fuss { text-align: center; color: var(--text-leise); font-size: 0.85rem; padding: 8px 16px calc(env(safe-area-inset-bottom) + 8px); }
 .laedt { color: var(--text-leise); }
+.kopf { position: sticky; top: 0; z-index: 20; }
+.kopf .baustein { margin-top: 0; }
+.kopf-knopf { --k-flaeche: rgba(255,255,255,.16); --k-rand: transparent; --k-kante: var(--kopf-kante, var(--haupt-dunkel)); --k-text: #fff; width: 48px; height: 48px; padding: 0; }
+.kopf-knopf svg { width: 24px; height: 24px; }
+.kopf-name { border: 0; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+.kopf-niveau { font-size: 1rem; }
+.kopf-text-knopf { --k-flaeche: rgba(255,255,255,.16); --k-rand: transparent; --k-kante: var(--haupt-dunkel); --k-text: #fff; padding: 6px 14px; }
+.kopf-titel { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.update-hinweis { position: fixed; left: 16px; right: 16px; bottom: calc(env(safe-area-inset-bottom) + 44px); display: flex; justify-content: center; z-index: 60; }
+.update-hinweis .knopf { box-shadow: 0 4px 0 var(--haupt-dunkel), 0 6px 18px rgba(0,0,0,.18); }
+
+.fehler-kasten, .daten-fehler { background: var(--hinweis-flaeche); border: 2px solid var(--hinweis); border-radius: var(--r-mittel); padding: var(--a3) var(--a4); color: var(--text); }
+.daten-fehler summary { font-weight: 700; cursor: pointer; min-height: 44px; display: flex; align-items: center; }
+.daten-fehler ul { margin: var(--a2) 0 0; padding-left: 1.2em; font-size: var(--text-klein); }
+
+.zeile { display: flex; flex-wrap: wrap; gap: var(--a3); align-items: center; }
+.zeile-rechts { display: flex; justify-content: flex-end; }
+.mitte { text-align: center; }
+.klein { font-size: var(--text-klein); }
+.tipp { color: var(--text-leise); font-size: var(--text-klein); margin: var(--a2) 0; }
+.meldung { color: var(--schlecht-dunkel); font-weight: 700; min-height: 1.4em; margin: var(--a2) 0; }
+.beschriftung { font-weight: 700; margin: var(--a4) 0 var(--a2); display: block; }
+.mini-icon { width: 18px; height: 18px; vertical-align: -3px; }
+.nur-vorlesen { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.knopf-klein { min-height: 44px; padding: 6px 12px; font-size: var(--text-klein); }
+
+.eingabe {
+  width: 100%; min-height: 56px; padding: 10px 16px;
+  font: inherit; font-size: var(--text-gross); font-weight: 700; letter-spacing: 0.04em;
+  border: 2px solid var(--rand-kraeftig); border-radius: var(--r-mittel); background: #fff; color: var(--text);
+}
+.eingabe:focus { outline: 3px solid var(--haupt); outline-offset: 2px; border-color: var(--haupt); }
+.eingabe-code { text-transform: uppercase; font-family: var(--schrift-code); letter-spacing: 0.2em; text-align: center; margin-bottom: var(--a3); }
+.name-vorschau { margin: var(--a2) 0 0; }
+.install-tipp { background: var(--haupt-zart); border: 2px dashed var(--haupt-hell); border-radius: var(--r-mittel); padding: var(--a3) var(--a4); margin: 0; font-size: var(--text-klein); }
+.lehrkraft-link { justify-self: center; display: inline-flex; gap: 8px; align-items: center; min-height: 48px; padding: 8px 16px; border: 0; background: none; color: var(--text-leise); font: inherit; font-size: var(--text-klein); cursor: pointer; }
+.lehrkraft-link svg { width: 20px; height: 20px; }
+
+/* Baustein klein (Namen, Karten, Reihe) */
+.baustein-klein { min-width: 44px; height: 38px; font-size: 1.15rem; margin-top: 0; padding: 0 8px 4px; border-radius: 7px; box-shadow: inset 0 -4px 0 rgba(0,0,0,.14); }
+.knopf-name .baustein { margin-bottom: 2px; }
+
+/* Lieblingselement */
+.element-wahl { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: var(--a2); margin-bottom: var(--a4); }
+.element-knopf { display: grid; justify-items: center; gap: 4px; min-height: 76px; padding: 8px 4px; border-radius: var(--r-mittel); border: 2px solid var(--rand); background: #fff; font: inherit; cursor: pointer; color: var(--text); }
+.element-knopf small { font-size: 0.8rem; }
+.element-knopf.gewaehlt { border: 3px solid var(--haupt); background: var(--haupt-zart); }
+.element-knopf.gewaehlt small::before { content: '✓ '; font-weight: 800; color: var(--haupt-dunkel); }
+
+/* Startseite */
+.start-kopf { display: grid; gap: var(--a3); }
+.start-kopf .titel { margin: 0; }
+.heute-knopf { flex-direction: column; align-items: flex-start; gap: 2px; text-align: left; padding: 14px 24px; }
+.heute-titel { font-size: 1.5rem; }
+.heute-text { font-size: var(--text-normal); font-weight: 600; opacity: 0.95; }
+.hinweis-karte { border: 2px solid var(--hinweis); background: var(--hinweis-flaeche); }
+.wochenziel { padding: var(--a4) var(--a5); }
+.wochenziel-kopf { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: var(--a2); }
+.wochenziel h3 { margin: 0; }
+.wochenziel-zahl { font-weight: 700; color: var(--text-leise); }
+.wochenziel-geschafft { margin: var(--a2) 0 0; font-weight: 700; color: var(--gut-dunkel); }
+.stempel { display: flex; gap: var(--a3); list-style: none; padding: 0; margin: var(--a3) 0 0; }
+.stempel li { width: 48px; height: 48px; border-radius: 50%; border: 3px dashed var(--rand-kraeftig); display: grid; place-items: center; font-size: 1.5rem; font-weight: 800; }
+.stempel li.voll { border: 3px solid var(--gut); background: var(--gut-flaeche); color: var(--gut-dunkel); }
+.start-knoepfe { display: flex; flex-wrap: wrap; gap: var(--a3); }
+button.bereich { font: inherit; text-align: left; cursor: pointer; width: 100%; }
+.medaillen { color: #a77b00; letter-spacing: 0.1em; font-size: 1rem; }
+.medaille-leer { color: var(--rand-kraeftig); }
+
+/* Niveau wählen */
+.niveaus { display: grid; gap: var(--a3); margin: var(--a4) 0; }
+.niveau-knopf { display: grid; grid-template-columns: auto 1fr; gap: 4px var(--a3); justify-items: start; text-align: left; padding: 14px 18px; --k-text: var(--text); }
+.niveau-knopf .sterne { grid-row: span 2; font-size: 1.25rem; align-self: center; }
+.niveau-text { font-weight: 700; }
+.niveau-stand { font-weight: 500; color: var(--text-leise); font-size: var(--text-klein); }
+.niveau-knopf.vorgeschlagen { --k-rand: var(--stern); border-width: 3px; }
+.vorschlag-marke { grid-column: 1 / -1; background: var(--hinweis-flaeche); color: var(--hinweis); border-radius: var(--r-rund); padding: 2px 12px; font-size: var(--text-klein); }
+
+/* Fenster */
+.fenster-hintergrund { position: fixed; inset: 0; background: rgba(28, 32, 51, 0.45); display: grid; place-items: center; padding: var(--a4); z-index: 100; }
+.fenster { width: min(560px, 100%); max-height: calc(100vh - 32px); overflow: auto; animation: auftauchen 180ms ease-out; }
+.fenster-titel { margin: 0 0 var(--a3); font-size: 1.5rem; }
+.fenster-text { font-size: var(--text-gross); line-height: 1.45; }
+.fenster-knoepfe { display: flex; justify-content: flex-end; gap: var(--a3); flex-wrap: wrap; margin-top: var(--a4); }
+.fachwort-kopf { font-size: 1.5rem; font-weight: 800; margin: 0; color: var(--haupt-dunkel); }
+.geschichte-platz { display: grid; place-items: center; height: 120px; border-radius: var(--r-mittel); background: var(--farbe-hell, var(--haupt-hell)); color: var(--farbe, var(--haupt)); }
+.geschichte-platz.b4 { --farbe: var(--b4); --farbe-hell: var(--b4-hell); }
+.geschichte-platz.b3 { --farbe: var(--b3); --farbe-hell: var(--b3-hell); }
+.geschichte-platz.b2 { --farbe: var(--b2); --farbe-hell: var(--b2-hell); }
+.geschichte-platz svg { width: 72px; height: 72px; }
+.geschichte-bild, .erklaer-bild { width: 100%; border-radius: var(--r-mittel); }
+
+/* Aufgabe */
+.aufgabe { display: grid; gap: var(--a4); }
+.anweisung-zeile { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--a3); }
+.anweisung-zeile .titel { margin: 0; }
+.rueck-bereich { display: grid; gap: var(--a3); }
+.rueck-bereich:empty { display: none; }
+.breit-rechts { justify-self: end; }
+.rueckmeldung { grid-template-columns: auto 1fr auto; }
+.rueckmeldung .breit { grid-column: 1 / -1; }
+.loesung p { margin: 0 0 var(--a2); color: var(--text); }
+.antworten-lang { grid-template-columns: 1fr; }
+.antwort-lang { font-size: var(--text-gross); justify-content: flex-start; text-align: left; min-height: 64px; }
+.antwort { gap: 12px; }
+.gleichung { font-size: var(--text-gross); font-weight: 700; text-align: center; margin: 0; line-height: 1.6; }
+.gleichung-gross { font-size: 1.6rem; }
+.plus, .pfeil { color: var(--text-leise); font-weight: 700; padding: 0 0.2em; }
+
+.zeitbalken { height: 10px; border-radius: var(--r-rund); background: var(--haupt-hell); overflow: hidden; }
+.zeitbalken > span { display: block; height: 100%; width: 100%; background: var(--b4); border-radius: inherit; transition: width 500ms linear; }
+.zeitbalken.abgelaufen { background: var(--hinweis-flaeche); }
+
+/* Zählen */
+.zahl-aufgabe .formel-gross { margin: 0; }
+.modell3d { min-height: 230px; border-radius: var(--r-mittel); overflow: hidden; background: #eef0f8; }
+.modell3d canvas { display: block; width: 100%; touch-action: none; }
+.zahl-eingabe { display: grid; grid-template-columns: auto 1fr; gap: var(--a4); align-items: start; }
+.zahl-anzeige { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-width: 110px; min-height: 96px; font-size: 3rem; font-weight: 800; border: 3px solid var(--rand-kraeftig); border-radius: var(--r-mittel); background: #fff; }
+.zahl-anzeige.ist-richtig { border-color: var(--gut); background: var(--gut-flaeche); color: var(--gut-dunkel); }
+.zahl-anzeige.ist-falsch { border-color: var(--schlecht); background: var(--schlecht-flaeche); color: var(--schlecht-dunkel); }
+.zahl-loesung { display: inline-flex; align-items: center; gap: 8px; font-size: 2rem; font-weight: 800; color: var(--gut-dunkel); }
+.zahl-loesung .marke { background: var(--gut); }
+.ist-richtig .marke { background: var(--gut); }
+.ist-falsch .marke { background: var(--schlecht); }
+.tastenfeld { display: grid; grid-template-columns: repeat(3, minmax(56px, 1fr)); gap: var(--a2); }
+.taste { min-height: 56px; font-size: 1.5rem; padding: 0; --k-text: var(--text); }
+.zahl-pruefen { grid-column: span 2; }
+.pin-tasten .knopf-haupt { grid-column: auto; }
+@media (max-width: 480px) { .zahl-eingabe { grid-template-columns: 1fr; } .zahl-anzeige { width: 100%; } }
+
+/* Sortieren */
+.sortieren { display: grid; gap: var(--a2); }
+.sortier-rand { margin: 0; font-size: var(--text-klein); color: var(--text-leise); text-align: center; }
+.sortier-rand b { color: var(--text); }
+.sortierliste { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.sortierkarte { display: flex; align-items: center; gap: var(--a3); min-height: 60px; padding: 8px 14px; background: #fff; border: 2px solid var(--rand-kraeftig); border-radius: var(--r-mittel); box-shadow: 0 3px 0 var(--kante); touch-action: none; user-select: none; -webkit-user-select: none; cursor: grab; position: relative; }
+.sortierkarte.gewaehlt { border: 3px solid var(--haupt); background: var(--haupt-zart); }
+.sortierkarte.gewaehlt::after { content: '↕ tauschen mit …'; position: absolute; right: 12px; font-size: var(--text-klein); font-weight: 700; color: var(--haupt-dunkel); }
+.sortierkarte.zieht { z-index: 5; box-shadow: 0 8px 18px rgba(0,0,0,.18); border-color: var(--haupt); }
+.sortierkarte.ist-richtig { border-color: var(--gut); background: var(--gut-flaeche); }
+.sortierkarte .marke { flex: none; }
+.griff { font-size: 1.4rem; color: var(--text-leise); }
+.sortierkarte-text { display: grid; }
+.sortierkarte-text small { color: var(--text-leise); font-size: 0.9rem; }
+
+/* Reihe nach "Klappt es?" */
+.reihe-box { border-top: 2px dashed var(--rand); padding-top: var(--a3); }
+.reihe-mini { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.reihe-mini li { display: grid; justify-items: center; gap: 2px; padding: 6px; border-radius: var(--r-klein); border: 2px solid transparent; font-size: 0.8rem; }
+.reihe-mini li.markiert { border-color: var(--haupt); background: var(--haupt-zart); font-weight: 800; }
+.reihe-mini li.markiert::before { content: '▼'; color: var(--haupt); font-size: 0.8rem; line-height: 1; }
+
+/* Wortgleichung */
+.luecke { display: inline-flex; align-items: center; gap: 6px; min-width: 120px; min-height: 52px; padding: 6px 12px; margin: 4px; border: 3px dashed var(--haupt); border-radius: var(--r-mittel); background: var(--haupt-zart); font: inherit; font-weight: 700; color: var(--haupt-dunkel); vertical-align: middle; cursor: pointer; justify-content: center; }
+.luecke.ist-richtig { border-style: solid; border-color: var(--gut); background: var(--gut-flaeche); color: var(--gut-dunkel); }
+.stoff { white-space: nowrap; }
+.chips { display: flex; flex-wrap: wrap; gap: var(--a2); justify-content: center; }
+.chip { --k-text: var(--text); }
+
+/* Antippen in der Gleichung */
+.gleichung-tippen { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--a2); }
+.stoff-knopf { font-size: var(--text-gross); --k-text: var(--text); }
+.gleichung-tippen .plus, .gleichung-tippen .pfeil { font-size: 1.6rem; }
+.stoff-knopf.gewaehlt { --k-rand: var(--haupt); --k-flaeche: var(--haupt-zart); }
+.stoff-knopf.ist-richtig { --k-rand: var(--gut); --k-flaeche: var(--gut-flaeche); --k-kante: var(--gut); --k-text: var(--gut-dunkel); border-width: 3px; }
+.stoff-knopf.ist-falsch { --k-rand: var(--schlecht); --k-flaeche: var(--schlecht-flaeche); --k-kante: var(--schlecht); --k-text: var(--schlecht-dunkel); border-width: 3px; }
+.stoff-knopf:disabled, .antwort:disabled { opacity: 1; }
+.antwort:disabled:not(.ist-richtig):not(.ist-falsch):not(.gewaehlt), .stoff-knopf:disabled:not(.ist-richtig):not(.ist-falsch):not(.gewaehlt) { opacity: 0.6; }
+
+/* Rundenende */
+.ergebnis { display: grid; justify-items: center; gap: var(--a2); }
+.ergebnis > * { margin: 0; }
+.ergebnis .titel { margin: 0; }
+.vergleich { font-weight: 700; color: var(--gut-dunkel); background: var(--gut-flaeche); padding: 6px 14px; border-radius: var(--r-mittel); }
+.code-bereich { width: 100%; display: grid; gap: var(--a2); justify-items: center; margin-top: var(--a3); }
+.code-bereich .beschriftung { margin: 0; }
+.code-feld { width: 100%; }
+.kopier-meldung { font-weight: 700; color: var(--gut-dunkel); min-height: 1.4em; }
+.vorschlag { width: 100%; background: var(--hinweis-flaeche); border: 2px solid var(--stern); border-radius: var(--r-mittel); padding: var(--a3) var(--a4); display: grid; gap: var(--a2); }
+.vorschlag p { margin: 0; }
+.ergebnis > .zeile { width: 100%; margin-top: var(--a3); }
+
+/* Fortschritt */
+.tabelle { width: 100%; border-collapse: collapse; font-size: var(--text-klein); }
+.tabelle th, .tabelle td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--rand); vertical-align: middle; }
+.tabelle thead th { color: var(--text-leise); font-weight: 700; }
+.tabelle-rollen { overflow-x: auto; }
+.fortschritt-bereich h3 { margin: 0 0 var(--a2); }
+.fortschritt-bereich.b4 h3 { color: var(--b4-dunkel); }
+.fortschritt-bereich.b3 h3 { color: var(--b3-dunkel); }
+.kann-liste { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+.kann-liste li { display: flex; gap: var(--a3); align-items: center; }
+.marke-klein { display: inline-grid; place-items: center; min-width: 44px; height: 32px; padding: 0 6px; border-radius: var(--r-rund); background: #eef0f6; color: var(--text-leise); font-weight: 800; font-size: 0.85rem; }
+.kann-ja .marke-klein { background: var(--gut); color: #fff; font-size: 1.1rem; }
+.kann-ja { font-weight: 700; }
+.stempelkarte { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 6px; }
+.stempelkarte li { display: grid; justify-items: center; gap: 2px; }
+.stempel-zeichen { width: 40px; height: 40px; border-radius: 50%; border: 3px dashed var(--rand-kraeftig); display: grid; place-items: center; font-weight: 800; }
+.stempelkarte li.voll .stempel-zeichen { border: 3px solid var(--gut); background: var(--gut-flaeche); color: var(--gut-dunkel); }
+.stempelkarte small { font-size: 0.7rem; color: var(--text-leise); }
+@media (max-width: 480px) { .stempel-zeichen { width: 32px; height: 32px; } }
+
+/* Admin */
+.pin-karte { justify-items: center; text-align: center; display: grid; }
+.pin-anzeige { font-size: 2rem; letter-spacing: 0.3em; min-height: 48px; }
+.pin-tasten { width: min(320px, 100%); margin: 0 auto; }
+.admin-abschnitt h3 { margin: 0 0 var(--a2); }
+.admin-abschnitt .tabelle .code { font-size: 1.1rem; }
+.gesperrt-zeile { opacity: 0.6; }
+.name-zelle { display: inline-flex; align-items: center; gap: 8px; }
+.schalter { display: flex; align-items: center; gap: var(--a3); min-height: 48px; font-weight: 600; }
+.schalter input { width: 28px; height: 28px; }
+.code-block { background: var(--haupt-zart); border: 1px solid var(--haupt-hell); border-radius: var(--r-klein); padding: var(--a3); font-family: var(--schrift-code); white-space: pre-wrap; word-break: break-all; user-select: all; -webkit-user-select: all; }

@@ -1,6 +1,6 @@
 // Offline-Speicher der App ("Service Worker").
 // Bei jeder Änderung an der App VERSION erhöhen (gleiche Zahl wie in js/version.js).
-const VERSION = 1;
+const VERSION = 2;
 const APP_CACHE = `chemie-app-v${VERSION}`;
 const DATEN_CACHE = 'chemie-daten';
 
@@ -12,9 +12,18 @@ const APP_DATEIEN = [
   'manifest.json',
   'css/app.css',
   'js/app.js',
-  'js/version.js',
+  'js/admin.js',
+  'js/aufgaben.js',
+  'js/codes.js',
+  'js/daten.js',
+  'js/hilfen.js',
+  'js/modell3d.js',
+  'js/profil.js',
+  'js/pruefsumme.js',
+  'js/runde.js',
   'js/speicher.js',
-  'js/baustein-test.js',
+  'js/ui.js',
+  'js/version.js',
   'lib/three.core.min.js',
   'lib/three.module.min.js',
   'lib/OrbitControls.js',
@@ -26,7 +35,13 @@ const APP_DATEIEN = [
 // Dateien, die die Lehrkraft auf github.com ändert. Sie werden beim Start
 // frisch geholt (wenn Internet da ist), sonst kommt die gespeicherte Fassung.
 const DATEN_DATEIEN = [
-  'daten/app.json'
+  'daten/app.json',
+  'daten/bereiche.json',
+  'daten/elemente.json',
+  'daten/reihe.json',
+  'daten/fachwoerter.json',
+  'daten/aufgaben/b3.json',
+  'daten/aufgaben/b4.json'
 ];
 
 self.addEventListener('install', (event) => {

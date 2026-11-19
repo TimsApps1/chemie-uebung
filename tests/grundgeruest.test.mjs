@@ -1,4 +1,4 @@
-// Tests für Etappe 0: Grundgerüst, offline, Version, Update-Hinweis.
+// Tests für das Grundgerüst: offline, Version, Update-Hinweis, Tippflächen.
 // Aufruf: node --test tests/
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
@@ -28,7 +28,7 @@ async function dateienIn(ordner, filter) {
   return eintraege.filter(filter).map((n) => `${ordner}/${n}`);
 }
 
-let server, browser, basis;
+let server, browser, basis, VERSION, NEU;
 let swAenderung = null; // wird im Update-Test gesetzt
 
 before(async () => {
@@ -36,6 +36,8 @@ before(async () => {
   server = await starten(0, ersetzungen);
   basis = `http://127.0.0.1:${server.address().port}${PFAD}`;
   browser = await chromium.launch();
+  VERSION = Number((await fs.readFile(path.join(WURZEL, 'js/version.js'), 'utf8')).match(/VERSION = (\d+)/)[1]);
+  NEU = VERSION + 1;
 });
 
 after(async () => {
@@ -64,7 +66,10 @@ test('Alle App-Dateien stehen in der Offline-Liste und existieren', async () => 
   for (const d of [...app, ...daten].filter((d) => d !== './')) {
     await fs.access(path.join(WURZEL, d)).catch(() => assert.fail(`${d} steht in sw.js, gibt es aber nicht`));
   }
-  const datenDateien = await dateienIn('daten', (n) => n.endsWith('.json'));
+  const datenDateien = [
+    ...(await dateienIn('daten', (n) => n.endsWith('.json'))),
+    ...(await dateienIn('daten/aufgaben', (n) => n.endsWith('.json')))
+  ];
   for (const d of datenDateien) assert.ok(daten.includes(d), `${d} fehlt in sw.js (DATEN_DATEIEN)`);
 });
 
@@ -76,7 +81,7 @@ test('Keine Verweise auf fremde Server im Code', async () => {
   ];
   for (const d of dateien) {
     const t = await fs.readFile(path.join(WURZEL, d), 'utf8');
-    assert.ok(!/https?:\/\//.test(t), `${d} enthält eine Internetadresse`);
+    assert.ok(!/https?:\/\//.test(t.replaceAll('http://www.w3.org/2000/svg', '')), `${d} enthält eine Internetadresse`);
   }
 });
 
@@ -90,10 +95,11 @@ for (const g of GROESSEN) {
     seite.on('pageerror', (e) => fehler.push(e.message));
 
     await seite.goto(basis);
-    await seite.getByText('Version 1').waitFor();
-    await seite.getByText('Offline bereit').waitFor();
-    assert.equal(await seite.locator('.status-ok').filter({ hasText: 'Offline bereit' }).count(), 1);
+    await seite.getByText(`Version ${VERSION}`).waitFor();
+    await seite.getByRole('heading', { name: 'Wer übt?' }).waitFor();
+    await seite.evaluate(() => navigator.serviceWorker.ready);
     assert.equal(await seite.locator('#update-hinweis').isVisible(), false, 'Update-Hinweis ohne neue Version sichtbar');
+    assert.equal(await seite.locator('.daten-fehler').count(), 0, 'Die Daten enthalten Fehler');
 
     // Kein waagerechtes Scrollen
     const zuBreit = await seite.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);
@@ -105,17 +111,14 @@ for (const g of GROESSEN) {
       assert.ok(b.width >= 44 && b.height >= 44, `Knopf zu klein: ${await k.textContent()}`);
     }
 
-    // 3D-Test
-    await seite.getByRole('button', { name: '3D-Test anzeigen' }).click();
-    await seite.locator('.buehne-test canvas').waitFor();
-
-    // Flugmodus: neu laden ohne Netz
+    // Flugmodus: neu laden ohne Netz, Daten und 3D müssen trotzdem gehen
+    await seite.reload();
+    await seite.getByRole('heading', { name: 'Wer übt?' }).waitFor();
     await kontext.setOffline(true);
     await seite.reload();
-    await seite.getByText('Hier entsteht deine Übungs-App').waitFor();
-    await seite.getByText('Version 1').waitFor();
-    await seite.getByRole('button', { name: '3D-Test anzeigen' }).click();
-    await seite.locator('.buehne-test canvas').waitFor();
+    await seite.getByRole('heading', { name: 'Wer übt?' }).waitFor();
+    await seite.getByText(`Version ${VERSION}`).waitFor();
+    assert.equal(await seite.locator('.daten-fehler').count(), 0, 'Offline fehlen Daten');
 
     assert.deepEqual(fremde, [], 'Anfragen an fremde Server');
     assert.deepEqual(fehler, [], 'JavaScript-Fehler');
@@ -127,11 +130,11 @@ test('Neue Version: Hinweis erscheint und lädt nach Antippen', async () => {
   const kontext = await browser.newContext({ viewport: { width: 820, height: 1180 } });
   const seite = await kontext.newPage();
   await seite.goto(basis);
-  await seite.getByText('Offline bereit').waitFor();
+  await seite.evaluate(() => navigator.serviceWorker.ready);
   await seite.reload(); // jetzt steuert der Offline-Speicher die Seite
-  await seite.getByText('Version 1').waitFor();
+  await seite.getByText(`Version ${VERSION}`).waitFor();
 
-  swAenderung = (t) => t.replace('const VERSION = 1;', 'const VERSION = 2;');
+  swAenderung = (t) => t.replace(`const VERSION = ${VERSION};`, `const VERSION = ${NEU};`);
   try {
     await seite.evaluate(async () => (await navigator.serviceWorker.getRegistration()).update());
     const knopf = seite.getByRole('button', { name: 'Neue Version – tippen zum Laden' });
@@ -141,7 +144,7 @@ test('Neue Version: Hinweis erscheint und lädt nach Antippen', async () => {
       navigator.serviceWorker.addEventListener('message', (e) => ok(e.data.swVersion), { once: true });
       navigator.serviceWorker.controller.postMessage('version?');
     }));
-    assert.equal(swVersion, 2);
+    assert.equal(swVersion, NEU);
   } finally {
     swAenderung = null;
     await kontext.close();

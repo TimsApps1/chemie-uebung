@@ -1,0 +1,31 @@
+{
+  "hinweis": "Elemente mit Wertigkeit (Zahl der Noppen). Bei zwei Möglichkeiten gibt es zwei Steine, z. B. Fe (II) und Fe (III).",
+  "elemente": [
+    { "symbol": "H",  "name": "Wasserstoff",  "metall": false, "wertigkeit": [1] },
+    { "symbol": "O",  "name": "Sauerstoff",   "metall": false, "wertigkeit": [2] },
+    { "symbol": "C",  "name": "Kohlenstoff",  "metall": false, "wertigkeit": [4] },
+    { "symbol": "N",  "name": "Stickstoff",   "metall": false, "wertigkeit": [3], "nur_in": "NH3" },
+    { "symbol": "Cl", "name": "Chlor",        "metall": false, "wertigkeit": [1] },
+    { "symbol": "S",  "name": "Schwefel",     "metall": false, "wertigkeit": [2], "nur_in": "Verbindungen mit Metallen oder H" },
+    { "symbol": "Na", "name": "Natrium",      "metall": true,  "wertigkeit": [1] },
+    { "symbol": "Mg", "name": "Magnesium",    "metall": true,  "wertigkeit": [2] },
+    { "symbol": "Al", "name": "Aluminium",    "metall": true,  "wertigkeit": [3] },
+    { "symbol": "Zn", "name": "Zink",         "metall": true,  "wertigkeit": [2] },
+    { "symbol": "Pb", "name": "Blei",         "metall": true,  "wertigkeit": [2] },
+    { "symbol": "Cu", "name": "Kupfer",       "metall": true,  "wertigkeit": [1, 2] },
+    { "symbol": "Fe", "name": "Eisen",        "metall": true,  "wertigkeit": [2, 3] },
+    { "symbol": "Ag", "name": "Silber",       "metall": true,  "wertigkeit": [1] },
+    { "symbol": "Au", "name": "Gold",         "metall": true,  "wertigkeit": [] },
+    { "symbol": "Co", "name": "Cobalt",       "metall": true,  "wertigkeit": [] },
+    { "symbol": "K",  "name": "Kalium",       "metall": true,  "wertigkeit": [] },
+    { "symbol": "Ca", "name": "Calcium",      "metall": true,  "wertigkeit": [] },
+    { "symbol": "He", "name": "Helium",       "metall": false, "wertigkeit": [] },
+    { "symbol": "P",  "name": "Phosphor",     "metall": false, "wertigkeit": [] },
+    { "symbol": "Si", "name": "Silicium",     "metall": false, "wertigkeit": [] },
+    { "symbol": "Hg", "name": "Quecksilber",  "metall": true,  "wertigkeit": [] },
+    { "symbol": "Sn", "name": "Zinn",         "metall": true,  "wertigkeit": [] },
+    { "symbol": "I",  "name": "Iod",          "metall": false, "wertigkeit": [] },
+    { "symbol": "F",  "name": "Fluor",        "metall": false, "wertigkeit": [] },
+    { "symbol": "Ne", "name": "Neon",         "metall": false, "wertigkeit": [] }
+  ]
+}

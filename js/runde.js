@@ -1,0 +1,258 @@
+// Ablauf einer Übungsrunde: 8 Aufgaben, Denkanstoß, 2. Versuch, Lösung, Wiederholung am Ende.
+import { el, mischen, sterneText } from './hilfen.js';
+import { kopfSetzen, icon, iconKnopf, text, vorlesenKnopf, vorlesenStoppen, fenster, fragen, tonSpielen } from './ui.js';
+import { aufgabeDarstellen, pruefen, fehlerHinweis, loesungsText, vorleseText } from './aufgaben.js';
+import { fehlerMerken, fehlerWiederholt, kannZaehlen, geraet } from './profil.js';
+
+export const RUNDE_LAENGE = 8;
+const ZEIT_PRO_AUFGABE = 45; // Sekunden, nur ★★★
+const PUNKTE = { erster: 10, zweiter: 5, warum: 5 };
+
+const LOB_STANDARD = {
+  erster: ['Richtig!', 'Stimmt genau!', 'Gut gemacht!', 'Sehr gut!'],
+  zweiter: ['Beim 2. Versuch richtig – gut nachgedacht!', 'Richtig! Der Denkanstoß hat geholfen.', 'Gut, dass du drangeblieben bist!'],
+  ausgebessert: ['Ausgebessert! Diesmal hat es geklappt.', 'Super, jetzt sitzt es!']
+};
+
+function lob(daten, art) {
+  const liste = daten.app.lob?.[art]?.length ? daten.app.lob[art] : LOB_STANDARD[art];
+  return liste[Math.floor(Math.random() * liste.length)];
+}
+
+// ---------- Aufgaben für eine Runde auswählen ----------
+
+function passtZumKurs(a, kurs) {
+  return a.kurs !== 'E' || kurs === 'E';
+}
+
+export function aufgabenWaehlen(alle, niveau, kurs) {
+  const pool = alle.filter((a) => a.niveau === niveau && passtZumKurs(a, kurs));
+  const einstiegPool = niveau > 1
+    ? alle.filter((a) => a.niveau === niveau - 1 && passtZumKurs(a, kurs))
+    : pool.filter((a) => a.leicht);
+  const einstieg = mischen(einstiegPool.length >= 2 ? einstiegPool : pool).slice(0, 2);
+  const rest = mischen(pool.filter((a) => !einstieg.includes(a)));
+  // Höchstens 2 Sortieraufgaben pro Runde (sie dauern länger).
+  const auswahl = [];
+  let sortieren = einstieg.filter((a) => a.typ === 'sortieren').length;
+  for (const a of rest) {
+    if (auswahl.length >= RUNDE_LAENGE - einstieg.length) break;
+    if (a.typ === 'sortieren') { if (sortieren >= 2) continue; sortieren++; }
+    auswahl.push(a);
+  }
+  return [...einstieg, ...auswahl];
+}
+
+// ---------- Runde spielen ----------
+// art: 'normal' oder 'fehler' (Meine Fehler wiederholen)
+// Liefert per fertig(...) das Ergebnis oder null bei Abbruch.
+
+export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgaben, art = 'normal', fertig }) {
+  const zeitlimit = art === 'normal' && niveau === 3 && !geraet().zeitlimitAus && daten.app.zeitlimit !== false;
+  const mitWarum = art === 'normal' && niveau === 3;
+  const bereichInfo = daten.bereiche.find((b) => b.id === bereich);
+  const farbe = bereich.toLowerCase();
+  const stand = {
+    punkte: 0, ersterVersuch: 0, beantwortet: 0, warumRichtig: 0,
+    nochmal: [], ausgebessert: 0, abgebrochen: false
+  };
+  let liste = [...aufgaben];
+  let index = 0;
+  let wiederholung = false;
+  let zeitgeber = null;
+
+  kopfSetzen({
+    titel: art === 'fehler' ? 'Meine Fehler' : bereichInfo?.titel || bereich,
+    farbe,
+    links: iconKnopf('i-haus', 'Runde abbrechen', abbrechen, 'knopf-rund kopf-knopf'),
+    rechts: art === 'normal' ? [el('span', { class: 'kopf-niveau sterne' }, sterneText(niveau))] : []
+  });
+
+  async function abbrechen() {
+    const ja = await fragen('Runde abbrechen? Die Punkte dieser Runde zählen dann nicht.', 'Ja, abbrechen', 'Weiter üben');
+    if (!ja) return;
+    stand.abgebrochen = true;
+    aufraeumen();
+    fertig(null);
+  }
+
+  function aufraeumen() {
+    clearInterval(zeitgeber);
+    vorlesenStoppen();
+  }
+
+  function fortschritt() {
+    if (wiederholung) {
+      return el('div', { class: 'fortschritt' },
+        el('span', { class: 'fortschritt-text' }, `Nochmal: ${index - aufgaben.length + 1} von ${liste.length - aufgaben.length}`));
+    }
+    const schritte = el('ol', { class: 'schritte', 'aria-hidden': 'true' });
+    for (let i = 0; i < aufgaben.length; i++) {
+      schritte.append(el('li', { class: i < index ? 'fertig' : i === index ? 'jetzt' : '' }));
+    }
+    return el('div', { class: 'fortschritt', style: `--balken: var(--${farbe})` },
+      el('span', { class: 'fortschritt-text' }, `${index + 1} von ${aufgaben.length}`), schritte);
+  }
+
+  function zeitbalken(onAbgelaufen) {
+    const innen = el('span');
+    const balken = el('div', { class: 'zeitbalken', role: 'img', 'aria-label': 'Zeitbalken' }, innen);
+    const start = Date.now();
+    clearInterval(zeitgeber);
+    zeitgeber = setInterval(() => {
+      const rest = Math.max(0, 1 - (Date.now() - start) / (ZEIT_PRO_AUFGABE * 1000));
+      innen.style.width = `${rest * 100}%`;
+      if (rest === 0) {
+        clearInterval(zeitgeber);
+        balken.classList.add('abgelaufen');
+        balken.setAttribute('aria-label', 'Die Zeit ist um. Du kannst in Ruhe weitermachen.');
+        balken.after(el('p', { class: 'tipp' }, '⏳ Die Zeit ist um. Mach in Ruhe weiter, es gibt jetzt höchstens 5 Punkte.'));
+        onAbgelaufen();
+      }
+    }, 500);
+    return balken;
+  }
+
+  function naechste() {
+    aufraeumen();
+    // Falsch beantwortete Aufgaben kommen am Ende noch einmal.
+    if (index >= liste.length && stand.nochmal.length && liste.length === aufgaben.length) {
+      liste = [...aufgaben, ...stand.nochmal];
+    }
+    if (index >= liste.length) return ende();
+    wiederholung = index >= aufgaben.length;
+    const a = liste[index];
+    zeigeAufgabe(a);
+  }
+
+  function zeigeAufgabe(a) {
+    let versuch = 1;
+    let zeitUm = false;
+    const rueck = el('div', { class: 'rueck-bereich', 'aria-live': 'polite' });
+    const darstellung = aufgabeDarstellen(a, (wert) => beantwortet(wert), daten);
+
+    const erklaeren = el('button', { type: 'button', class: 'knopf knopf-leise knopf-breit', onclick: () => {
+      fenster(el('div', {},
+        el('p', { class: 'fenster-text' }, text(a.erklaerung)),
+        a.bild ? el('img', { src: `bilder/${a.bild}`, alt: '', class: 'erklaer-bild' }) : null,
+        el('div', { class: 'zeile-rechts' }, vorlesenKnopf(a.erklaerung))
+      ), { titel: 'Erklär’s mir' });
+    } }, icon('i-birne'), 'Erklär’s mir');
+
+    const karte = el('section', { class: 'karte aufgabe' },
+      el('div', { class: 'anweisung-zeile' },
+        el('p', { class: 'anweisung' }, el('span', { class: 'anweisung-zeichen', 'aria-hidden': 'true' }, a.symbol || '❓'), el('span', {}, text(a.frage))),
+        vorlesenKnopf(() => vorleseText(a))),
+      zeitlimit && !wiederholung ? zeitbalken(() => { zeitUm = true; }) : null,
+      darstellung.wurzel,
+      rueck,
+      erklaeren);
+    ziel.replaceChildren(fortschritt(), karte);
+    window.scrollTo(0, 0);
+
+    function beantwortet(wert) {
+      const richtig = pruefen(a, wert, daten);
+      const endgueltig = richtig || versuch >= 2;
+      darstellung.ergebnis(wert, richtig, endgueltig);
+      tonSpielen(richtig);
+      if (richtig) {
+        clearInterval(zeitgeber);
+        let plus = 0;
+        if (!wiederholung && art === 'normal') {
+          plus = versuch === 1 && !zeitUm ? PUNKTE.erster : PUNKTE.zweiter;
+          stand.punkte += plus;
+          if (versuch === 1) stand.ersterVersuch += 1;
+        }
+        if (art === 'fehler' || wiederholung) {
+          if (art === 'fehler') {
+            if (fehlerWiederholt(name, a.id, versuch === 1)) stand.ausgebessert += 1;
+          } else if (versuch === 1) stand.ausgebessert += 1;
+        }
+        kannZaehlen(name, a.kann);
+        rueck.replaceChildren(rueckmeldung(true,
+          wiederholung || art === 'fehler' ? lob(daten, 'ausgebessert') : lob(daten, versuch === 1 ? 'erster' : 'zweiter'),
+          null, plus));
+        weiterKnopf(a);
+        return;
+      }
+      if (!endgueltig) {
+        versuch = 2;
+        const hinweis = fehlerHinweis(a, wert) || a.denkanstoss;
+        const nochmal = el('button', { type: 'button', class: 'knopf knopf-haupt knopf-breit', onclick: () => {
+          rueck.replaceChildren();
+          darstellung.nochmal();
+        } }, 'Nochmal versuchen');
+        rueck.replaceChildren(rueckmeldung(false, 'Noch nicht.', hinweis), nochmal);
+        nochmal.focus({ preventScroll: true });
+        return;
+      }
+      clearInterval(zeitgeber);
+      if (art === 'normal' && !wiederholung) {
+        stand.nochmal.push(a);
+        fehlerMerken(name, a, bereich);
+      }
+      if (art === 'fehler') fehlerWiederholt(name, a.id, false);
+      rueck.replaceChildren(rueckmeldung(false, 'Das war noch nicht richtig.', null, 0,
+        el('div', { class: 'loesung' },
+          el('p', {}, el('b', {}, 'Lösung: '), text(loesungsText(a, daten))),
+          el('p', {}, text(a.erklaerung)))));
+      weiterKnopf(a);
+    }
+
+    function weiterKnopf(aufgabe) {
+      const knopfWeiter = el('button', { type: 'button', class: 'knopf knopf-haupt knopf-gross knopf-breit', onclick: () => {
+        if (!wiederholung) stand.beantwortet += 1;
+        index += 1;
+        if (mitWarum && !wiederholung && aufgabe.warum && stand.beantwortet % 2 === 0) warumFrage(aufgabe);
+        else naechste();
+      } }, 'Weiter ➜');
+      rueck.append(knopfWeiter);
+      knopfWeiter.focus({ preventScroll: true });
+    }
+  }
+
+  // ★★★: "Warum?" mit drei Begründungen, richtige Begründung = Extrapunkte.
+  function warumFrage(aufgabe) {
+    const w = { typ: 'auswahl', antworten: aufgabe.warum.antworten, richtig: aufgabe.warum.richtig };
+    const rueck = el('div', { class: 'rueck-bereich', 'aria-live': 'polite' });
+    const darstellung = aufgabeDarstellen(w, (wert) => {
+      const richtig = wert === w.richtig;
+      darstellung.ergebnis(wert, richtig, true);
+      tonSpielen(richtig);
+      if (richtig) { stand.punkte += PUNKTE.warum; stand.warumRichtig += 1; }
+      rueck.replaceChildren(
+        rueckmeldung(richtig, richtig ? 'Gute Begründung!' : 'Diese Begründung passt nicht.', null, richtig ? PUNKTE.warum : 0),
+        el('button', { type: 'button', class: 'knopf knopf-haupt knopf-gross knopf-breit', onclick: naechste }, 'Weiter ➜'));
+    }, daten);
+    ziel.replaceChildren(el('section', { class: 'karte aufgabe warum' },
+      el('div', { class: 'anweisung-zeile' },
+        el('p', { class: 'anweisung' }, el('span', { class: 'anweisung-zeichen', 'aria-hidden': 'true' }, '💡'),
+          el('span', {}, text(aufgabe.warum.frage || 'Warum?'))),
+        vorlesenKnopf(() => `${aufgabe.warum.frage || 'Warum?'}. ${aufgabe.warum.antworten.join('. ')}`)),
+      el('p', { class: 'tipp' }, `Extrapunkte: +${PUNKTE.warum} für die richtige Begründung.`),
+      darstellung.wurzel, rueck));
+  }
+
+  function ende() {
+    aufraeumen();
+    fertig({
+      art, bereich, niveau,
+      punkte: stand.punkte,
+      ersterVersuch: stand.ersterVersuch,
+      anzahl: aufgaben.length,
+      warumRichtig: stand.warumRichtig,
+      ausgebessert: stand.ausgebessert
+    });
+  }
+
+  naechste();
+}
+
+export function rueckmeldung(richtig, titel, hinweis, plus = 0, extra = null) {
+  return el('div', { class: `rueckmeldung ${richtig ? 'richtig' : 'falsch'}` },
+    el('span', { class: 'marke', 'aria-hidden': 'true' }, richtig ? '✓' : '✗'),
+    el('p', { class: 'rueckmeldung-titel' }, el('span', { class: 'nur-vorlesen' }, richtig ? 'Richtig. ' : 'Falsch. '), titel),
+    plus > 0 ? el('span', { class: 'punkte-plus breit-rechts' }, `+${plus}`) : null,
+    hinweis ? el('div', { class: 'denkanstoss breit' }, el('span', { class: 'denkanstoss-zeichen', 'aria-hidden': 'true' }, '💡'), el('p', {}, text(hinweis))) : null,
+    extra ? el('div', { class: 'breit' }, extra) : null);
+}
