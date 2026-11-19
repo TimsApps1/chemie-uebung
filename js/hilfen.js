@@ -40,6 +40,7 @@ export function nameVereinheitlichen(roh) {
   return String(roh || '')
     .toUpperCase()
     .replace(/Ä/g, 'AE').replace(/Ö/g, 'OE').replace(/Ü/g, 'UE').replace(/ß/g, 'SS').replace(/ẞ/g, 'SS')
+    .replace(/Ł/g, 'L').replace(/Ø/g, 'OE').replace(/Æ/g, 'AE').replace(/Œ/g, 'OE')
     .normalize('NFD').replace(/[̀-ͯ]/g, '')
     .replace(/[^A-Z0-9]/g, '')
     .slice(0, 8);
@@ -128,13 +129,29 @@ export function formelZeichen(text) {
     istFormel(w) ? w.replace(/\d/g, (z) => TIEF[Number(z)]) : w);
 }
 
-// Für die Sprachausgabe: "2 H2O" -> "2 H 2 O", "→" -> "reagiert zu"
+// Formel/Symbol buchstabieren: "Na" -> "N klein a", "CO" -> "C O", "H2O" -> "H 2 O".
+export function buchstabieren(wort) {
+  return wort.split('').map((z) => (/[a-zäöü]/.test(z) ? `klein ${z}` : z)).join(' ').replace(/(\d) (?=\d)/g, '$1');
+}
+
+function istSymbolFolge(wort) {
+  const teile = wort.match(/[A-Z][a-z]?\d*/g);
+  return Boolean(teile && teile.join('') === wort && teile.every((t) => bekannteSymbole.has(t.replace(/\d+/, ''))));
+}
+
+// Für die Sprachausgabe: Formeln und Symbole werden buchstabiert, "2 H2O" -> "2 mal H 2 O".
 export function vorlesbar(text) {
   return String(text)
-    .replace(/([A-Z][A-Za-z0-9]*\d[A-Za-z0-9]*)/g, (w) => (istFormel(w) ? w.replace(/(\d+)/g, ' $1 ').replace(/([a-z])([A-Z])/g, '$1 $2') : w))
+    .replace(/\b(\d+) (?=[A-Z][a-z]?\d)/g, '$1 mal ')
+    .replace(/\b[A-Z][A-Za-z0-9]*\b/g, (w) => {
+      if (/\d/.test(w) && istFormel(w)) return buchstabieren(w);
+      if (w.length <= 4 && istSymbolFolge(w) && (w.length > 1 || bekannteSymbole.has(w))) return buchstabieren(w);
+      if (/^[A-Z]{2,3}$/.test(w)) return buchstabieren(w);
+      return w;
+    })
     .replace(/→/g, ' reagiert zu ')
     .replace(/\s\+\s/g, ' und ')
-    .replace(/[★✋↕🔢✏️❓🔥✓✗]/gu, ' ')
+    .replace(/[★✋↕🔢✏️❓🔥✓✗💡⏳]/gu, ' ')
     .replace(/\s+/g, ' ')
     .trim();
 }

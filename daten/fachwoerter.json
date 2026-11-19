@@ -1,44 +1,281 @@
 {
   "woerter": [
-    { "wort": "Element", "formen": ["Element", "Elemente", "Elements", "Elementen"], "artikel": "das", "mehrzahl": "die Elemente",
-      "erklaerung": "Ein Grundstoff, der nur aus einer Sorte von Atomen besteht." },
-    { "wort": "Atom", "formen": ["Atom", "Atome", "Atoms", "Atomen"], "artikel": "das", "mehrzahl": "die Atome",
-      "erklaerung": "Ein winzig kleiner Baustein, aus dem alle Stoffe bestehen." },
-    { "wort": "Teilchen", "formen": ["Teilchen", "Teilchens"], "artikel": "das", "mehrzahl": "die Teilchen",
-      "erklaerung": "Ein kleinstes Stück eines Stoffes, zum Beispiel ein Wasser-Teilchen aus 2 H-Atomen und 1 O-Atom." },
-    { "wort": "Symbol", "formen": ["Symbol", "Symbole", "Symbols", "Symbolen"], "artikel": "das", "mehrzahl": "die Symbole",
-      "erklaerung": "Ein kurzes Zeichen aus einem oder zwei Buchstaben für ein Element, zum Beispiel O für Sauerstoff." },
-    { "wort": "Formel", "formen": ["Formel", "Formeln"], "artikel": "die", "mehrzahl": "die Formeln",
-      "erklaerung": "Eine Schreibweise mit Symbolen und Zahlen, die zeigt, welche Atome in einem Stoff stecken." },
-    { "wort": "Oxid", "formen": ["Oxid", "Oxide", "Oxids", "Oxiden"], "artikel": "das", "mehrzahl": "die Oxide",
-      "erklaerung": "Ein Stoff aus einem Element und Sauerstoff." },
-    { "wort": "Sulfid", "formen": ["Sulfid", "Sulfide"], "artikel": "das", "mehrzahl": "die Sulfide",
-      "erklaerung": "Ein Stoff aus einem Element und Schwefel." },
-    { "wort": "Chlorid", "formen": ["Chlorid", "Chloride"], "artikel": "das", "mehrzahl": "die Chloride",
-      "erklaerung": "Ein Stoff aus einem Element und Chlor." },
-    { "wort": "Erz", "formen": ["Erz", "Erze", "Erzes"], "artikel": "das", "mehrzahl": "die Erze",
-      "erklaerung": "Ein Gestein, in dem ein Metall zusammen mit anderen Stoffen steckt, oft mit Sauerstoff." },
-    { "wort": "edel", "formen": ["edel", "edle", "edler", "edles", "edlen", "edelsten"], "artikel": "", "mehrzahl": "",
-      "erklaerung": "Edle Metalle halten Sauerstoff nur schwach fest, darum rosten sie kaum." },
-    { "wort": "unedel", "formen": ["unedel", "unedle", "unedler", "unedles", "unedlen", "unedelsten"], "artikel": "", "mehrzahl": "",
-      "erklaerung": "Unedle Metalle halten Sauerstoff stark fest und rosten oder brennen gut." },
-    { "wort": "Reaktivitätsreihe", "formen": ["Reaktivitätsreihe", "Reihe"], "artikel": "die", "mehrzahl": "die Reaktivitätsreihen",
-      "erklaerung": "Eine Liste der Metalle von edel bis unedel, die zeigt, wie stark sie Sauerstoff festhalten." },
-    { "wort": "Wortgleichung", "formen": ["Wortgleichung", "Wortgleichungen"], "artikel": "die", "mehrzahl": "die Wortgleichungen",
-      "erklaerung": "Eine Reaktion mit Namen statt Formeln: vor dem Pfeil die Ausgangsstoffe, hinter dem Pfeil die neuen Stoffe." },
-    { "wort": "Reduktion", "formen": ["Reduktion", "Reduktionen"], "artikel": "die", "mehrzahl": "die Reduktionen",
-      "erklaerung": "Ein Stoff gibt Sauerstoff ab." },
-    { "wort": "Oxidation", "formen": ["Oxidation", "Oxidationen"], "artikel": "die", "mehrzahl": "die Oxidationen",
-      "erklaerung": "Ein Stoff nimmt Sauerstoff auf." },
-    { "wort": "Redoxreaktion", "formen": ["Redoxreaktion", "Redoxreaktionen", "Redox"], "artikel": "die", "mehrzahl": "die Redoxreaktionen",
-      "erklaerung": "Eine Reaktion, bei der ein Stoff Sauerstoff abgibt und ein anderer ihn gleichzeitig aufnimmt." },
-    { "wort": "reduziert", "formen": ["reduziert", "reduzieren"], "artikel": "", "mehrzahl": "",
-      "erklaerung": "Ein Stoff wird reduziert, wenn er Sauerstoff abgibt." },
-    { "wort": "oxidiert", "formen": ["oxidiert", "oxidieren"], "artikel": "", "mehrzahl": "",
-      "erklaerung": "Ein Stoff wird oxidiert, wenn er Sauerstoff aufnimmt." },
-    { "wort": "Reduktionsmittel", "formen": ["Reduktionsmittel", "Reduktionsmittels"], "artikel": "das", "mehrzahl": "die Reduktionsmittel",
-      "erklaerung": "Der Stoff, der einem Oxid den Sauerstoff wegnimmt und dabei selbst oxidiert wird." },
-    { "wort": "Oxidationsmittel", "formen": ["Oxidationsmittel", "Oxidationsmittels"], "artikel": "das", "mehrzahl": "die Oxidationsmittel",
-      "erklaerung": "Der Stoff, der Sauerstoff an einen anderen Stoff abgibt und dabei selbst reduziert wird." }
+    {
+      "wort": "Element",
+      "formen": [
+        "Element",
+        "Elemente",
+        "Elements",
+        "Elementen"
+      ],
+      "artikel": "das",
+      "mehrzahl": "die Elemente",
+      "erklaerung": "Ein Grundstoff, der nur aus einer Sorte von Atomen besteht."
+    },
+    {
+      "wort": "Atom",
+      "formen": [
+        "Atom",
+        "Atome",
+        "Atoms",
+        "Atomen"
+      ],
+      "artikel": "das",
+      "mehrzahl": "die Atome",
+      "erklaerung": "Ein winzig kleiner Baustein, aus dem alle Stoffe bestehen."
+    },
+    {
+      "wort": "Teilchen",
+      "formen": [
+        "Teilchen",
+        "Teilchens"
+      ],
+      "artikel": "das",
+      "mehrzahl": "die Teilchen",
+      "erklaerung": "Ein kleinstes Stück eines Stoffes, zum Beispiel ein Wasser-Teilchen aus 2 H-Atomen und 1 O-Atom."
+    },
+    {
+      "wort": "Symbol",
+      "formen": [
+        "Symbol",
+        "Symbole",
+        "Symbols",
+        "Symbolen"
+      ],
+      "artikel": "das",
+      "mehrzahl": "die Symbole",
+      "erklaerung": "Ein kurzes Zeichen aus einem oder zwei Buchstaben für ein Element, zum Beispiel O für Sauerstoff."
+    },
+    {
+      "wort": "Formel",
+      "formen": [
+        "Formel",
+        "Formeln"
+      ],
+      "artikel": "die",
+      "mehrzahl": "die Formeln",
+      "erklaerung": "Eine Schreibweise mit Symbolen und Zahlen, die zeigt, welche Atome in einem Stoff stecken."
+    },
+    {
+      "wort": "Oxid",
+      "formen": [
+        "Oxid",
+        "Oxide",
+        "Oxids",
+        "Oxiden"
+      ],
+      "artikel": "das",
+      "mehrzahl": "die Oxide",
+      "erklaerung": "Ein Stoff aus einem Element und Sauerstoff."
+    },
+    {
+      "wort": "Sulfid",
+      "formen": [
+        "Sulfid",
+        "Sulfide"
+      ],
+      "artikel": "das",
+      "mehrzahl": "die Sulfide",
+      "erklaerung": "Ein Stoff aus einem Element und Schwefel."
+    },
+    {
+      "wort": "Chlorid",
+      "formen": [
+        "Chlorid",
+        "Chloride"
+      ],
+      "artikel": "das",
+      "mehrzahl": "die Chloride",
+      "erklaerung": "Ein Stoff aus einem Element und Chlor."
+    },
+    {
+      "wort": "Erz",
+      "formen": [
+        "Erz",
+        "Erze",
+        "Erzes"
+      ],
+      "artikel": "das",
+      "mehrzahl": "die Erze",
+      "erklaerung": "Ein Gestein, in dem ein Metall zusammen mit anderen Stoffen steckt, oft mit Sauerstoff."
+    },
+    {
+      "wort": "edel",
+      "formen": [
+        "edel",
+        "edle",
+        "edler",
+        "edles",
+        "edlen",
+        "edelsten"
+      ],
+      "artikel": "",
+      "mehrzahl": "",
+      "erklaerung": "Edle Metalle halten Sauerstoff nur schwach fest, darum bleiben sie lange blank."
+    },
+    {
+      "wort": "unedel",
+      "formen": [
+        "unedel",
+        "unedle",
+        "unedler",
+        "unedles",
+        "unedlen",
+        "unedelsten"
+      ],
+      "artikel": "",
+      "mehrzahl": "",
+      "erklaerung": "Unedle Metalle halten Sauerstoff stark fest und reagieren leicht mit Sauerstoff."
+    },
+    {
+      "wort": "Reaktivitätsreihe",
+      "formen": [
+        "Reaktivitätsreihe",
+        "Reihe"
+      ],
+      "artikel": "die",
+      "mehrzahl": "die Reaktivitätsreihen",
+      "erklaerung": "Eine Liste der Metalle (und Kohlenstoff) von edel bis unedel. Sie zeigt, wie stark ein Stoff Sauerstoff festhält."
+    },
+    {
+      "wort": "Wortgleichung",
+      "formen": [
+        "Wortgleichung",
+        "Wortgleichungen"
+      ],
+      "artikel": "die",
+      "mehrzahl": "die Wortgleichungen",
+      "erklaerung": "Eine Reaktion mit Namen statt Formeln: vor dem Pfeil die Ausgangsstoffe, hinter dem Pfeil die neuen Stoffe."
+    },
+    {
+      "wort": "Reduktion",
+      "formen": [
+        "Reduktion",
+        "Reduktionen"
+      ],
+      "artikel": "die",
+      "mehrzahl": "die Reduktionen",
+      "erklaerung": "Ein Stoff gibt Sauerstoff ab."
+    },
+    {
+      "wort": "Oxidation",
+      "formen": [
+        "Oxidation",
+        "Oxidationen"
+      ],
+      "artikel": "die",
+      "mehrzahl": "die Oxidationen",
+      "erklaerung": "Ein Stoff nimmt Sauerstoff auf."
+    },
+    {
+      "wort": "Redoxreaktion",
+      "formen": [
+        "Redoxreaktion",
+        "Redoxreaktionen",
+        "Redox"
+      ],
+      "artikel": "die",
+      "mehrzahl": "die Redoxreaktionen",
+      "erklaerung": "Eine Reaktion, bei der ein Stoff Sauerstoff abgibt und ein anderer ihn gleichzeitig aufnimmt."
+    },
+    {
+      "wort": "reduziert",
+      "formen": [
+        "reduziert",
+        "reduzieren"
+      ],
+      "artikel": "",
+      "mehrzahl": "",
+      "erklaerung": "Ein Stoff wird reduziert, wenn er Sauerstoff abgibt."
+    },
+    {
+      "wort": "oxidiert",
+      "formen": [
+        "oxidiert",
+        "oxidieren"
+      ],
+      "artikel": "",
+      "mehrzahl": "",
+      "erklaerung": "Ein Stoff wird oxidiert, wenn er Sauerstoff aufnimmt."
+    },
+    {
+      "wort": "Reduktionsmittel",
+      "formen": [
+        "Reduktionsmittel",
+        "Reduktionsmittels"
+      ],
+      "artikel": "das",
+      "mehrzahl": "die Reduktionsmittel",
+      "erklaerung": "Der Stoff, der einem Oxid den Sauerstoff wegnimmt und dabei selbst oxidiert wird."
+    },
+    {
+      "wort": "Oxidationsmittel",
+      "formen": [
+        "Oxidationsmittel",
+        "Oxidationsmittels"
+      ],
+      "artikel": "das",
+      "mehrzahl": "die Oxidationsmittel",
+      "erklaerung": "Der Stoff, der Sauerstoff an einen anderen Stoff abgibt und dabei selbst reduziert wird."
+    },
+    {
+      "wort": "Metall",
+      "formen": [
+        "Metall",
+        "Metalle",
+        "Metallen"
+      ],
+      "artikel": "das",
+      "mehrzahl": "die Metalle",
+      "erklaerung": "Ein Stoff wie Eisen, Kupfer oder Gold. Metalle glänzen und leiten Strom."
+    },
+    {
+      "wort": "erhitzen",
+      "formen": [
+        "erhitzen",
+        "erhitzt",
+        "Erhitzen"
+      ],
+      "artikel": "",
+      "mehrzahl": "",
+      "erklaerung": "Etwas heiß machen, zum Beispiel mit einer Flamme."
+    },
+    {
+      "wort": "Holzkohle",
+      "formen": [
+        "Holzkohle"
+      ],
+      "artikel": "die",
+      "mehrzahl": "",
+      "erklaerung": "Kohle aus verbranntem Holz. Sie besteht fast nur aus Kohlenstoff."
+    },
+    {
+      "wort": "Koks",
+      "formen": [
+        "Koks"
+      ],
+      "artikel": "der",
+      "mehrzahl": "",
+      "erklaerung": "Eine Kohle aus Steinkohle. Sie besteht fast nur aus Kohlenstoff und wird im Hochofen benutzt."
+    },
+    {
+      "wort": "Hochofen",
+      "formen": [
+        "Hochofen",
+        "Hochöfen"
+      ],
+      "artikel": "der",
+      "mehrzahl": "die Hochöfen",
+      "erklaerung": "Ein sehr hoher Ofen, in dem man aus Eisenerz mit Koks Eisen gewinnt."
+    },
+    {
+      "wort": "Thermit",
+      "formen": [
+        "Thermit"
+      ],
+      "artikel": "das",
+      "mehrzahl": "",
+      "erklaerung": "Ein Gemisch aus Aluminium und Eisenoxid. Es wird beim Anzünden sehr heiß, und flüssiges Eisen entsteht."
+    }
   ]
 }

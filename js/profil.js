@@ -18,12 +18,18 @@ export function kindEintrag(name) {
   return kinder().find((k) => k.name === name) || null;
 }
 
-export function kindAnlegen(name, element) {
+// name = Kurzform (Schlüssel, im Punktecode), anzeige = Schreibweise wie eingegeben.
+export function kindAnlegen(name, element, anzeige = name) {
   const liste = kinder();
   if (!liste.some((k) => k.name === name)) {
-    liste.push({ name, element, gesperrt: false });
+    liste.push({ name, anzeige: String(anzeige).trim().slice(0, 40), element, gesperrt: false, angelegt: Date.now() });
     kinderSpeichern(liste);
   }
+}
+
+export function anzeigeName(name) {
+  const k = kindEintrag(name);
+  return k?.anzeige && k.anzeige.toUpperCase() !== name ? `${k.anzeige} (${name})` : name;
 }
 
 export function kindSperren(name, gesperrt) {
@@ -98,14 +104,21 @@ export function freischalten(name, bereich, kurs) {
 
 // ---------- Runden ----------
 
-export function rundeSpeichern(name, runde) {
-  const tag = tagNummer();
+export function rundeSpeichern(name, runde, tag = tagNummer()) {
   return aendern(name, (p) => {
     p.runden.push({ ...runde, tag, zeit: Date.now() });
     if (runde.art === 'normal') p.letzte = { bereich: runde.bereich, niveau: runde.niveau };
     const woche = wocheVonTag(tag);
     if (rundenInWoche(p, woche) >= p.wochenziel && !p.stempel.includes(woche)) p.stempel.push(woche);
   });
+}
+
+export function ersteWoche(p) {
+  return p.runden.length ? Math.min(...p.runden.map((r) => wocheVonTag(r.tag))) : wocheVonTag(tagNummer());
+}
+
+export function naechsteRundenNummer(p) {
+  return (p.runden.filter((r) => r.art === 'normal').length + 1) % 100;
 }
 
 export function rundenInWoche(p, woche = wocheVonTag(tagNummer())) {
@@ -175,7 +188,8 @@ export function faelligeFehler(p, bereicheFrei) {
 
 // ---------- Ich kann ----------
 
-export const KANN_SCHWELLE = 5;
+// Ein Ich-kann-Satz gilt, wenn 6 Aufgaben dazu gleich beim ersten Versuch richtig waren.
+export const KANN_SCHWELLE = 6;
 
 export function kannZaehlen(name, kannId) {
   if (!kannId) return;

@@ -2,12 +2,30 @@
 import { el, nameVereinheitlichen } from './hilfen.js';
 import { kopfSetzen, iconKnopf, fenster, fragen, baustein } from './ui.js';
 import { pinPruefen, pinPruefsumme, freischaltcode, KURSE_PRO_BEREICH } from './codes.js';
-import { kinder, kindUmbenennen, kinderZusammenfuehren, kindSperren, profil, geraet, geraetAendern } from './profil.js';
+import { anzeigeName, kinder, kindUmbenennen, kinderZusammenfuehren, kindSperren, profil, geraet, geraetAendern } from './profil.js';
 
+// Die Lehrer-Ansicht sperrt sich wieder: beim Verlassen (jeder Weg), wenn das iPad in den
+// Hintergrund geht und nach 5 Minuten ohne Tippen.
 let entsperrt = false;
+let sperrUhr = null;
+const SPERRE_NACH = 5 * 60 * 1000;
+
+export function adminSperren() {
+  entsperrt = false;
+  clearTimeout(sperrUhr);
+}
+
+function sperrUhrNeu(umgebung) {
+  clearTimeout(sperrUhr);
+  sperrUhr = setTimeout(() => { if (entsperrt) { adminSperren(); umgebung.zurueck(); } }, SPERRE_NACH);
+}
+
+document.addEventListener('visibilitychange', () => { if (document.hidden) adminSperren(); });
+document.addEventListener('pointerdown', () => { if (entsperrt && aktuelleUmgebung) sperrUhrNeu(aktuelleUmgebung); });
+let aktuelleUmgebung = null;
 
 export function adminStart(umgebung) {
-  if (entsperrt) return adminSeite(umgebung);
+  aktuelleUmgebung = umgebung;
   pinAbfrage(umgebung);
 }
 
@@ -21,6 +39,7 @@ function pinAbfrage(umgebung) {
   const pruefen = () => {
     if (pinPruefen(eingabe, umgebung.daten.app.admin_pin_pruefsumme)) {
       entsperrt = true;
+      sperrUhrNeu(umgebung);
       adminSeite(umgebung);
     } else {
       meldung.textContent = '✗ Die PIN stimmt nicht.';
@@ -48,13 +67,16 @@ function abschnitt(titel, ...inhalt) {
   return el('section', { class: 'karte admin-abschnitt' }, el('h3', {}, titel), ...inhalt);
 }
 
-function adminSeite(umgebung) {
+function adminSeite(umgebungRoh) {
+  // Jeder Weg hinaus sperrt die Lehrer-Ansicht wieder.
+  const umgebung = { ...umgebungRoh, zurueck: () => { adminSperren(); umgebungRoh.zurueck(); } };
+  if (!entsperrt) return pinAbfrage(umgebungRoh);
   const { daten, zeigen, zurueck } = umgebung;
-  const neu = () => adminSeite(umgebung);
+  const neu = () => adminSeite(umgebungRoh);
   kopfSetzen({
     titel: 'Lehrkraft',
     links: iconKnopf('i-zurueck', 'Zurück', zurueck, 'knopf-rund kopf-knopf'),
-    rechts: [el('button', { type: 'button', class: 'knopf kopf-text-knopf', onclick: () => { entsperrt = false; zurueck(); } }, 'Abmelden')]
+    rechts: [el('button', { type: 'button', class: 'knopf kopf-text-knopf', onclick: zurueck }, 'Abmelden')]
   });
   const g = geraet();
   const abSerie = daten.app.codes_ab_serie || 1;
@@ -93,7 +115,7 @@ function adminSeite(umgebung) {
     const runden = p.runden.filter((r) => r.art === 'normal').length;
     const frei = Object.entries(p.freigeschaltet).map(([b, kurs]) => `${b} ${kurs}`).join(', ') || '–';
     return el('tr', { class: k.gesperrt ? 'gesperrt-zeile' : '' },
-      el('th', { scope: 'row' }, el('span', { class: 'name-zelle' }, baustein(k.element || 'H', { klein: true }), k.name, k.gesperrt ? ' (gesperrt)' : '')),
+      el('th', { scope: 'row' }, el('span', { class: 'name-zelle' }, baustein(k.element || 'H', { klein: true }), anzeigeName(k.name), k.gesperrt ? ' (gesperrt)' : '')),
       el('td', {}, String(runden)),
       el('td', {}, frei),
       el('td', {}, el('div', { class: 'zeile' },

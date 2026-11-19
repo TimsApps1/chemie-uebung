@@ -775,3 +775,42 @@ button.bereich { font: inherit; text-align: left; cursor: pointer; width: 100%; 
 .schalter { display: flex; align-items: center; gap: var(--a3); min-height: 48px; font-weight: 600; }
 .schalter input { width: 28px; height: 28px; }
 .code-block { background: var(--haupt-zart); border: 1px solid var(--haupt-hell); border-radius: var(--r-klein); padding: var(--a3); font-family: var(--schrift-code); white-space: pre-wrap; word-break: break-all; user-select: all; -webkit-user-select: all; }
+
+/* ---------- Nachbesserungen nach der Prüfung ---------- */
+.name-voll { font-size: 0.8rem; font-weight: 600; letter-spacing: 0; color: var(--text-leise); }
+.neu-liste { list-style: none; padding: 0; margin: var(--a2) 0 0; width: 100%; display: grid; gap: var(--a2); text-align: left; }
+.neu-zeile { display: flex; align-items: center; gap: var(--a3); padding: 10px 14px; border-radius: var(--r-mittel); background: var(--haupt-zart); border: 2px solid var(--haupt-hell); }
+.neu-zeile.stark { background: var(--hinweis-flaeche); border-color: var(--stern); color: var(--hinweis); font-size: var(--text-gross); animation: auftauchen 220ms ease-out; }
+.neu-zeichen { flex: none; min-width: 36px; text-align: center; font-size: 1.5rem; font-weight: 800; }
+.neu-zeile .stempel { margin: 0 0 0 6px; display: inline-flex; vertical-align: middle; }
+.stempel-klein li { width: 28px; height: 28px; font-size: 0.95rem; border-width: 2px; }
+.stempel-klein li.voll { border-width: 2px; }
+.code-karte { display: grid; gap: var(--a2); }
+.code-karte h3 { margin: 0; }
+.code-liste { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--a2); }
+.code-liste li { display: grid; grid-template-columns: 1fr auto; gap: 4px var(--a3); align-items: center; padding: 8px 0; border-bottom: 1px solid var(--rand); }
+.code-liste .code-info { grid-column: 1 / -1; font-size: 0.9rem; color: var(--text-leise); }
+.code-liste .code { font-size: 1rem; }
+.warum-bezug { margin: 0; padding: 8px 12px; border-radius: var(--r-klein); background: var(--haupt-zart); }
+/* Medaillen: Bronze, Silber, Gold als kleine Scheiben (Form + Anzahl, nicht nur Farbe) */
+.medaillen { display: inline-flex; gap: 3px; vertical-align: middle; }
+.medaillen > span { width: 14px; height: 14px; border-radius: 50%; border: 2px solid #6b7290; }
+.medaillen .medaille-leer { background: transparent; }
+.medaille-1 .medaille-voll { background: #c47a3d; border-color: #7a4618; }
+.medaille-2 .medaille-voll { background: #c9d1dc; border-color: #5d6779; }
+.medaille-3 .medaille-voll { background: var(--stern); border-color: #8a6500; }
+.neu-zeichen .medaillen > span { width: 16px; height: 16px; }
+/* Lösungskasten neutral, nur die ✗-Zeile rot */
+.rueckmeldung.falsch .loesung { background: #fff; border-radius: var(--r-klein); padding: var(--a3); border-left: 6px solid var(--haupt); color: var(--text); }
+/* PIN-Feld: OK-Taste mit weißer Schrift */
+.taste.knopf-haupt { --k-text: #fff; --k-flaeche: var(--haupt); --k-rand: var(--haupt); --k-kante: var(--haupt-dunkel); font-size: 1.25rem; }
+/* Fokus in der Kopfzeile sichtbar */
+.kopf .knopf:focus-visible, .kopf-name:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+/* Fachwort-Tippfläche mindestens 44 px breit */
+.fachwort { min-width: 44px; display: inline-block; text-align: center; }
+/* Sortier-Hinweis nicht über den Namen legen */
+.sortierkarte.gewaehlt::after { position: static; margin-left: auto; white-space: nowrap; }
+@media (max-width: 480px) { .sortierkarte.gewaehlt::after { content: '↕'; font-size: 1.3rem; } }
+.medaille-leer { border-color: #6b7290; }
+.admin-abschnitt .tabelle { min-width: 420px; }
+.admin-abschnitt { overflow-x: auto; }

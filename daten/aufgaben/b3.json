@@ -24,9 +24,9 @@
       "erklaerung": "Kupfer ist edler als Magnesium und hält Sauerstoff schwächer fest, darum klappt es nicht." },
 
     { "id": "b3-1-05", "niveau": 1, "typ": "klappt", "symbol": "🔥", "kann": "klappt",
-      "frage": "Ötzis Leute erhitzten Kupfererz mit Holzkohle, klappt das?", "oxid": "Kupferoxid", "stoff": "Kohlenstoff",
+      "frage": "Klappt es, wenn man Kupferoxid mit Holzkohle erhitzt?", "oxid": "Kupferoxid", "stoff": "Kohlenstoff",
       "denkanstoss": "Im Erz steckt Kupferoxid, und Holzkohle ist Kohlenstoff.",
-      "erklaerung": "Kohlenstoff ist unedler als Kupfer und nimmt dem Kupferoxid den Sauerstoff weg, so entsteht Kupfer." },
+      "erklaerung": "Kohlenstoff hält Sauerstoff stärker fest als Kupfer und nimmt dem Kupferoxid den Sauerstoff weg, so entsteht Kupfer." },
 
     { "id": "b3-1-06", "niveau": 1, "typ": "klappt", "symbol": "🔥", "kann": "klappt",
       "frage": "Klappt es beim Erhitzen?", "oxid": "Eisenoxid", "stoff": "Aluminium",
@@ -52,7 +52,7 @@
       "frage": "Welches Metall ist am edelsten?",
       "antworten": ["Gold", "Eisen", "Zink", "Magnesium"], "richtig": "Gold",
       "fehler": { "Magnesium": "Magnesium brennt hell, es hält Sauerstoff sehr stark fest." },
-      "denkanstoss": "Ein edles Metall glänzt lange und rostet nicht.",
+      "denkanstoss": "Ein edles Metall glänzt lange und reagiert kaum mit Luft.",
       "erklaerung": "Gold ist am edelsten, es hält Sauerstoff kaum fest." },
 
     { "id": "b3-1-11", "niveau": 1, "typ": "auswahl", "symbol": "❓", "kann": "reihe",
@@ -91,9 +91,9 @@
       "erklaerung": "Blei ist edler als Eisen und hält Sauerstoff schwächer fest, darum klappt es nicht." },
 
     { "id": "b3-2-04", "niveau": 2, "typ": "klappt", "symbol": "🔥", "kann": "klappt",
-      "frage": "Im Hochofen wird Eisenoxid mit Koks (Kohlenstoff) erhitzt, klappt das?", "oxid": "Eisenoxid", "stoff": "Kohlenstoff",
+      "frage": "Klappt es, wenn man Eisenoxid mit Koks (Kohlenstoff) erhitzt?", "oxid": "Eisenoxid", "stoff": "Kohlenstoff",
       "denkanstoss": "Such Kohlenstoff und Eisen in der Reihe.",
-      "erklaerung": "Kohlenstoff ist unedler als Eisen und nimmt dem Eisenoxid den Sauerstoff weg, so entsteht Eisen." },
+      "erklaerung": "Kohlenstoff hält Sauerstoff stärker fest als Eisen und nimmt dem Eisenoxid den Sauerstoff weg, so entsteht Eisen." },
 
     { "id": "b3-2-05", "niveau": 2, "typ": "klappt", "symbol": "🔥", "kann": "klappt",
       "frage": "Klappt es beim Erhitzen?", "oxid": "Zinkoxid", "stoff": "Eisen",
@@ -113,7 +113,7 @@
       "links": ["Eisenoxid", "Aluminium"], "rechts": ["?", "?"],
       "richtig": ["Eisen", "Aluminiumoxid"],
       "auswahl": ["Eisen", "Aluminiumoxid", "Aluminium", "Eisenoxid", "Sauerstoff"],
-      "denkanstoss": "Der Sauerstoff wandert vom Eisen zum Aluminium.",
+      "denkanstoss": "Der Sauerstoff wandert vom Eisenoxid zum Aluminium.",
       "erklaerung": "Aluminium nimmt dem Eisenoxid den Sauerstoff weg, so entstehen Eisen und Aluminiumoxid." },
 
     { "id": "b3-2-08", "niveau": 2, "typ": "wortgleichung", "symbol": "✏️", "kann": "wortgleichung",
@@ -156,7 +156,7 @@
       "frage": "Was passiert bei einer Reduktion?",
       "antworten": ["Ein Stoff gibt Sauerstoff ab.", "Ein Stoff nimmt Sauerstoff auf.", "Ein Stoff schmilzt."], "richtig": "Ein Stoff gibt Sauerstoff ab.",
       "fehler": { "Ein Stoff nimmt Sauerstoff auf.": "Sauerstoff aufnehmen heißt Oxidation." },
-      "denkanstoss": "Reduzieren heißt weniger machen.",
+      "denkanstoss": "Nach einer Reduktion hat der Stoff weniger Sauerstoff als vorher.",
       "erklaerung": "Bei einer Reduktion gibt ein Stoff Sauerstoff ab." },
 
     { "id": "b3-2-14", "niveau": 2, "typ": "auswahl", "symbol": "❓", "kann": "redox",
@@ -241,7 +241,7 @@
     { "id": "b3-3-06", "niveau": 3, "typ": "klappt", "symbol": "🔥", "leicht": true, "kann": "klappt",
       "frage": "Klappt es beim Erhitzen?", "oxid": "Bleioxid", "stoff": "Kohlenstoff",
       "denkanstoss": "Such Kohlenstoff und Blei in der Reihe.",
-      "erklaerung": "Kohlenstoff ist unedler als Blei und nimmt dem Bleioxid den Sauerstoff weg." },
+      "erklaerung": "Kohlenstoff hält Sauerstoff stärker fest als Blei und nimmt dem Bleioxid den Sauerstoff weg." },
 
     { "id": "b3-3-07", "niveau": 3, "typ": "wortgleichung", "symbol": "✏️", "kann": "wortgleichung",
       "frage": "Ergänze die Wortgleichung für Thermit.",
@@ -294,7 +294,7 @@
       "antworten": ["Magnesium", "Eisen", "Kupfer", "Blei"], "richtig": "Magnesium",
       "fehler": { "Eisen": "Eisen ist edler als Zink und hält Sauerstoff schwächer fest.", "Blei": "Blei ist edler als Zink und hält Sauerstoff schwächer fest.", "Kupfer": "Kupfer ist edler als Zink und hält Sauerstoff schwächer fest." },
       "denkanstoss": "Du brauchst einen Stoff, der unedler ist als Zink.",
-      "erklaerung": "Nur Magnesium ist unedler als Zink und hält Sauerstoff stärker fest." },
+      "erklaerung": "Von diesen Stoffen ist nur Magnesium unedler als Zink und hält Sauerstoff stärker fest." },
 
     { "id": "b3-3-13", "niveau": 3, "typ": "wortgleichung", "symbol": "✏️", "kann": "wortgleichung",
       "frage": "Ergänze die Stoffe vor dem Pfeil.",

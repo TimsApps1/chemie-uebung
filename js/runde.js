@@ -32,13 +32,20 @@ export function aufgabenWaehlen(alle, niveau, kurs) {
     : pool.filter((a) => a.leicht);
   const einstieg = mischen(einstiegPool.length >= 2 ? einstiegPool : pool).slice(0, 2);
   const rest = mischen(pool.filter((a) => !einstieg.includes(a)));
-  // Höchstens 2 Sortieraufgaben pro Runde (sie dauern länger).
+  // Höchstens 2 Sortieraufgaben (dauern länger) und 3 von der App erzeugte Aufgaben pro Runde,
+  // damit die selbst geschriebenen Aufgaben im Mittelpunkt bleiben.
   const auswahl = [];
-  let sortieren = einstieg.filter((a) => a.typ === 'sortieren').length;
+  const zahl = (liste, test) => liste.filter(test).length;
+  const passt = (a, liste) => !(a.typ === 'sortieren' && zahl(liste, (x) => x.typ === 'sortieren') >= 2) &&
+    !(a.generiert && zahl(liste, (x) => x.generiert) >= 3);
   for (const a of rest) {
     if (auswahl.length >= RUNDE_LAENGE - einstieg.length) break;
-    if (a.typ === 'sortieren') { if (sortieren >= 2) continue; sortieren++; }
-    auswahl.push(a);
+    if (passt(a, [...einstieg, ...auswahl])) auswahl.push(a);
+  }
+  // Falls zu wenig übrig ist, mit den übrigen auffüllen.
+  for (const a of rest) {
+    if (auswahl.length >= RUNDE_LAENGE - einstieg.length) break;
+    if (!auswahl.includes(a)) auswahl.push(a);
   }
   return [...einstieg, ...auswahl];
 }
@@ -54,7 +61,7 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
   const farbe = bereich.toLowerCase();
   const stand = {
     punkte: 0, ersterVersuch: 0, beantwortet: 0, warumRichtig: 0,
-    nochmal: [], ausgebessert: 0, abgebrochen: false
+    nochmal: [], falsch: [], ausgebessert: 0, abgebrochen: false
   };
   let liste = [...aufgaben];
   let index = 0;
@@ -94,20 +101,26 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
       el('span', { class: 'fortschritt-text' }, `${index + 1} von ${aufgaben.length}`), schritte);
   }
 
-  function zeitbalken(onAbgelaufen) {
+  // Ruhiger Zeitbalken (nur ★★★). Er hält an, solange ein Fenster offen ist oder vorgelesen wird,
+  // und kostet keine Punkte – er zeigt nur, wie lange man ungefähr braucht.
+  function zeitbalken() {
     const innen = el('span');
     const balken = el('div', { class: 'zeitbalken', role: 'img', 'aria-label': 'Zeitbalken' }, innen);
-    const start = Date.now();
+    let vergangen = 0;
+    let letzte = Date.now();
     clearInterval(zeitgeber);
     zeitgeber = setInterval(() => {
-      const rest = Math.max(0, 1 - (Date.now() - start) / (ZEIT_PRO_AUFGABE * 1000));
+      const jetzt = Date.now();
+      const pause = document.querySelector('.fenster-hintergrund') || window.speechSynthesis?.speaking || document.hidden;
+      if (!pause) vergangen += jetzt - letzte;
+      letzte = jetzt;
+      const rest = Math.max(0, 1 - vergangen / (ZEIT_PRO_AUFGABE * 1000));
       innen.style.width = `${rest * 100}%`;
       if (rest === 0) {
         clearInterval(zeitgeber);
         balken.classList.add('abgelaufen');
         balken.setAttribute('aria-label', 'Die Zeit ist um. Du kannst in Ruhe weitermachen.');
-        balken.after(el('p', { class: 'tipp' }, '⏳ Die Zeit ist um. Mach in Ruhe weiter, es gibt jetzt höchstens 5 Punkte.'));
-        onAbgelaufen();
+        balken.after(el('p', { class: 'tipp' }, '⏳ Die Zeit ist um. Mach in Ruhe weiter.'));
       }
     }, 500);
     return balken;
@@ -127,8 +140,7 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
 
   function zeigeAufgabe(a) {
     let versuch = 1;
-    let zeitUm = false;
-    const rueck = el('div', { class: 'rueck-bereich', 'aria-live': 'polite' });
+    const rueck = el('div', { class: 'rueck-bereich' });
     const darstellung = aufgabeDarstellen(a, (wert) => beantwortet(wert), daten);
 
     const erklaeren = el('button', { type: 'button', class: 'knopf knopf-leise knopf-breit', onclick: () => {
@@ -142,8 +154,8 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
     const karte = el('section', { class: 'karte aufgabe' },
       el('div', { class: 'anweisung-zeile' },
         el('p', { class: 'anweisung' }, el('span', { class: 'anweisung-zeichen', 'aria-hidden': 'true' }, a.symbol || '❓'), el('span', {}, text(a.frage))),
-        vorlesenKnopf(() => vorleseText(a))),
-      zeitlimit && !wiederholung ? zeitbalken(() => { zeitUm = true; }) : null,
+        vorlesenKnopf(() => vorleseText(a, darstellung.reihenfolge))),
+      zeitlimit && !wiederholung ? zeitbalken() : null,
       darstellung.wurzel,
       rueck,
       erklaeren);
@@ -159,16 +171,16 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
         clearInterval(zeitgeber);
         let plus = 0;
         if (!wiederholung && art === 'normal') {
-          plus = versuch === 1 && !zeitUm ? PUNKTE.erster : PUNKTE.zweiter;
+          plus = versuch === 1 ? PUNKTE.erster : PUNKTE.zweiter;
           stand.punkte += plus;
-          if (versuch === 1) stand.ersterVersuch += 1;
         }
+        if (!wiederholung && versuch === 1) stand.ersterVersuch += 1;
         if (art === 'fehler' || wiederholung) {
           if (art === 'fehler') {
             if (fehlerWiederholt(name, a.id, versuch === 1)) stand.ausgebessert += 1;
           } else if (versuch === 1) stand.ausgebessert += 1;
         }
-        kannZaehlen(name, a.kann);
+        if (versuch === 1) kannZaehlen(name, a.kann);
         rueck.replaceChildren(rueckmeldung(true,
           wiederholung || art === 'fehler' ? lob(daten, 'ausgebessert') : lob(daten, versuch === 1 ? 'erster' : 'zweiter'),
           null, plus));
@@ -182,20 +194,24 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
           rueck.replaceChildren();
           darstellung.nochmal();
         } }, 'Nochmal versuchen');
-        rueck.replaceChildren(rueckmeldung(false, 'Noch nicht.', hinweis), nochmal);
+        rueck.replaceChildren(rueckmeldung(false, 'Noch nicht.', hinweis, 0, null, hinweis), nochmal);
         nochmal.focus({ preventScroll: true });
         return;
       }
       clearInterval(zeitgeber);
+      if (!wiederholung) stand.falsch.push(a.id);
       if (art === 'normal' && !wiederholung) {
         stand.nochmal.push(a);
         fehlerMerken(name, a, bereich);
       }
       if (art === 'fehler') fehlerWiederholt(name, a.id, false);
+      const loesung = loesungsText(a, daten);
       rueck.replaceChildren(rueckmeldung(false, 'Das war noch nicht richtig.', null, 0,
         el('div', { class: 'loesung' },
-          el('p', {}, el('b', {}, 'Lösung: '), text(loesungsText(a, daten))),
-          el('p', {}, text(a.erklaerung)))));
+          el('p', {}, el('b', {}, '💡 So geht’s: '), text(loesung)),
+          el('p', {}, text(a.erklaerung)),
+          art === 'normal' && !wiederholung ? el('p', { class: 'leise' }, '↻ Diese Aufgabe kommt am Ende der Runde noch einmal.') : null),
+        `Lösung: ${loesung}. ${a.erklaerung}`));
       weiterKnopf(a);
     }
 
@@ -214,7 +230,7 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
   // ★★★: "Warum?" mit drei Begründungen, richtige Begründung = Extrapunkte.
   function warumFrage(aufgabe) {
     const w = { typ: 'auswahl', antworten: aufgabe.warum.antworten, richtig: aufgabe.warum.richtig };
-    const rueck = el('div', { class: 'rueck-bereich', 'aria-live': 'polite' });
+    const rueck = el('div', { class: 'rueck-bereich' });
     const darstellung = aufgabeDarstellen(w, (wert) => {
       const richtig = wert === w.richtig;
       darstellung.ergebnis(wert, richtig, true);
@@ -224,11 +240,14 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
         rueckmeldung(richtig, richtig ? 'Gute Begründung!' : 'Diese Begründung passt nicht.', null, richtig ? PUNKTE.warum : 0),
         el('button', { type: 'button', class: 'knopf knopf-haupt knopf-gross knopf-breit', onclick: naechste }, 'Weiter ➜'));
     }, daten);
+    const bezug = aufgabe.typ === 'klappt' ? `${aufgabe.oxid} + ${aufgabe.stoff}`
+      : aufgabe.links ? `${aufgabe.links.join(' + ')} → ${aufgabe.rechts.map((x, i) => (x === '?' ? '…' : x)).join(' + ')}` : aufgabe.frage;
     ziel.replaceChildren(el('section', { class: 'karte aufgabe warum' },
+      el('p', { class: 'warum-bezug' }, 'Zur Aufgabe: ', el('b', {}, text(bezug))),
       el('div', { class: 'anweisung-zeile' },
         el('p', { class: 'anweisung' }, el('span', { class: 'anweisung-zeichen', 'aria-hidden': 'true' }, '💡'),
           el('span', {}, text(aufgabe.warum.frage || 'Warum?'))),
-        vorlesenKnopf(() => `${aufgabe.warum.frage || 'Warum?'}. ${aufgabe.warum.antworten.join('. ')}`)),
+        vorlesenKnopf(() => vorleseText({ ...w, frage: `${aufgabe.warum.frage || 'Warum?'} Zur Aufgabe: ${bezug}` }, darstellung.reihenfolge))),
       el('p', { class: 'tipp' }, `Extrapunkte: +${PUNKTE.warum} für die richtige Begründung.`),
       darstellung.wurzel, rueck));
   }
@@ -241,18 +260,21 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
       ersterVersuch: stand.ersterVersuch,
       anzahl: aufgaben.length,
       warumRichtig: stand.warumRichtig,
-      ausgebessert: stand.ausgebessert
+      ausgebessert: stand.ausgebessert,
+      falsch: stand.falsch,
+      kurs
     });
   }
 
   naechste();
 }
 
-export function rueckmeldung(richtig, titel, hinweis, plus = 0, extra = null) {
-  return el('div', { class: `rueckmeldung ${richtig ? 'richtig' : 'falsch'}` },
+export function rueckmeldung(richtig, titel, hinweis, plus = 0, extra = null, vorleseZusatz = null) {
+  return el('div', { class: `rueckmeldung ${richtig ? 'richtig' : 'falsch'}`, role: 'status' },
     el('span', { class: 'marke', 'aria-hidden': 'true' }, richtig ? '✓' : '✗'),
     el('p', { class: 'rueckmeldung-titel' }, el('span', { class: 'nur-vorlesen' }, richtig ? 'Richtig. ' : 'Falsch. '), titel),
-    plus > 0 ? el('span', { class: 'punkte-plus breit-rechts' }, `+${plus}`) : null,
+    plus > 0 ? el('span', { class: 'punkte-plus breit-rechts' }, `+${plus}`)
+      : vorleseZusatz ? el('span', { class: 'breit-rechts' }, vorlesenKnopf(`${titel} ${vorleseZusatz}`)) : null,
     hinweis ? el('div', { class: 'denkanstoss breit' }, el('span', { class: 'denkanstoss-zeichen', 'aria-hidden': 'true' }, '💡'), el('p', {}, text(hinweis))) : null,
     extra ? el('div', { class: 'breit' }, extra) : null);
 }

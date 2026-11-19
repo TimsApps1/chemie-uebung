@@ -38,14 +38,29 @@ test('Freischaltcodes: gültig, getrennt nach Kurs, ohne Verwechslungszeichen', 
   assert.equal(freischaltcodePruefen(freischaltcode('B3', 'G', 1), 2), null, 'alte Serie gesperrt');
 });
 
-test('Punktecode: Aufbau wie vorgegeben, Prüfsumme erkennt Änderungen', () => {
-  const code = punktecode({ name: 'LENA', bereich: 'B3', niveau: 2, punkte: 80, tag: 127 });
-  assert.match(code, /^LENA-B3-2-0080-0127-[23456789ABCDEFGHJKMNPQRSTUVWXYZ]{3}$/);
+test('Punktecode: Aufbau, Kurs und Rundennummer, Prüfsumme erkennt Änderungen', () => {
+  const code = punktecode({ name: 'LENA', bereich: 'B3', niveau: 2, punkte: 80, tag: 127, kurs: 'E', nummer: 7 });
+  assert.match(code, /^LENA-B3-2-0080-0127-E07-[23456789ABCDEFGHJKMNPQRSTUVWXYZ]{3}$/);
   const gelesen = punktecodeLesen(code.toLowerCase().replace(/-/g, ' - '));
   assert.equal(gelesen.ok, true);
   assert.equal(gelesen.punkte, 80);
+  assert.equal(gelesen.kurs, 'E');
+  assert.equal(gelesen.nummer, 7);
   assert.equal(punktecodeLesen(code.replace('0080', '0090')).ok, false);
   assert.equal(punktecodeLesen(code.replace('LENA', 'LENE')).ok, false);
+  assert.equal(punktecodeLesen(code.replace('E07', 'G07')).ok, false);
+  // Älteres Format ohne Kurs/Nummer wird weiter gelesen
+  assert.equal(punktecodeLesen('LENA-B3-2-0080-0127-DQS').ok, true);
+  // Zwei Runden mit gleicher Punktzahl am selben Tag ergeben verschiedene Codes
+  assert.notEqual(punktecode({ name: 'TOM', bereich: 'B4', niveau: 1, punkte: 60, tag: 10, kurs: 'G', nummer: 1 }),
+    punktecode({ name: 'TOM', bereich: 'B4', niveau: 1, punkte: 60, tag: 10, kurs: 'G', nummer: 2 }));
+});
+
+test('Vorlesen: Formeln und Symbole werden buchstabiert', async () => {
+  const { vorlesbar } = await import('../js/hilfen.js');
+  assert.equal(vorlesbar('Co oder CO?'), 'C klein o oder C O?');
+  assert.equal(vorlesbar('2 H2O'), '2 mal H 2 O');
+  assert.match(vorlesbar('Welches Symbol hat Natrium? Na, NA'), /N klein a, N A/);
 });
 
 test('Tag und Woche nach deutscher Zeit', () => {
@@ -183,7 +198,7 @@ test('Neuer Name, falscher Code, G-Code und E-Code', async () => {
   const { kontext, seite, fehler } = await neueSeite();
   await seite.getByRole('button', { name: 'Neuer Name' }).click();
   await seite.fill('#name-feld', 'Lena Özil');
-  await seite.getByText('LENAOEZI').waitFor();
+  await seite.locator('#name-vorschau b').getByText('LENAOEZI').waitFor();
   await seite.getByRole('button', { name: /Los geht/ }).click();
   await seite.getByRole('heading', { name: 'Hallo LENAOEZI!' }).waitFor();
 
@@ -350,5 +365,86 @@ test('Kein Klartext-Code im Quelltext', async () => {
     const t = await fs.readFile(path.join(WURZEL, d), 'utf8');
     for (const c of codes) assert.ok(!t.includes(c), `${d} enthält den Code ${c} im Klartext`);
     assert.ok(!t.includes('4711'), `${d} enthält die PIN im Klartext`);
+  }
+});
+
+test('Vorlesen nennt die Antworten in der angezeigten Reihenfolge', async () => {
+  const { kontext, seite, fehler } = await neueSeite();
+  const ergebnis = await seite.evaluate(async () => {
+    const { aufgabeDarstellen, vorleseText } = await import('./js/aufgaben.js');
+    const a = { typ: 'auswahl', frage: 'Welches Symbol hat Natrium?', antworten: ['Na', 'NA', 'N', 'So'], richtig: 'Na' };
+    const versuche = [];
+    for (let i = 0; i < 20; i++) {
+      const d = aufgabeDarstellen(a, () => {}, {});
+      document.getElementById('inhalt').replaceChildren(d.wurzel);
+      const sichtbar = [...document.querySelectorAll('.antwort')].map((k) => k.dataset.wert);
+      versuche.push({ sichtbar, text: vorleseText(a, d.reihenfolge) });
+    }
+    return versuche;
+  });
+  for (const v of ergebnis) {
+    v.sichtbar.forEach((w, i) => assert.ok(v.text.includes(`Antwort ${i + 1}: ${w.length <= 3 ? '' : w}`)));
+    const ersteNa = v.sichtbar.indexOf('Na') + 1;
+    assert.ok(v.text.includes(`Antwort ${ersteNa}: N klein a`), v.text);
+  }
+  assert.ok(new Set(ergebnis.map((v) => v.sichtbar.join())).size > 1, 'Antworten werden gemischt');
+  assert.deepEqual(fehler, []);
+  await kontext.close();
+});
+
+test('Fehler-Runde zählt richtige Antworten und meldet Erfolge', async () => {
+  const { kontext, seite, fehler } = await neueSeite();
+  await seite.evaluate(() => {
+    localStorage.setItem('chemie:kinder', JSON.stringify([{ name: 'MIA', element: 'O', gesperrt: false }]));
+    localStorage.setItem('chemie:kind:MIA', JSON.stringify({ freigeschaltet: { B4: 'G' },
+      fehler: { 'b4-1-01': { bereich: 'B4', stufe: 0, faellig: 0, inFolge: 1 } } }));
+  });
+  await seite.reload();
+  await seite.getByRole('button', { name: /MIA/ }).click();
+  await seite.getByRole('button', { name: /Heute üben/ }).click();
+  // Die Aufgabe richtig lösen (Lösung aus den Daten)
+  const richtig = await seite.evaluate(async () => {
+    const { allesLaden } = await import('./js/daten.js');
+    const d = await allesLaden();
+    return d.aufgaben.B4.find((a) => a.id === 'b4-1-01').richtig;
+  });
+  await seite.locator(`.antwort[data-wert="${richtig}"]`).click();
+  await seite.getByRole('button', { name: /Weiter/ }).click();
+  await seite.getByText('Fehler-Runde geschafft!').waitFor();
+  await seite.getByText('1 gleich beim ersten Versuch richtig.').waitFor();
+  await seite.getByText(/Fehler sitzt jetzt sicher/).waitFor();
+  assert.equal(await seite.evaluate(() => Object.keys(JSON.parse(localStorage.getItem('chemie:kind:MIA')).fehler).length), 0);
+  assert.deepEqual(fehler, []);
+  await kontext.close();
+});
+
+test('Lehrer-Ansicht sperrt sich beim Verlassen wieder', async () => {
+  const { kontext, seite, fehler } = await neueSeite();
+  const pin = async () => {
+    await seite.getByRole('button', { name: 'Lehrkraft' }).click();
+    for (const z of '4711') await seite.getByRole('button', { name: z, exact: true }).click();
+    await seite.getByRole('button', { name: 'OK' }).click();
+    await seite.getByRole('heading', { name: 'Freischaltcodes' }).waitFor();
+  };
+  await pin();
+  await seite.getByRole('button', { name: 'Zurück' }).click();
+  await seite.getByRole('heading', { name: 'Wer übt?' }).waitFor();
+  await seite.getByRole('button', { name: 'Lehrkraft' }).click();
+  await seite.getByRole('heading', { name: 'PIN eingeben' }).waitFor();
+  assert.deepEqual(fehler, []);
+  await kontext.close();
+});
+
+test('Erzeugte Aufgaben sind gültig und passen zur Reihe', async () => {
+  const { d, modul } = await datenLaden();
+  const erzeugt = [...d.aufgaben.B3, ...d.aufgaben.B4].filter((a) => a.generiert);
+  assert.ok(erzeugt.length > 50);
+  for (const a of erzeugt) {
+    assert.deepEqual(modul.aufgabePruefen(a, d), [], a.id);
+    if (a.typ === 'klappt') {
+      const klappt = modul.klapptEs(d.reihe, a.oxid, a.stoff);
+      assert.equal(/nicht wegnehmen/.test(a.erklaerung), !klappt, `${a.id}: Erklärung passt nicht`);
+    }
+    if (a.typ === 'zahl') assert.match(a.erklaerung, new RegExp(`sind das ${atomeZaehlen(a.formel, a.zaehle).gesamt}\\.`));
   }
 });

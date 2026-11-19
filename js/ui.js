@@ -157,12 +157,31 @@ export function vorlesenKnopf(textOderFunktion) {
 
 // ---------- Fenster (Erklärung, Fachwort, Rückfrage) ----------
 
+// Fenster können übereinanderliegen (z. B. Fachwort im Erklär-Fenster).
+// Schließen bringt das vorherige Fenster und den Fokus zurück.
+const fensterStapel = [];
+let fensterNr = 0;
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && fensterStapel.length) fensterStapel[fensterStapel.length - 1].schliessen();
+});
+
 export function fenster(inhalt, { knoepfe = null, titel = null } = {}) {
-  const alt = document.querySelector('.fenster-hintergrund');
-  alt?.remove();
-  const schliessen = () => { hg.remove(); vorlesenStoppen(); };
-  const box = el('div', { class: 'fenster karte', role: 'dialog', 'aria-modal': 'true' },
-    titel ? el('h2', { class: 'fenster-titel' }, titel) : null,
+  const ausloeser = document.activeElement;
+  const titelId = `fenster-titel-${++fensterNr}`;
+  const eintrag = {};
+  const schliessen = () => {
+    const i = fensterStapel.indexOf(eintrag);
+    if (i < 0) return;
+    fensterStapel.splice(i, 1);
+    hg.remove();
+    vorlesenStoppen();
+    const darunter = fensterStapel[fensterStapel.length - 1];
+    if (darunter) darunter.hg.hidden = false;
+    if (ausloeser && document.contains(ausloeser)) ausloeser.focus({ preventScroll: true });
+  };
+  const box = el('div', { class: 'fenster karte', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': titel ? titelId : null, 'aria-label': titel ? null : 'Hinweis' },
+    titel ? el('h2', { class: 'fenster-titel', id: titelId }, titel) : null,
     inhalt,
     el('div', { class: 'fenster-knoepfe' },
       knoepfe ? knoepfe(schliessen) : el('button', { type: 'button', class: 'knopf knopf-haupt', onclick: schliessen }, 'Schließen'))
@@ -171,8 +190,12 @@ export function fenster(inhalt, { knoepfe = null, titel = null } = {}) {
     class: 'fenster-hintergrund',
     onclick: (e) => { if (e.target === hg) schliessen(); }
   }, box);
+  const oben = fensterStapel[fensterStapel.length - 1];
+  if (oben) oben.hg.hidden = true;
+  Object.assign(eintrag, { hg, schliessen });
+  fensterStapel.push(eintrag);
   document.body.append(hg);
-  box.querySelector('button')?.focus({ preventScroll: true });
+  (box.querySelector('.fenster-knoepfe button') || box.querySelector('button'))?.focus({ preventScroll: true });
   return schliessen;
 }
 

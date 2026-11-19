@@ -2,7 +2,7 @@
 // Jede Darstellung bekommt `antworten(wert)` und liefert ein Objekt mit
 //   ergebnis(wert, richtig, endgueltig)  – Markierungen setzen
 //   nochmal()                            – für den zweiten Versuch freigeben
-import { el, mischen, formelKnoten } from './hilfen.js';
+import { el, mischen, formelKnoten, buchstabieren } from './hilfen.js';
 import { text, baustein } from './ui.js';
 import { klapptEs, richtigeZahl } from './daten.js';
 import { formelModell } from './modell3d.js';
@@ -61,13 +61,18 @@ export function loesungsText(a, daten) {
 }
 
 // Text zum Vorlesen der Aufgabe.
-export function vorleseText(a) {
+// reihenfolge = so, wie die Antworten auf dem Bildschirm stehen (gemischt).
+export function vorleseText(a, reihenfolge = null) {
   const teile = [a.frage];
   if (a.typ === 'klappt') teile.push(`${a.oxid} und ${a.stoff}`);
   if (a.typ === 'zahl') teile.push(a.formel);
   if (a.links) teile.push(`${a.links.map((s) => (s === '?' ? 'Lücke' : s)).join(' + ')} → ${a.rechts.map((s) => (s === '?' ? 'Lücke' : s)).join(' + ')}`);
   if (a.gleichung) teile.push(a.gleichung);
-  if (a.antworten && a.typ === 'auswahl') teile.push('Antworten: ' + a.antworten.join('. '));
+  if (a.antworten && a.typ === 'auswahl') {
+    const liste = reihenfolge || a.antworten;
+    teile.push(liste.map((t, i) => `Antwort ${i + 1}: ${t.length <= 3 && !t.includes(' ') ? buchstabieren(t) : t}`).join('. '));
+  }
+  if (a.typ === 'klappt') teile.push('Klappt, oder klappt nicht');
   return teile.join('. ');
 }
 
@@ -92,7 +97,8 @@ function markieren(knopf, richtig) {
 
 function auswahl(a, antworten) {
   const lang = a.antworten.some((t) => t.length > 18);
-  const knoepfe = mischen(a.antworten).map((t) => el('button', {
+  const reihenfolge = mischen(a.antworten);
+  const knoepfe = reihenfolge.map((t) => el('button', {
     type: 'button', class: 'knopf antwort' + (lang ? ' antwort-lang' : ''), 'data-wert': t,
     onclick: (e) => {
       knoepfe.forEach((k) => { k.disabled = true; });
@@ -105,6 +111,7 @@ function auswahl(a, antworten) {
     el('div', { class: 'antworten' + (lang ? ' antworten-lang' : '') }, knoepfe));
   return {
     wurzel,
+    reihenfolge,
     ergebnis(wert, richtig, endgueltig) {
       const gewaehlt = knoepfe.find((k) => k.dataset.wert === wert);
       if (gewaehlt) markieren(gewaehlt, richtig);
@@ -330,7 +337,7 @@ function wortgleichung(a, antworten) {
     const teil = s === '?'
       ? (() => {
         const l = el('button', { type: 'button', class: 'luecke', 'data-seite': wo, 'aria-label': 'Lücke',
-          onclick: () => { if (!gesperrt && l.dataset.wert) { l.dataset.wert = ''; l.replaceChildren('___'); aktualisieren(); } } }, '___');
+          onclick: () => { if (!gesperrt && l.dataset.wert) { l.dataset.wert = ''; l.replaceChildren('___'); l.setAttribute('aria-label', 'Lücke, leer'); aktualisieren(); } } }, '___');
         luecken.push(l);
         return l;
       })()
@@ -345,6 +352,7 @@ function wortgleichung(a, antworten) {
       if (!frei) return;
       frei.dataset.wert = s;
       frei.replaceChildren(formelKnoten(s));
+      frei.setAttribute('aria-label', `Lücke: ${s}. Antippen zum Leeren.`);
       aktualisieren();
     } }, formelKnoten(s)));
   const pruefKnopf = el('button', { type: 'button', class: 'knopf knopf-haupt knopf-breit', disabled: true, onclick: () => {

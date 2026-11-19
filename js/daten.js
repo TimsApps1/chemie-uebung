@@ -2,6 +2,7 @@
 // Fehler werden als deutsche Hinweise mit Dateiname und Zeile gesammelt,
 // fehlerhafte Aufgaben werden übersprungen – die App läuft trotzdem weiter.
 import { atomeZaehlen, formelZerlegen, symboleSetzen } from './hilfen.js';
+import { aufgabenErzeugen } from './erzeugen.js';
 
 const fehlerListe = [];
 
@@ -167,6 +168,8 @@ export function klapptEs(reihe, oxid, stoff) {
   return namen.indexOf(stoff) > namen.indexOf(oxidElement);
 }
 
+export { aufgabePruefen };
+
 export function richtigeZahl(a) {
   return atomeZaehlen(a.formel, a.zaehle).gesamt;
 }
@@ -211,5 +214,6 @@ export async function allesLaden() {
       return true;
     });
   }
+  aufgabenErzeugen(d);
   return d;
 }
