@@ -1,5 +1,5 @@
 // Ansicht für die Lehrkraft (hinter der PIN).
-import { el, nameVereinheitlichen } from './hilfen.js';
+import { el, nameVereinheitlichen, datumVonTag } from './hilfen.js';
 import { kopfSetzen, iconKnopf, fenster, fragen, baustein } from './ui.js';
 import { pinPruefen, pinPruefsumme, freischaltcode, KURSE_PRO_BEREICH } from './codes.js';
 import { anzeigeName, kinder, kindUmbenennen, kinderZusammenfuehren, kindSperren, profil, geraet, geraetAendern } from './profil.js';
@@ -119,6 +119,7 @@ function adminSeite(umgebungRoh) {
       el('td', {}, String(runden)),
       el('td', {}, frei),
       el('td', {}, el('div', { class: 'zeile' },
+        el('button', { type: 'button', class: 'knopf knopf-klein', onclick: () => rundenZeigen(k.name) }, 'Runden'),
         el('button', { type: 'button', class: 'knopf knopf-klein', onclick: () => umbenennen(k.name, neu) }, 'Umbenennen'),
         liste.length > 1 ? el('button', { type: 'button', class: 'knopf knopf-klein', onclick: () => zusammenfuehren(k.name, liste, neu) }, 'Zusammenführen') : null,
         el('button', { type: 'button', class: 'knopf knopf-klein', onclick: () => { kindSperren(k.name, !k.gesperrt); neu(); } }, k.gesperrt ? 'Entsperren' : 'Sperren'))));
@@ -156,6 +157,25 @@ function adminSeite(umgebungRoh) {
     el('p', { class: 'leise' }, 'Kommt in Etappe 2: Punktecodes einlesen, Übersicht pro Kind, Rangliste für den Beamer, Sicherung.'));
 
   zeigen(codes, kinderTeil, einstellungen, spaeter);
+}
+
+// Notlösung bis Etappe 2: alle Runden eines Kindes mit Code ansehen und kopieren.
+function rundenZeigen(name) {
+  const p = profil(name);
+  const runden = p.runden.filter((r) => r.art === 'normal');
+  const codes = runden.map((r) => r.code).filter(Boolean);
+  const meldung = el('span', { class: 'kopier-meldung', 'aria-live': 'polite' });
+  fenster(el('div', {},
+    runden.length ? el('div', { class: 'tabelle-rollen' }, el('table', { class: 'tabelle' },
+      el('thead', {}, el('tr', {}, el('th', {}, 'Datum'), el('th', {}, 'Bereich'), el('th', {}, 'Punkte'), el('th', {}, '1. Versuch'))),
+      el('tbody', {}, runden.slice().reverse().map((r) => el('tr', {},
+        el('td', {}, datumVonTag(r.tag)), el('td', {}, `${r.bereich} ${'★'.repeat(r.niveau)} ${r.kurs || ''}`),
+        el('td', {}, String(r.punkte)), el('td', {}, `${r.ersterVersuch}/${r.anzahl || 8}`))))))
+      : el('p', { class: 'leise' }, 'Noch keine Runden.'),
+    codes.length ? el('button', { type: 'button', class: 'knopf', onclick: async () => {
+      try { await navigator.clipboard.writeText(codes.join('\n')); meldung.textContent = `✓ ${codes.length} Codes kopiert`; } catch { meldung.textContent = 'Kopieren ging nicht.'; }
+    } }, 'Alle Codes kopieren') : null,
+    meldung), { titel: anzeigeName(name) });
 }
 
 function umbenennen(alt, fertig) {

@@ -814,3 +814,24 @@ button.bereich { font: inherit; text-align: left; cursor: pointer; width: 100%; 
 .medaille-leer { border-color: #6b7290; }
 .admin-abschnitt .tabelle { min-width: 420px; }
 .admin-abschnitt { overflow-x: auto; }
+
+/* ---------- Prüfrunde 2 ---------- */
+.medaille { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; border: 2px dashed var(--rand-kraeftig); font-size: 0.85rem; font-weight: 800; vertical-align: middle; flex: none; }
+.medaille-1 { border: 3px solid #7a4618; background: radial-gradient(circle at 35% 30%, #e8a46c, #b8692c); color: #2b1203; }
+.medaille-2 { border: 3px solid #5d6779; background: radial-gradient(circle at 35% 30%, #f4f6f9, #b9c2cf); color: #1c2033; }
+.medaille-3 { border: 3px solid #8a6500; background: radial-gradient(circle at 35% 30%, #ffe27a, #f0b400); color: #3d2c00; }
+.medaille-gross { width: 52px; height: 52px; font-size: 1.3rem; animation: auftauchen 260ms ease-out; }
+.medaille-zeile .neu-zeichen { min-width: 56px; }
+.reihe-mini-box { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.reihe-ende { font-weight: 800; font-size: 1rem; color: var(--text-leise); }
+.reihe-mini li { font-size: 1rem; }
+.stempelkarte small { font-size: 0.8rem; }
+.kopf-name-text { max-width: 9em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.verlauf h4 { margin: var(--a2) 0; }
+.saeulen { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 6px; height: 120px; align-items: end; }
+.saeulen li { display: grid; grid-template-rows: 1fr auto auto; justify-items: center; height: 100%; }
+.saeule { align-self: end; width: 70%; height: var(--h); min-height: 4px; border-radius: 6px 6px 0 0; background: var(--farbe, var(--haupt)); }
+.fortschritt-bereich.b4 .saeule { background: var(--b4); }
+.fortschritt-bereich.b3 .saeule { background: var(--b3); }
+.saeulen small { font-size: 0.8rem; font-weight: 700; }
+.saeule-niveau { color: var(--text-leise); font-weight: 600 !important; letter-spacing: -0.1em; }

@@ -67,6 +67,8 @@ export function vorleseText(a, reihenfolge = null) {
   if (a.typ === 'klappt') teile.push(`${a.oxid} und ${a.stoff}`);
   if (a.typ === 'zahl') teile.push(a.formel);
   if (a.links) teile.push(`${a.links.map((s) => (s === '?' ? 'Lücke' : s)).join(' + ')} → ${a.rechts.map((s) => (s === '?' ? 'Lücke' : s)).join(' + ')}`);
+  if (a.typ === 'wortgleichung') teile.push('Zur Auswahl: ' + (reihenfolge || a.auswahl).join(', '));
+  if (a.typ === 'sortieren') teile.push((reihenfolge || a.karten).map((k, i) => `Karte ${i + 1}: ${k}`).join('. '));
   if (a.gleichung) teile.push(a.gleichung);
   if (a.antworten && a.typ === 'auswahl') {
     const liste = reihenfolge || a.antworten;
@@ -186,7 +188,7 @@ function sortieren(a, antworten, daten) {
 
   const karte = (name) => {
     const s = info[name] || { name, symbol: '' };
-    const k = el('li', { class: 'sortierkarte', 'data-name': name, tabindex: '0', role: 'button',
+    const k = el('li', { class: 'sortierkarte', 'data-name': name, tabindex: '0', role: 'button', 'aria-pressed': 'false',
       'aria-label': `${name}. Antippen, dann eine zweite Karte antippen zum Tauschen.` },
     el('span', { class: 'griff', 'aria-hidden': 'true' }, '⠿'),
     s.symbol ? baustein(s.symbol, { metall: s.name !== 'Kohlenstoff', klein: true }) : null,
@@ -203,18 +205,23 @@ function sortieren(a, antworten, daten) {
 
   const antippen = (k) => {
     if (gesperrt) return;
-    if (!gewaehlt) { gewaehlt = k; k.classList.add('gewaehlt'); return; }
-    if (gewaehlt === k) { k.classList.remove('gewaehlt'); gewaehlt = null; return; }
+    if (!gewaehlt) { gewaehlt = k; k.classList.add('gewaehlt'); k.setAttribute('aria-pressed', 'true'); return; }
+    if (gewaehlt === k) { k.classList.remove('gewaehlt'); k.setAttribute('aria-pressed', 'false'); gewaehlt = null; return; }
     const i = reihenfolge.indexOf(gewaehlt.dataset.name);
     const j = reihenfolge.indexOf(k.dataset.name);
     [reihenfolge[i], reihenfolge[j]] = [reihenfolge[j], reihenfolge[i]];
     gewaehlt = null;
+    const name = k.dataset.name;
     zeichnen();
+    liste.querySelector(`[data-name="${name}"]`)?.focus({ preventScroll: true });
   };
 
   function ziehenEinrichten(k) {
     let start = null;
     let gezogen = false;
+    let perZeiger = false;
+    // Hilfsmittel (Schaltersteuerung, Sprachsteuerung) lösen oft nur "click" aus.
+    k.addEventListener('click', () => { if (perZeiger) { perZeiger = false; return; } antippen(k); });
     k.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); antippen(k); } });
     k.addEventListener('pointerdown', (e) => {
       if (gesperrt) return;
@@ -257,7 +264,7 @@ function sortieren(a, antworten, daten) {
       k.style.transform = '';
       k.classList.remove('zieht');
       if (gezogen) reihenfolge = [...liste.children].map((x) => x.dataset.name);
-      else if (e.type === 'pointerup') antippen(k);
+      else if (e.type === 'pointerup') { perZeiger = true; antippen(k); }
     };
     k.addEventListener('pointerup', ende);
     k.addEventListener('pointercancel', ende);
@@ -278,6 +285,7 @@ function sortieren(a, antworten, daten) {
     pruefKnopf);
   return {
     wurzel,
+    reihenfolge: () => [...reihenfolge],
     ergebnis(wert, richtig, endgueltig) {
       if (!richtig && !endgueltig) return;
       if (!richtig) { reihenfolge = [...a.karten]; zeichnen(); }
@@ -290,10 +298,13 @@ function sortieren(a, antworten, daten) {
 // ---------- Klappt es? ----------
 
 function reiheMitMarken(daten, namen) {
-  return el('ol', { class: 'reihe-mini', 'aria-label': 'Reaktivitätsreihe' },
-    daten.reihe.stoffe.map((s) => el('li', { class: namen.includes(s.name) ? 'markiert' : '' },
-      baustein(s.symbol, { metall: s.name !== 'Kohlenstoff', klein: true }),
-      el('span', {}, s.name))));
+  return el('div', { class: 'reihe-mini-box' },
+    el('span', { class: 'reihe-ende' }, 'edel'),
+    el('ol', { class: 'reihe-mini', 'aria-label': 'Reaktivitätsreihe von edel nach unedel' },
+      daten.reihe.stoffe.map((s) => el('li', { class: namen.includes(s.name) ? 'markiert' : '' },
+        baustein(s.symbol, { metall: s.name !== 'Kohlenstoff', klein: true }),
+        el('span', {}, s.name, namen.includes(s.name) ? el('span', { class: 'nur-vorlesen' }, ' (markiert)') : null)))),
+    el('span', { class: 'reihe-ende' }, 'unedel'));
 }
 
 function klappt(a, antworten, daten) {
@@ -333,11 +344,13 @@ function klappt(a, antworten, daten) {
 
 function wortgleichung(a, antworten) {
   const luecken = [];
+  const beschriften = (l, zustand) => l.setAttribute('aria-label',
+    zustand === 'leer' ? 'Lücke, leer' : zustand === 'geloest' ? `Lücke, Lösung: ${l.dataset.wert}` : `Lücke: ${l.dataset.wert}. Antippen zum Leeren.`);
   const seite = (stoffe, wo) => stoffe.flatMap((s, i) => {
     const teil = s === '?'
       ? (() => {
         const l = el('button', { type: 'button', class: 'luecke', 'data-seite': wo, 'aria-label': 'Lücke',
-          onclick: () => { if (!gesperrt && l.dataset.wert) { l.dataset.wert = ''; l.replaceChildren('___'); l.setAttribute('aria-label', 'Lücke, leer'); aktualisieren(); } } }, '___');
+          onclick: () => { if (!gesperrt && l.dataset.wert) { l.dataset.wert = ''; l.replaceChildren('___'); beschriften(l, 'leer'); aktualisieren(); } } }, '___');
         luecken.push(l);
         return l;
       })()
@@ -345,14 +358,15 @@ function wortgleichung(a, antworten) {
     return i < stoffe.length - 1 ? [teil, el('span', { class: 'plus' }, ' + ')] : [teil];
   });
   let gesperrt = false;
-  const chips = mischen(a.auswahl).map((s) => el('button', { type: 'button', class: 'knopf chip',
+  const chipFolge = mischen(a.auswahl);
+  const chips = chipFolge.map((s) => el('button', { type: 'button', class: 'knopf chip',
     onclick: () => {
       if (gesperrt) return;
       const frei = luecken.find((l) => !l.dataset.wert);
       if (!frei) return;
       frei.dataset.wert = s;
       frei.replaceChildren(formelKnoten(s));
-      frei.setAttribute('aria-label', `Lücke: ${s}. Antippen zum Leeren.`);
+      beschriften(frei, 'gefuellt');
       aktualisieren();
     } }, formelKnoten(s)));
   const pruefKnopf = el('button', { type: 'button', class: 'knopf knopf-haupt knopf-breit', disabled: true, onclick: () => {
@@ -372,19 +386,21 @@ function wortgleichung(a, antworten) {
   return {
     wurzel,
     ergebnis(wert, richtig, endgueltig) {
-      if (richtig) { luecken.forEach((l) => { l.classList.add('ist-richtig'); l.prepend(marke(true)); }); return; }
+      if (richtig) { luecken.forEach((l) => { l.classList.add('ist-richtig'); l.prepend(marke(true)); beschriften(l, 'geloest'); }); return; }
       if (endgueltig) {
         let i = 0;
         luecken.forEach((l) => {
           l.dataset.wert = a.richtig[i++];
           l.replaceChildren(marke(true), formelKnoten(l.dataset.wert));
           l.classList.add('ist-richtig');
+          beschriften(l, 'geloest');
         });
       }
     },
+    reihenfolge: chipFolge,
     nochmal() {
       gesperrt = false;
-      luecken.forEach((l) => { l.dataset.wert = ''; l.replaceChildren('___'); });
+      luecken.forEach((l) => { l.dataset.wert = ''; l.replaceChildren('___'); beschriften(l, 'leer'); });
       aktualisieren();
     }
   };

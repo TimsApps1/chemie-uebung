@@ -3,7 +3,10 @@
     {
       "id": "B4",
       "titel": "Symbole und Formeln lesen",
-      "kurse": ["G", "E"],
+      "kurse": [
+        "G",
+        "E"
+      ],
       "bildzeichen": "lupe",
       "geschichte": {
         "titel": "Eine Schrift für alle",
@@ -16,16 +19,35 @@
         "3": "Zählen mit Zahl davor, zum Beispiel 2 H2O."
       },
       "ich_kann": [
-        { "id": "symbole", "text": "Ich kann Elementsymbole richtig schreiben und lesen." },
-        { "id": "zaehlen", "text": "Ich kann die Atome in einer Formel zählen." },
-        { "id": "namen", "text": "Ich kann am Namen erkennen, welche Elemente in einem Stoff stecken." },
-        { "id": "zahl_davor", "text": "Ich weiß, was die große Zahl vor einer Formel bedeutet." }
+        {
+          "id": "symbole",
+          "text": "Ich kann Elementsymbole richtig schreiben und lesen.",
+          "hilfe": "Ein Symbol hat einen oder zwei Buchstaben: der erste ist groß, der zweite klein. Manche Symbole kommen aus dem Lateinischen, zum Beispiel Fe von Ferrum (Eisen)."
+        },
+        {
+          "id": "zaehlen",
+          "text": "Ich kann die Atome in einer Formel zählen.",
+          "hilfe": "Die kleine Zahl gehört zum Symbol direkt davor. Steht keine kleine Zahl da, ist es 1 Atom."
+        },
+        {
+          "id": "namen",
+          "text": "Ich kann am Namen erkennen, welche Elemente in einem Stoff stecken.",
+          "hilfe": "Die Endung verrät ein Element: -oxid heißt Sauerstoff, -sulfid heißt Schwefel, -chlorid heißt Chlor."
+        },
+        {
+          "id": "zahl_davor",
+          "text": "Ich weiß, was die große Zahl vor einer Formel bedeutet.",
+          "hilfe": "Eine große Zahl vor der Formel gilt für die ganze Formel. Zähle erst die Atome einer Formel, dann nimm mal."
+        }
       ]
     },
     {
       "id": "B3",
       "titel": "Reaktivitätsreihe und Redox",
-      "kurse": ["G", "E"],
+      "kurse": [
+        "G",
+        "E"
+      ],
       "bildzeichen": "flamme",
       "geschichte": {
         "titel": "Ötzi und sein Kupferbeil",
@@ -38,17 +60,40 @@
         "3": "Wie ★★, dazu „Warum?“ mit Begründungen und ein Zeitbalken."
       },
       "ich_kann": [
-        { "id": "reihe", "text": "Ich kann Metalle von edel nach unedel sortieren." },
-        { "id": "klappt", "text": "Ich kann vorhersagen, ob ein Stoff einem Oxid den Sauerstoff wegnimmt." },
-        { "id": "wortgleichung", "text": "Ich kann Wortgleichungen für Redoxreaktionen ergänzen." },
-        { "id": "redox", "text": "Ich kann sagen, welcher Stoff reduziert und welcher oxidiert wird." },
-        { "id": "mittel", "text": "Ich kann Reduktionsmittel und Oxidationsmittel benennen.", "kurs": "E" }
+        {
+          "id": "reihe",
+          "text": "Ich kann Metalle von edel nach unedel sortieren.",
+          "hilfe": "Edle Metalle halten Sauerstoff schwach fest, unedle Metalle halten Sauerstoff stark fest."
+        },
+        {
+          "id": "klappt",
+          "text": "Ich kann vorhersagen, ob ein Stoff einem Oxid den Sauerstoff wegnimmt.",
+          "hilfe": "Ein unedlerer Stoff nimmt dem Oxid eines edleren Stoffes beim Erhitzen den Sauerstoff weg, weil er Sauerstoff stärker festhält."
+        },
+        {
+          "id": "wortgleichung",
+          "text": "Ich kann Wortgleichungen für Redoxreaktionen ergänzen.",
+          "hilfe": "Der Sauerstoff wandert vom Oxid zum unedleren Stoff. Aus dem Oxid wird das Element, aus dem anderen Stoff wird ein Oxid."
+        },
+        {
+          "id": "redox",
+          "text": "Ich kann sagen, welcher Stoff reduziert und welcher oxidiert wird.",
+          "hilfe": "Reduziert wird der Stoff, der Sauerstoff abgibt. Oxidiert wird der Stoff, der Sauerstoff aufnimmt."
+        },
+        {
+          "id": "mittel",
+          "text": "Ich kann Reduktionsmittel und Oxidationsmittel benennen.",
+          "kurs": "E",
+          "hilfe": "Das Reduktionsmittel nimmt den Sauerstoff weg und wird selbst oxidiert. Das Oxidationsmittel gibt Sauerstoff ab und wird selbst reduziert."
+        }
       ]
     },
     {
       "id": "B1",
       "titel": "Formeln bauen",
-      "kurse": ["E"],
+      "kurse": [
+        "E"
+      ],
       "bildzeichen": "baustein",
       "geschichte": null,
       "niveaus": {
@@ -62,7 +107,9 @@
     {
       "id": "B2",
       "titel": "Reaktionen ausgleichen",
-      "kurse": ["E"],
+      "kurse": [
+        "E"
+      ],
       "bildzeichen": "waage",
       "geschichte": {
         "titel": "Schienen schweißen mit Feuer",

@@ -27,6 +27,12 @@ export function kindAnlegen(name, element, anzeige = name) {
   }
 }
 
+export function vorname(name) {
+  const k = kindEintrag(name);
+  const erstes = (k?.anzeige || '').trim().split(/\s+/)[0];
+  return erstes || name;
+}
+
 export function anzeigeName(name) {
   const k = kindEintrag(name);
   return k?.anzeige && k.anzeige.toUpperCase() !== name ? `${k.anzeige} (${name})` : name;
@@ -118,11 +124,14 @@ export function ersteWoche(p) {
 }
 
 export function naechsteRundenNummer(p) {
-  return (p.runden.filter((r) => r.art === 'normal').length + 1) % 100;
+  return p.runden.filter((r) => r.art === 'normal').length + 1;
 }
 
+// Für Wochenziel und Stempel zählen normale Runden und Fehler-Runden ab 4 Aufgaben.
+const zaehltFuerWoche = (r) => r.art === 'normal' || (r.anzahl || 0) >= 4;
+
 export function rundenInWoche(p, woche = wocheVonTag(tagNummer())) {
-  return p.runden.filter((r) => wocheVonTag(r.tag) === woche).length;
+  return p.runden.filter((r) => zaehltFuerWoche(r) && wocheVonTag(r.tag) === woche).length;
 }
 
 export function normaleRunden(p, bereich, niveau) {

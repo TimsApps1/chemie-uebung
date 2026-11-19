@@ -4,9 +4,12 @@
 import { atomeZaehlen } from './hilfen.js';
 
 const LATEIN = {
+  H: 'Hydrogenium', O: 'Oxygenium', C: 'Carboneum', N: 'Nitrogenium', S: 'Sulfur',
   Fe: 'Ferrum', Cu: 'Cuprum', Ag: 'Argentum', Au: 'Aurum', Pb: 'Plumbum', Hg: 'Hydrargyrum',
   Sn: 'Stannum', Na: 'Natrium', K: 'Kalium'
 };
+// Gold und Silber haben keine Oxide in der Reihe; als Stoff wären sie zu einfache "klappt nicht"-Fälle.
+const NICHT_ALS_STOFF = ['Gold', 'Silber'];
 const HAEUFIG = ['H', 'O', 'C', 'N', 'S', 'Cl', 'Na', 'Mg', 'Al', 'Fe', 'Cu', 'Zn', 'K', 'Ca'];
 const SELTENER = ['Pb', 'Ag', 'Au', 'Co', 'Si', 'Hg', 'Sn', 'He', 'Ne', 'P', 'F', 'I'];
 
@@ -31,7 +34,7 @@ function klapptAufgaben(reihe, vorhanden) {
     // Kohlenstoffdioxid lassen wir weg (Grenzfälle wie Zink + Kohlenstoffdioxid).
     if (!oxidStoff.oxid || oxidStoff.name === 'Kohlenstoff') return;
     stoffe.forEach((stoff, j) => {
-      if (i === j) return;
+      if (i === j || NICHT_ALS_STOFF.includes(stoff.name)) return;
       const schluessel = `${oxidStoff.oxid}|${stoff.name}`;
       if (verboten.has(schluessel) || schonDa.has(schluessel)) return;
       const abstand = Math.abs(i - j);
@@ -46,8 +49,8 @@ function klapptAufgaben(reihe, vorhanden) {
       const a = {
         id: `gen-k-${o}-${s}`.toLowerCase(), niveau, typ: 'klappt', symbol: '🔥', kann: 'klappt', generiert: true,
         frage: 'Klappt es beim Erhitzen?', oxid: o, stoff: s,
-        leicht: abstand >= 5 ? true : undefined,
-        denkanstoss: 'Such beide Stoffe in der Reihe. Welcher hält Sauerstoff stärker fest?',
+        leicht: klappt && abstand >= 5 ? true : undefined,
+        denkanstoss: `Such ${e} und ${s} in der Reihe. Wer hält Sauerstoff stärker fest?`,
         erklaerung: klappt
           ? `${staerker}. Darum nimmt ${istC ? 'er' : s} dem ${o} den Sauerstoff weg.`
           : `${schwaecher}. Darum kann ${istC ? 'er' : s} dem ${o} den Sauerstoff nicht wegnehmen.`
@@ -65,13 +68,23 @@ function klapptAufgaben(reihe, vorhanden) {
       liste.push(a);
     });
   });
-  return liste;
+  // Pro Niveau gleich viele "klappt" und "klappt nicht", damit Raten nicht hilft.
+  const ausgeglichen = [];
+  for (const n of [1, 2, 3]) {
+    const ja = liste.filter((a) => a.niveau === n && !/nicht wegnehmen/.test(a.erklaerung));
+    const nein = liste.filter((a) => a.niveau === n && /nicht wegnehmen/.test(a.erklaerung));
+    const k = Math.min(ja.length, nein.length);
+    ausgeglichen.push(...ja.slice(0, k), ...nein.slice(0, k));
+  }
+  return ausgeglichen;
 }
 
 // ---------- Bereich 4: Symbole und Namen ----------
 
-function symbolAufgaben(elemente) {
+function symbolAufgaben(elemente, vorhanden) {
   const nachSymbol = Object.fromEntries(elemente.map((e) => [e.symbol, e]));
+  // Was es schon als selbst geschriebene Aufgabe gibt, wird nicht doppelt erzeugt.
+  const schonDa = new Set(vorhanden.filter((a) => a.typ === 'auswahl').map((a) => a.richtig));
   const liste = [];
   const machen = (symbole, niveau) => symbole.filter((s) => nachSymbol[s]).forEach((sym, nr) => {
     const e = nachSymbol[sym];
@@ -87,24 +100,27 @@ function symbolAufgaben(elemente) {
       ...andere.filter((x) => x.symbol[0] === sym[0]).map((x) => x.symbol),
       andere[Math.floor(rnd() * andere.length)].symbol
     ].filter((x) => x && x !== sym && !(sym.length === 1 && x === sym))).slice(0, 3);
-    if (falsche.length >= 2) {
+    if (falsche.length >= 2 && !schonDa.has(sym)) {
       liste.push({
         id: `gen-s-${sym}-${niveau}`.toLowerCase(), niveau, typ: 'auswahl', symbol: '❓', kann: 'symbole', generiert: true,
         leicht: niveau === 1 && ['H', 'O', 'C'].includes(sym) ? true : undefined,
         frage: `Welches Symbol hat ${e.name}?`, antworten: [sym, ...falsche], richtig: sym,
-        denkanstoss: sym.length === 2 ? 'Ein Symbol: erster Buchstabe groß, zweiter Buchstabe klein.' : 'Manche Symbole haben nur einen Buchstaben.',
+        denkanstoss: sym.length === 2 ? 'Ein Symbol: erster Buchstabe groß, zweiter Buchstabe klein.'
+          : latein ? 'Manche Symbole kommen aus dem Lateinischen.' : 'Manche Symbole haben nur einen Buchstaben.',
         erklaerung: `${e.name} hat das Symbol ${sym}.${latein}`
       });
     }
     // Symbol -> Name
-    const gleicherAnfang = andere.filter((x) => x.name[0] === e.name[0] || x.symbol[0] === sym[0]).map((x) => x.name);
+    // Ablenker: Namen mit gleichem Anfang wie der deutsche Name (nicht wie das Symbol, sonst wäre es eine Falle).
+    const gleicherAnfang = andere.filter((x) => x.name[0] === e.name[0]).map((x) => x.name);
     const namen = eindeutig([...gleicherAnfang, ...andere.map((x) => x.name)]).filter((n) => n !== e.name);
     const start = Math.floor(rnd() * Math.max(1, namen.length - 3));
     const falscheNamen = eindeutig([...gleicherAnfang.slice(0, 2), ...namen.slice(start, start + 3)]).slice(0, 3);
+    if (schonDa.has(e.name)) return;
     liste.push({
       id: `gen-n-${sym}-${niveau}`.toLowerCase(), niveau, typ: 'auswahl', symbol: '❓', kann: 'symbole', generiert: true,
       frage: `Für welches Element steht das Symbol ${sym}?`, antworten: [e.name, ...falscheNamen], richtig: e.name,
-      denkanstoss: latein ? 'Manche Symbole kommen aus dem Lateinischen.' : 'Denk an den Anfang des Namens.',
+      denkanstoss: e.name[0] === sym[0] ? 'Denk an den Anfang des Namens.' : 'Manche Symbole kommen aus dem Lateinischen.',
       erklaerung: `${sym} ist das Symbol für ${e.name}.${latein}`
     });
   });
@@ -127,12 +143,12 @@ function zahlAufgaben(vorhanden) {
     const zaehle = i % 2 === 0 ? 'alle' : symbole[i % symbole.length];
     if (schonDa.has(`${formel}|${zaehle}`)) return;
     const { gesamt, ohneFaktor } = atomeZaehlen(formel, zaehle);
-    const was = zaehle === 'alle' ? 'Atome insgesamt' : `${zaehle}-Atome`;
+    const was = zaehle === 'alle' ? 'Atome insgesamt' : `${zaehle}-${ohneFaktor === 1 ? 'Atom' : 'Atome'}`;
     liste.push({
       id: `gen-z-${faktor}-${f}-${zaehle}`.toLowerCase(), niveau: 3, typ: 'zahl', symbol: '🔢', kann: 'zahl_davor', generiert: true,
       frage: zaehle === 'alle' ? 'Wie viele Atome sind es insgesamt?' : `Wie viele ${zaehle}-Atome sind es?`,
       formel, zaehle,
-      denkanstoss: 'Die große Zahl gilt für das ganze Teilchen.',
+      denkanstoss: 'Die große Zahl gilt für die ganze Formel.',
       erklaerung: `Die Formel ${f} zeigt ${ohneFaktor} ${was}. Mal ${faktor} sind das ${gesamt}.`
     });
   });
@@ -142,5 +158,5 @@ function zahlAufgaben(vorhanden) {
 export function aufgabenErzeugen(d) {
   if (d.app.aufgaben_erzeugen === false) return;
   if (d.aufgaben.B3 && d.reihe) d.aufgaben.B3.push(...klapptAufgaben(d.reihe, d.aufgaben.B3));
-  if (d.aufgaben.B4 && d.elemente.length) d.aufgaben.B4.push(...symbolAufgaben(d.elemente), ...zahlAufgaben(d.aufgaben.B4));
+  if (d.aufgaben.B4 && d.elemente.length) d.aufgaben.B4.push(...symbolAufgaben(d.elemente, d.aufgaben.B4), ...zahlAufgaben(d.aufgaben.B4));
 }

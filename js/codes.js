@@ -46,31 +46,32 @@ export function pinPruefen(pin, gespeichert) {
 }
 
 // ---------- Punktecode ----------
-// LENA-B3-2-0080-0127-E07-K9Q
-//   Name · Bereich · Niveau · Punkte (4 Ziffern) · Tag seit 01.08.2025 · Kurs (G/E) + Rundennummer (00–99) · Prüfsumme
-// Die Rundennummer zählt pro Kind und iPad hoch. So erkennt die Lehrkraft echte Wiederholungen
-// am selben Tag mit gleicher Punktzahl und kann doppelt eingefügte Codes trotzdem aussortieren.
-// Das ältere Format ohne Kurs/Rundennummer wird beim Einlesen weiter akzeptiert.
+// LENA-B3-2-0080-0127-E5-007-K9Q
+//   Name · Bereich · Niveau · Punkte · Tag seit 01.08.2025 · Kurs (G/E) + Zahl der Aufgaben, die beim
+//   ersten Versuch richtig waren (0–8) · Rundennummer (001–999, pro Kind und iPad) · Prüfsumme
+// Das ältere Format ohne die letzten beiden Teile wird beim Einlesen weiter akzeptiert.
 
-export function punktecode({ name, bereich, niveau, punkte, tag, kurs = 'G', nummer = 0 }) {
-  const teile = [name, bereich, String(niveau), String(Math.min(9999, Math.max(0, punkte))).padStart(4, '0'),
-    String(Math.min(9999, Math.max(0, tag))).padStart(4, '0'), `${kurs === 'E' ? 'E' : 'G'}${String(nummer % 100).padStart(2, '0')}`];
+export function punktecode({ name, bereich, niveau, punkte, tag, kurs = 'G', erster = 0, nummer = 0 }) {
+  const begrenzt = (z, max) => Math.min(max, Math.max(0, Math.round(z)));
+  const teile = [name, bereich, String(niveau), String(begrenzt(punkte, 9999)).padStart(4, '0'),
+    String(begrenzt(tag, 9999)).padStart(4, '0'), `${kurs === 'E' ? 'E' : 'G'}${begrenzt(erster, 9)}`,
+    String(((nummer - 1) % 999 + 999) % 999 + 1).padStart(3, '0')];
   return [...teile, pruefzeichen(teile.join('-'), 3)].join('-');
 }
 
-// Liefert { ok, code, name, bereich, niveau, punkte, tag, kurs, nummer, grund }.
+// Liefert { ok, code, name, bereich, niveau, punkte, tag, kurs, erster, nummer, grund }.
 export function punktecodeLesen(eingabe) {
   const code = eingabeSaeubern(eingabe);
-  const neu = code.match(/^([A-Z0-9]{1,8})-(B[1-4])-([1-3])-(\d{4})-(\d{4})-([GE])(\d{2})-([A-Z0-9]{3})$/);
+  const neu = code.match(/^([A-Z0-9]{1,8})-(B[1-4])-([1-3])-(\d{4})-(\d{4})-([GE])(\d)-(\d{3})-([A-Z0-9]{3})$/);
   const alt = !neu && code.match(/^([A-Z0-9]{1,8})-(B[1-4])-([1-3])-(\d{4})-(\d{4})-([A-Z0-9]{3})$/);
   if (!neu && !alt) return { ok: false, code, grund: 'Aufbau stimmt nicht' };
   const [, name, bereich, niveau, punkte, tag] = neu || alt;
   const teile = [name, bereich, niveau, punkte, tag];
-  if (neu) teile.push(neu[6] + neu[7]);
-  const pruef = neu ? neu[8] : alt[6];
+  if (neu) teile.push(neu[6] + neu[7], neu[8]);
+  const pruef = neu ? neu[9] : alt[6];
   if (pruefzeichen(teile.join('-'), 3) !== pruef) return { ok: false, code, grund: 'Prüfsumme stimmt nicht' };
   return {
     ok: true, code, name, bereich, niveau: Number(niveau), punkte: Number(punkte), tag: Number(tag),
-    kurs: neu ? neu[6] : null, nummer: neu ? Number(neu[7]) : null
+    kurs: neu ? neu[6] : null, erster: neu ? Number(neu[7]) : null, nummer: neu ? Number(neu[8]) : null
   };
 }

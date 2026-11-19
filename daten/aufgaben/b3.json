@@ -10,7 +10,7 @@
     { "id": "b3-1-02", "niveau": 1, "typ": "sortieren", "symbol": "↕", "kann": "reihe",
       "frage": "Sortiere von edel (oben) nach unedel (unten).",
       "karten": ["Silber", "Kupfer", "Eisen", "Zink", "Magnesium"],
-      "denkanstoss": "Ein Eisennagel rostet schnell, ein Silberring nicht.",
+      "denkanstoss": "Ein Silberring bleibt lange blank, Magnesium wird an der Luft schnell matt.",
       "erklaerung": "Die Reihe geht von edel nach unedel: Silber, Kupfer, Eisen, Zink, Magnesium." },
 
     { "id": "b3-1-03", "niveau": 1, "typ": "klappt", "symbol": "🔥", "leicht": true, "kann": "klappt",

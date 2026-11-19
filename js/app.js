@@ -1,14 +1,14 @@
 // Start der App und alle Bildschirme für Schülerinnen und Schüler.
 import { VERSION } from './version.js';
 import { dauerhaftBitten } from './speicher.js';
-import { el, formelKnoten, sterneText, nameVereinheitlichen, tagNummer, wocheVonTag, datumVonTag, mischen } from './hilfen.js';
+import { el, formelKnoten, sterneText, kurzname as kurznameAus, tagNummer, wocheVonTag, datumVonTag, mischen } from './hilfen.js';
 import { allesLaden, alleFehler } from './daten.js';
 import {
-  symboleEinfuegen, kopfSetzen, icon, iconKnopf, baustein, fenster, text, vorlesenKnopf,
+  symboleEinfuegen, kopfSetzen, icon, iconKnopf, baustein, fenster, fragen, text, vorlesenKnopf,
   fachwoerterSetzen, datenFehlerKasten
 } from './ui.js';
 import {
-  anzeigeName, ersteWoche, naechsteRundenNummer,
+  anzeigeName, vorname, ersteWoche, naechsteRundenNummer,
   kinder, kindEintrag, kindAnlegen, profil, aendern, freischalten, rundeSpeichern, rundenInWoche,
   normaleRunden, bestwert, sterneFuer, niveauVorschlag, faelligeFehler, KANN_SCHWELLE, LIEBLINGSELEMENTE, geraet
 } from './profil.js';
@@ -82,7 +82,8 @@ function lehrkraftLink() {
 function installTipp() {
   if (alsAppGestartet()) return null;
   return el('p', { class: 'install-tipp' },
-    '📲 Tipp: Tippe oben auf Teilen ⬆ und dann auf „Zum Home-Bildschirm“. Dann bleiben deine Punkte sicher gespeichert.');
+    el('b', {}, '📲 Wichtig: '), 'Tippe oben auf Teilen ⬆ und dann auf „Zum Home-Bildschirm“. Übe danach immer in der App mit dem Symbol. ',
+    'Was du hier im Safari-Fenster übst, sieht die App nicht.');
 }
 
 // ---------- Wer übt? ----------
@@ -133,7 +134,7 @@ function neuerName() {
     }));
 
   // Kurzname aus Vorname und Nachname: höchstens 8 Zeichen, A–Z und 0–9.
-  function kurzname() { return nameVereinheitlichen(feld.value); }
+  function kurzname() { return kurznameAus(feld.value); }
   function freieVariante(n) {
     for (let z = 2; z <= 9; z++) {
       const v = n.slice(0, 7) + z;
@@ -155,17 +156,22 @@ function neuerName() {
     else if (eintrag) {
       const anders = eintrag.anzeige && eintrag.anzeige.toLowerCase() !== feld.value.trim().toLowerCase();
       meldung.textContent = anders
-        ? `${n} gibt es schon (${eintrag.anzeige}). Bist du das nicht? Dann heißt du ${freieVariante(n) || n}.`
+        ? `${n} gibt es schon auf diesem iPad (${eintrag.anzeige}).`
         : 'Diesen Namen gibt es schon auf diesem iPad. Bist du das? Dann tippe auf „Los geht’s“.';
     }
     los.disabled = !n || Boolean(eintrag?.gesperrt);
   }
-  function anlegen() {
+  async function anlegen() {
     let n = kurzname();
     if (!n || kindEintrag(n)?.gesperrt) return;
     const eintrag = kindEintrag(n);
     if (eintrag && eintrag.anzeige && eintrag.anzeige.toLowerCase() !== feld.value.trim().toLowerCase()) {
-      n = freieVariante(n) || n;
+      // Erst fragen, ob es dasselbe Kind ist – sonst entstehen doppelte Profile.
+      const binIch = await fragen(`Auf diesem iPad gibt es schon „${eintrag.anzeige}“ (${n}) mit dem Element ${eintrag.element}. Bist du das?`,
+        'Ja, das bin ich', 'Nein, ich bin jemand anderes');
+      if (binIch) return startseite(n);
+      n = freieVariante(n);
+      if (!n) { meldung.textContent = 'Bitte schreib deinen Namen etwas anders.'; return; }
     }
     kindAnlegen(n, element, feld.value.trim());
     startseite(n);
@@ -187,8 +193,8 @@ function neuerName() {
 
 function kopfMitName(name, extra = {}) {
   kopfSetzen({
-    rechts: [el('button', { type: 'button', class: 'kopf-name', onclick: werUebt, 'aria-label': `${name}. Tippen zum Wechseln.` },
-      baustein(kindEintrag(name)?.element || 'H', { klein: true }), name)],
+    rechts: [el('button', { type: 'button', class: 'kopf-name', onclick: werUebt, 'aria-label': `${vorname(name)}. Tippen zum Wechseln.` },
+      baustein(kindEintrag(name)?.element || 'H', { klein: true }), el('span', { class: 'kopf-name-text' }, vorname(name)))],
     ...extra
   });
 }
@@ -217,7 +223,7 @@ function startseite(name) {
   zeigen(
     datenFehlerKasten(alleFehler()),
     el('section', { class: 'start-kopf' },
-      el('h2', { class: 'titel' }, `Hallo ${name}!`),
+      el('h2', { class: 'titel' }, `Hallo ${vorname(name)}!`),
       plan ? el('button', { type: 'button', class: 'knopf knopf-haupt knopf-gross heute-knopf', onclick: () => planStarten(name, plan) },
         el('span', { class: 'heute-titel' }, '▶ Heute üben'), el('span', { class: 'heute-text' }, plan.text)) : null),
     !bereicheFrei(p).length
@@ -268,8 +274,11 @@ function bereichKachel(name, p, b) {
     el('div', {}, el('p', { class: 'bereich-name' }, b.titel), stufen));
 }
 
-const medaillen = (n) => el('span', { class: `medaillen medaille-${n}`, role: 'img', 'aria-label': n ? `${['', 'Bronze', 'Silber', 'Gold'][n]}-Medaille` : 'noch keine Medaille' },
-  [1, 2, 3].map((i) => el('span', { class: i <= n ? 'medaille-voll' : 'medaille-leer' })));
+// Eine Medaille pro Niveau: Bronze, Silber, Gold (Farbe + Buchstabe B/S/G, nicht nur Farbe).
+const medaillen = (n, gross = false) => el('span', {
+  class: `medaille medaille-${n}${gross ? ' medaille-gross' : ''}`, role: 'img',
+  'aria-label': n ? `${['', 'Bronze', 'Silber', 'Gold'][n]}-Medaille` : 'noch keine Medaille'
+}, n ? ['', 'B', 'S', 'G'][n] : '');
 
 // ---------- Code eingeben ----------
 
@@ -429,7 +438,8 @@ function rundenende(name, ergebnis, kannVorher) {
   const wocheVorher = rundenInWoche(vorher);
   const tag = tagNummer();
   const nummer = naechsteRundenNummer(vorher);
-  const code = punktecode({ name, bereich: ergebnis.bereich, niveau: ergebnis.niveau, punkte: ergebnis.punkte, tag, kurs: ergebnis.kurs, nummer });
+  const code = punktecode({ name, bereich: ergebnis.bereich, niveau: ergebnis.niveau, punkte: ergebnis.punkte, tag,
+    kurs: ergebnis.kurs, erster: ergebnis.ersterVersuch, nummer });
   const p = rundeSpeichern(name, { art: 'normal', bereich: ergebnis.bereich, niveau: ergebnis.niveau, kurs: ergebnis.kurs,
     punkte: ergebnis.punkte, ersterVersuch: ergebnis.ersterVersuch, anzahl: ergebnis.anzahl,
     warumRichtig: ergebnis.warumRichtig, falsch: ergebnis.falsch, nummer, code }, tag);
@@ -443,7 +453,7 @@ function rundenende(name, ergebnis, kannVorher) {
   // Alles Neue und Gute dieser Runde (nur Verbesserungen, nie Verschlechterungen).
   const neu = [];
   if (rekord) neu.push(neuZeile('🏆', el('b', {}, `Neuer persönlicher Rekord! Vorher: ${alterBest}`), 'stark'));
-  if (medailleNeu > medailleAlt) neu.push(neuZeile(medaillen(medailleNeu), el('b', {}, `${MEDAILLE[medailleNeu]}-Medaille auf ${sterneText(ergebnis.niveau)} erreicht!`), 'stark'));
+  if (medailleNeu > medailleAlt) neu.push(neuZeile(medaillen(medailleNeu, true), el('b', {}, `${MEDAILLE[medailleNeu]}-Medaille auf ${sterneText(ergebnis.niveau)} erreicht!`), 'stark medaille-zeile'));
   for (const k of neueIchKann(name, kannVorher)) neu.push(neuZeile('⭐', ['Neu: ', el('b', {}, text(k.text))], 'stark'));
   if (!letzte) neu.push(neuZeile('🚀', 'Deine erste Runde auf diesem Niveau. Gut, dass du angefangen hast!'));
   else if (ergebnis.ersterVersuch > letzte.ersterVersuch) neu.push(neuZeile('↑', `Letztes Mal ${letzte.ersterVersuch}, heute ${ergebnis.ersterVersuch} Aufgaben gleich beim ersten Versuch richtig.`));
@@ -509,7 +519,7 @@ async function inZwischenablage(textInhalt, knoten) {
 // Code einer gespeicherten Runde (ältere Runden ohne gespeicherten Code bekommen ihn nachträglich).
 function codeVonRunde(name, p, r, i) {
   return r.code || punktecode({ name, bereich: r.bereich, niveau: r.niveau, punkte: r.punkte, tag: r.tag,
-    kurs: r.kurs || p.freigeschaltet[r.bereich] || 'G', nummer: r.nummer ?? i + 1 });
+    kurs: r.kurs || p.freigeschaltet[r.bereich] || 'G', erster: r.ersterVersuch || 0, nummer: r.nummer ?? i + 1 });
 }
 
 // ---------- Mein Fortschritt ----------
@@ -552,8 +562,17 @@ function meinFortschritt(name) {
           fertigJa ? '✓' : `${Math.min(n, KANN_SCHWELLE)}/${KANN_SCHWELLE}`),
         el('span', {}, text(k.text)));
     });
+    // Verlauf: die letzten 10 Runden als Säulen (Aufgaben beim ersten Versuch richtig).
+    const letzte10 = p.runden.filter((r) => r.art === 'normal' && r.bereich === b.id).slice(-10);
+    const verlauf = letzte10.length >= 2 ? el('div', { class: 'verlauf' },
+      el('h4', {}, 'Meine letzten Runden'),
+      el('ol', { class: 'saeulen', 'aria-label': 'Aufgaben beim ersten Versuch richtig, letzte Runden: ' + letzte10.map((r) => r.ersterVersuch).join(', ') },
+        letzte10.map((r) => el('li', { style: `--h:${Math.max(4, (r.ersterVersuch / (r.anzahl || 8)) * 100)}%` },
+          el('span', { class: 'saeule' }), el('small', {}, String(r.ersterVersuch)), el('small', { class: 'saeule-niveau' }, sterneText(r.niveau))))),
+      el('p', { class: 'tipp' }, 'Zahl = Aufgaben gleich beim ersten Versuch richtig.')) : null;
     return el('section', { class: `karte fortschritt-bereich ${b.id.toLowerCase()}` },
       el('h3', {}, b.titel),
+      verlauf,
       el('div', { class: 'tabelle-rollen' }, el('table', { class: 'tabelle' },
         el('thead', {}, el('tr', {}, el('th', {}, 'Niveau'), el('th', {}, 'Medaille'), el('th', {}, 'Bestwert'), el('th', {}, 'Runden'))),
         el('tbody', {}, zeilen))),
@@ -585,7 +604,8 @@ function meinFortschritt(name) {
       zielWahl,
       el('h4', {}, 'Meine Stempel'),
       wochen,
-      el('p', { class: 'leise' }, `Insgesamt ${normale.length} Runden geübt · ${p.ausgebessert} Fehler endgültig ausgebessert`),
+      el('p', { class: 'leise' }, `Insgesamt ${normale.length} ${normale.length === 1 ? 'Runde' : 'Runden'} geübt` +
+        (p.ausgebessert ? ` · ${p.ausgebessert} Fehler endgültig ausgebessert` : '')),
       el('p', { class: 'tipp' }, 'Medaillen pro Niveau: Bronze ab 40 Punkten, Silber ab 60, Gold ab 75 in einer Runde.')),
     ...frei.map(bereichsBlock),
     !frei.length ? el('p', { class: 'leise' }, 'Noch keine Bereiche frei.') : null,

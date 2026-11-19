@@ -30,14 +30,22 @@ export function aufgabenWaehlen(alle, niveau, kurs) {
   const einstiegPool = niveau > 1
     ? alle.filter((a) => a.niveau === niveau - 1 && passtZumKurs(a, kurs))
     : pool.filter((a) => a.leicht);
-  const einstieg = mischen(einstiegPool.length >= 2 ? einstiegPool : pool).slice(0, 2);
+  // Einstieg: höchstens eine von der App erzeugte Aufgabe.
+  const einstiegQuelle = mischen(einstiegPool.length >= 2 ? einstiegPool : pool);
+  const einstieg = [];
+  for (const a of einstiegQuelle) {
+    if (einstieg.length >= 2) break;
+    if (a.generiert && einstieg.some((x) => x.generiert)) continue;
+    einstieg.push(a);
+  }
   const rest = mischen(pool.filter((a) => !einstieg.includes(a)));
   // Höchstens 2 Sortieraufgaben (dauern länger) und 3 von der App erzeugte Aufgaben pro Runde,
   // damit die selbst geschriebenen Aufgaben im Mittelpunkt bleiben.
   const auswahl = [];
   const zahl = (liste, test) => liste.filter(test).length;
   const passt = (a, liste) => !(a.typ === 'sortieren' && zahl(liste, (x) => x.typ === 'sortieren') >= 2) &&
-    !(a.generiert && zahl(liste, (x) => x.generiert) >= 3);
+    !(a.generiert && zahl(liste, (x) => x.generiert) >= 3) &&
+    zahl(liste, (x) => x.typ === a.typ) < 4;
   for (const a of rest) {
     if (auswahl.length >= RUNDE_LAENGE - einstieg.length) break;
     if (passt(a, [...einstieg, ...auswahl])) auswahl.push(a);
@@ -138,23 +146,37 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
     zeigeAufgabe(a);
   }
 
+  // Kurzer Konzept-Hinweis für "Erklär's mir" VOR der Antwort (verrät die Lösung nicht).
+  function konzeptHilfe(a) {
+    const kann = daten.bereiche.flatMap((b) => b.ich_kann || []).find((k) => k.id === a.kann);
+    if (kann?.hilfe && (!kann.kurs || kurs === 'E')) return kann.hilfe;
+    return a.denkanstoss;
+  }
+
+  // Aufgaben mit nur zwei Antworten: Nach einem Fehler wäre der 2. Versuch geschenkt.
+  const nurZweiAntworten = (a) => a.typ === 'klappt' || (a.typ === 'auswahl' && a.antworten.length === 2);
+
   function zeigeAufgabe(a) {
     let versuch = 1;
+    let beantwortetSchon = false;
     const rueck = el('div', { class: 'rueck-bereich' });
     const darstellung = aufgabeDarstellen(a, (wert) => beantwortet(wert), daten);
 
     const erklaeren = el('button', { type: 'button', class: 'knopf knopf-leise knopf-breit', onclick: () => {
+      // Vor der Antwort: nur die Regel. Nach der Antwort: die Erklärung zu dieser Aufgabe.
+      const inhaltText = beantwortetSchon ? a.erklaerung : konzeptHilfe(a);
       fenster(el('div', {},
-        el('p', { class: 'fenster-text' }, text(a.erklaerung)),
+        !beantwortetSchon ? el('p', { class: 'leise' }, 'So geht es allgemein:') : null,
+        el('p', { class: 'fenster-text' }, text(inhaltText)),
         a.bild ? el('img', { src: `bilder/${a.bild}`, alt: '', class: 'erklaer-bild' }) : null,
-        el('div', { class: 'zeile-rechts' }, vorlesenKnopf(a.erklaerung))
+        el('div', { class: 'zeile-rechts' }, vorlesenKnopf(inhaltText))
       ), { titel: 'Erklär’s mir' });
     } }, icon('i-birne'), 'Erklär’s mir');
 
     const karte = el('section', { class: 'karte aufgabe' },
       el('div', { class: 'anweisung-zeile' },
         el('p', { class: 'anweisung' }, el('span', { class: 'anweisung-zeichen', 'aria-hidden': 'true' }, a.symbol || '❓'), el('span', {}, text(a.frage))),
-        vorlesenKnopf(() => vorleseText(a, darstellung.reihenfolge))),
+        vorlesenKnopf(() => vorleseText(a, typeof darstellung.reihenfolge === 'function' ? darstellung.reihenfolge() : darstellung.reihenfolge))),
       zeitlimit && !wiederholung ? zeitbalken() : null,
       darstellung.wurzel,
       rueck,
@@ -164,7 +186,8 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
 
     function beantwortet(wert) {
       const richtig = pruefen(a, wert, daten);
-      const endgueltig = richtig || versuch >= 2;
+      const endgueltig = richtig || versuch >= 2 || nurZweiAntworten(a);
+      if (endgueltig) beantwortetSchon = true;
       darstellung.ergebnis(wert, richtig, endgueltig);
       tonSpielen(richtig);
       if (richtig) {
@@ -175,15 +198,17 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
           stand.punkte += plus;
         }
         if (!wiederholung && versuch === 1) stand.ersterVersuch += 1;
-        if (art === 'fehler' || wiederholung) {
-          if (art === 'fehler') {
-            if (fehlerWiederholt(name, a.id, versuch === 1)) stand.ausgebessert += 1;
-          } else if (versuch === 1) stand.ausgebessert += 1;
+        let lobText = lob(daten, versuch === 1 ? 'erster' : 'zweiter');
+        if (art === 'fehler') {
+          const erledigt = fehlerWiederholt(name, a.id, versuch === 1);
+          if (erledigt) { stand.ausgebessert += 1; lobText = lob(daten, 'ausgebessert'); }
+          else lobText = versuch === 1 ? 'Richtig! Noch einmal richtig, dann ist es erledigt.' : 'Richtig! Das üben wir bald noch einmal.';
+        } else if (wiederholung) {
+          if (versuch === 1) stand.ausgebessert += 1;
+          lobText = lob(daten, 'ausgebessert');
         }
         if (versuch === 1) kannZaehlen(name, a.kann);
-        rueck.replaceChildren(rueckmeldung(true,
-          wiederholung || art === 'fehler' ? lob(daten, 'ausgebessert') : lob(daten, versuch === 1 ? 'erster' : 'zweiter'),
-          null, plus));
+        rueck.replaceChildren(rueckmeldung(true, lobText, null, plus));
         weiterKnopf(a);
         return;
       }
@@ -206,7 +231,7 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
       }
       if (art === 'fehler') fehlerWiederholt(name, a.id, false);
       const loesung = loesungsText(a, daten);
-      rueck.replaceChildren(rueckmeldung(false, 'Das war noch nicht richtig.', null, 0,
+      rueck.replaceChildren(rueckmeldung(false, nurZweiAntworten(a) && versuch === 1 ? 'Leider nicht. Merk dir die Lösung.' : 'Das war noch nicht richtig.', null, 0,
         el('div', { class: 'loesung' },
           el('p', {}, el('b', {}, '💡 So geht’s: '), text(loesung)),
           el('p', {}, text(a.erklaerung)),
@@ -241,7 +266,8 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
         el('button', { type: 'button', class: 'knopf knopf-haupt knopf-gross knopf-breit', onclick: naechste }, 'Weiter ➜'));
     }, daten);
     const bezug = aufgabe.typ === 'klappt' ? `${aufgabe.oxid} + ${aufgabe.stoff}`
-      : aufgabe.links ? `${aufgabe.links.join(' + ')} → ${aufgabe.rechts.map((x, i) => (x === '?' ? '…' : x)).join(' + ')}` : aufgabe.frage;
+      : aufgabe.typ === 'wortgleichung' ? loesungsText(aufgabe, daten)
+        : aufgabe.links ? `${aufgabe.links.join(' + ')} → ${aufgabe.rechts.join(' + ')}` : aufgabe.frage;
     ziel.replaceChildren(el('section', { class: 'karte aufgabe warum' },
       el('p', { class: 'warum-bezug' }, 'Zur Aufgabe: ', el('b', {}, text(bezug))),
       el('div', { class: 'anweisung-zeile' },

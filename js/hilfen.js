@@ -35,6 +35,16 @@ export const sterneText = (n) => '★'.repeat(n);
 
 // ---------- Namen ----------
 
+// Kurzname für Vor- und Nachname: Anfang des Vornamens + 3 Buchstaben des Nachnamens,
+// zusammen höchstens 8 Zeichen. "Mohammed Yilmaz" -> "MOHAMYIL", "Lena Özil" -> "LENAOEZ", "Tom" -> "TOM".
+export function kurzname(roh) {
+  const woerter = String(roh || '').trim().split(/\s+/).filter(Boolean);
+  if (woerter.length < 2) return nameVereinheitlichen(roh);
+  const vor = nameVereinheitlichen(woerter[0]);
+  const nach = nameVereinheitlichen(woerter[woerter.length - 1]).slice(0, 3);
+  return (vor.slice(0, 8 - nach.length) + nach).slice(0, 8);
+}
+
 // "Lena-Marie Özdemir" -> "LENAMARI" (höchstens 8 Zeichen, A–Z und 0–9)
 export function nameVereinheitlichen(roh) {
   return String(roh || '')
@@ -142,14 +152,14 @@ function istSymbolFolge(wort) {
 // Für die Sprachausgabe: Formeln und Symbole werden buchstabiert, "2 H2O" -> "2 mal H 2 O".
 export function vorlesbar(text) {
   return String(text)
-    .replace(/\b(\d+) (?=[A-Z][a-z]?\d)/g, '$1 mal ')
+    .replace(/\b(\d+) (?=([A-Z][A-Za-z0-9]*)\b)/g, (m, zahl, wort) => (istSymbolFolge(wort) && /[a-z\d]|^[A-Z]{1,3}$/.test(wort) ? `${zahl} mal ` : m))
     .replace(/\b[A-Z][A-Za-z0-9]*\b/g, (w) => {
       if (/\d/.test(w) && istFormel(w)) return buchstabieren(w);
       if (w.length <= 4 && istSymbolFolge(w) && (w.length > 1 || bekannteSymbole.has(w))) return buchstabieren(w);
       if (/^[A-Z]{2,3}$/.test(w)) return buchstabieren(w);
       return w;
     })
-    .replace(/→/g, ' reagiert zu ')
+    .replace(/→/g, ' reagieren zu ')
     .replace(/\s\+\s/g, ' und ')
     .replace(/[★✋↕🔢✏️❓🔥✓✗💡⏳]/gu, ' ')
     .replace(/\s+/g, ' ')

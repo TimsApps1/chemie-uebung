@@ -38,28 +38,37 @@ test('Freischaltcodes: gültig, getrennt nach Kurs, ohne Verwechslungszeichen', 
   assert.equal(freischaltcodePruefen(freischaltcode('B3', 'G', 1), 2), null, 'alte Serie gesperrt');
 });
 
-test('Punktecode: Aufbau, Kurs und Rundennummer, Prüfsumme erkennt Änderungen', () => {
-  const code = punktecode({ name: 'LENA', bereich: 'B3', niveau: 2, punkte: 80, tag: 127, kurs: 'E', nummer: 7 });
-  assert.match(code, /^LENA-B3-2-0080-0127-E07-[23456789ABCDEFGHJKMNPQRSTUVWXYZ]{3}$/);
+test('Punktecode: Aufbau mit Kurs, Erstversuchen und Rundennummer; Prüfsumme erkennt Änderungen', () => {
+  const code = punktecode({ name: 'LENA', bereich: 'B3', niveau: 2, punkte: 80, tag: 127, kurs: 'E', erster: 6, nummer: 7 });
+  assert.match(code, /^LENA-B3-2-0080-0127-E6-007-[23456789ABCDEFGHJKMNPQRSTUVWXYZ]{3}$/);
   const gelesen = punktecodeLesen(code.toLowerCase().replace(/-/g, ' - '));
   assert.equal(gelesen.ok, true);
-  assert.equal(gelesen.punkte, 80);
-  assert.equal(gelesen.kurs, 'E');
-  assert.equal(gelesen.nummer, 7);
-  assert.equal(punktecodeLesen(code.replace('0080', '0090')).ok, false);
-  assert.equal(punktecodeLesen(code.replace('LENA', 'LENE')).ok, false);
-  assert.equal(punktecodeLesen(code.replace('E07', 'G07')).ok, false);
-  // Älteres Format ohne Kurs/Nummer wird weiter gelesen
-  assert.equal(punktecodeLesen('LENA-B3-2-0080-0127-DQS').ok, true);
-  // Zwei Runden mit gleicher Punktzahl am selben Tag ergeben verschiedene Codes
-  assert.notEqual(punktecode({ name: 'TOM', bereich: 'B4', niveau: 1, punkte: 60, tag: 10, kurs: 'G', nummer: 1 }),
-    punktecode({ name: 'TOM', bereich: 'B4', niveau: 1, punkte: 60, tag: 10, kurs: 'G', nummer: 2 }));
+  assert.deepEqual([gelesen.punkte, gelesen.kurs, gelesen.erster, gelesen.nummer], [80, 'E', 6, 7]);
+  for (const [alt, neu] of [['0080', '0090'], ['LENA', 'LENE'], ['E6', 'G6'], ['E6', 'E7'], ['-007-', '-008-']]) {
+    assert.equal(punktecodeLesen(code.replace(alt, neu)).ok, false, `${alt} -> ${neu}`);
+  }
+  assert.equal(punktecodeLesen('LENA-B3-2-0080-0127-DQS').ok, true, 'älteres Format');
+  assert.match(punktecode({ name: 'TOM', bereich: 'B4', niveau: 1, punkte: 60, tag: 10, nummer: 1000 }), /-001-/);
+  assert.notEqual(punktecode({ name: 'TOM', bereich: 'B4', niveau: 1, punkte: 60, tag: 10, nummer: 1 }),
+    punktecode({ name: 'TOM', bereich: 'B4', niveau: 1, punkte: 60, tag: 10, nummer: 2 }));
+});
+
+test('Kurzname aus Vor- und Nachname', async () => {
+  const { kurzname } = await import('../js/hilfen.js');
+  assert.equal(kurzname('Mohammed Yilmaz'), 'MOHAMYIL');
+  assert.equal(kurzname('Mohammed Kaya'), 'MOHAMKAY');
+  assert.equal(kurzname('Lena Özil'), 'LENAOEZ');
+  assert.equal(kurzname('Tom'), 'TOM');
+  assert.equal(kurzname('Ayşe Yılmaz'), 'AYSEYIL');
 });
 
 test('Vorlesen: Formeln und Symbole werden buchstabiert', async () => {
   const { vorlesbar } = await import('../js/hilfen.js');
   assert.equal(vorlesbar('Co oder CO?'), 'C klein o oder C O?');
   assert.equal(vorlesbar('2 H2O'), '2 mal H 2 O');
+  assert.equal(vorlesbar('3 CO2'), '3 mal C O 2');
+  assert.equal(vorlesbar('2 MgCl2'), '2 mal M klein g C klein l 2');
+  assert.equal(vorlesbar('Klasse 9 Chemie'), 'Klasse 9 Chemie');
   assert.match(vorlesbar('Welches Symbol hat Natrium? Na, NA'), /N klein a, N A/);
 });
 
@@ -198,9 +207,9 @@ test('Neuer Name, falscher Code, G-Code und E-Code', async () => {
   const { kontext, seite, fehler } = await neueSeite();
   await seite.getByRole('button', { name: 'Neuer Name' }).click();
   await seite.fill('#name-feld', 'Lena Özil');
-  await seite.locator('#name-vorschau b').getByText('LENAOEZI').waitFor();
+  await seite.locator('#name-vorschau b').getByText('LENAOEZ').waitFor();
   await seite.getByRole('button', { name: /Los geht/ }).click();
-  await seite.getByRole('heading', { name: 'Hallo LENAOEZI!' }).waitFor();
+  await seite.getByRole('heading', { name: 'Hallo Lena!' }).waitFor();
 
   await codeEingeben(seite, 'ABCDEF');
   await seite.getByText('Das hat nicht geklappt.').waitFor();
@@ -245,7 +254,7 @@ test('Neuer Name, falscher Code, G-Code und E-Code', async () => {
 
   await codeEingeben(seite, freischaltcode('B3', 'E', 1));
   await seite.getByText('Mit allen Aufgaben für den E-Kurs.').waitFor();
-  const kurs = await seite.evaluate(() => JSON.parse(localStorage.getItem('chemie:kind:LENAOEZI')).freigeschaltet.B3);
+  const kurs = await seite.evaluate(() => JSON.parse(localStorage.getItem('chemie:kind:LENAOEZ')).freigeschaltet.B3);
   assert.equal(kurs, 'E');
   assert.deepEqual(fehler, []);
   await kontext.close();
@@ -447,4 +456,42 @@ test('Erzeugte Aufgaben sind gültig und passen zur Reihe', async () => {
     }
     if (a.typ === 'zahl') assert.match(a.erklaerung, new RegExp(`sind das ${atomeZaehlen(a.formel, a.zaehle).gesamt}\\.`));
   }
+});
+
+test('„Klappt es?“: Falsch beim ersten Versuch = Lösung, 0 Punkte, kommt wieder', async () => {
+  const { kontext, seite, fehler } = await neueSeite();
+  await seite.evaluate(() => {
+    localStorage.setItem('chemie:kinder', JSON.stringify([{ name: 'EMIL', anzeige: 'Emil Roth', element: 'C', gesperrt: false }]));
+    localStorage.setItem('chemie:kind:EMIL', JSON.stringify({ freigeschaltet: { B3: 'G' } }));
+  });
+  await seite.reload();
+  const ergebnis = await seite.evaluate(async () => {
+    const { rundeSpielen } = await import('./js/runde.js');
+    const { allesLaden, klapptEs } = await import('./js/daten.js');
+    const d = await allesLaden();
+    const a = d.aufgaben.B3.find((x) => x.typ === 'klappt' && !x.generiert);
+    const falsch = !klapptEs(d.reihe, a.oxid, a.stoff);
+    return new Promise((ok) => {
+      rundeSpielen({ ziel: document.getElementById('inhalt'), daten: d, name: 'EMIL', bereich: 'B3', niveau: 1, kurs: 'G',
+        aufgaben: [a], art: 'normal', fertig: (e) => ok(e) });
+      // Erklär's mir vor der Antwort zeigt nicht die Aufgaben-Erklärung
+      document.querySelector('.knopf-leise.knopf-breit').click();
+      const fensterText = document.querySelector('.fenster').textContent;
+      window.__fensterOk = !fensterText.includes(a.erklaerung);
+      document.querySelector('.fenster-knoepfe button').click();
+      document.querySelector(`.antwort[data-wert="${falsch ? 'ja' : 'nein'}"]`).click();
+      window.__nochmal = Boolean([...document.querySelectorAll('button')].find((b) => b.textContent.includes('Nochmal versuchen')));
+      window.__weiter = () => [...document.querySelectorAll('button')].find((b) => b.textContent.includes('Weiter')).click();
+      window.__weiter();
+      // Am Ende kommt die Aufgabe noch einmal: jetzt richtig antworten
+      document.querySelector(`.antwort[data-wert="${falsch ? 'nein' : 'ja'}"]`).click();
+      window.__weiter();
+    });
+  });
+  assert.equal(ergebnis.punkte, 0, 'Raten beim 2. Versuch bringt keine Punkte');
+  assert.deepEqual(await seite.evaluate(() => [window.__fensterOk, window.__nochmal]), [true, false]);
+  assert.equal(ergebnis.falsch.length, 1);
+  assert.equal(await seite.evaluate(() => Object.keys(JSON.parse(localStorage.getItem('chemie:kind:EMIL')).fehler).length), 1);
+  assert.deepEqual(fehler, []);
+  await kontext.close();
 });
