@@ -835,3 +835,18 @@ button.bereich { font: inherit; text-align: left; cursor: pointer; width: 100%; 
 .fortschritt-bereich.b3 .saeule { background: var(--b3); }
 .saeulen small { font-size: 0.8rem; font-weight: 700; }
 .saeule-niveau { color: var(--text-leise); font-weight: 600 !important; letter-spacing: -0.1em; }
+
+/* ---------- Prüfrunde 3 ---------- */
+.marke { flex: none; }
+.nummer { flex: none; display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--haupt-hell); color: var(--haupt-dunkel); font-size: 0.85rem; font-weight: 800; }
+.antwort { justify-content: flex-start; }
+.antworten:not(.antworten-lang) .antwort { justify-content: center; }
+.chips { justify-content: flex-start; }
+.ergebnis-gleichung { background: var(--gut-flaeche); border-radius: var(--r-klein); padding: 6px 10px; color: var(--gut-dunkel); }
+.knopf-name { font-size: 1.35rem; letter-spacing: 0; overflow-wrap: anywhere; }
+.name-kurz { font-size: 0.8rem; font-weight: 700; color: var(--text-leise); letter-spacing: 0.04em; }
+.verlauf-reihe { display: grid; grid-template-columns: 3.4em 1fr; gap: 8px; align-items: end; margin-bottom: 6px; }
+.verlauf-reihe .saeulen { height: 70px; }
+.kann-balken { display: inline-flex; gap: 3px; vertical-align: middle; margin-left: 4px; }
+.kann-balken span { width: 14px; height: 14px; border-radius: 3px; border: 2px solid var(--haupt); }
+.kann-balken span.voll { background: var(--haupt); }

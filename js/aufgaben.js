@@ -38,7 +38,7 @@ export function fehlerHinweis(a, wert) {
     const faktor = Number((String(a.formel).match(/^\s*(\d+)\s/) || [])[1] || 1);
     const gesamt = richtigeZahl(a);
     if (faktor > 1 && Number(wert) === gesamt / faktor) {
-      return `Die große ${faktor} gilt für das ganze Teilchen: ${faktor} · ${gesamt / faktor} = ${gesamt}.`;
+      return `Die große ${faktor} gilt für die ganze Formel: ${faktor} · ${gesamt / faktor} = ${gesamt}.`;
     }
   }
   return null;
@@ -67,7 +67,7 @@ export function vorleseText(a, reihenfolge = null) {
   if (a.typ === 'klappt') teile.push(`${a.oxid} und ${a.stoff}`);
   if (a.typ === 'zahl') teile.push(a.formel);
   if (a.links) teile.push(`${a.links.map((s) => (s === '?' ? 'Lücke' : s)).join(' + ')} → ${a.rechts.map((s) => (s === '?' ? 'Lücke' : s)).join(' + ')}`);
-  if (a.typ === 'wortgleichung') teile.push('Zur Auswahl: ' + (reihenfolge || a.auswahl).join(', '));
+  if (a.typ === 'wortgleichung') teile.push('Zur Auswahl: ' + (reihenfolge || a.auswahl).map((s, i) => `${i + 1}: ${s}`).join('. '));
   if (a.typ === 'sortieren') teile.push((reihenfolge || a.karten).map((k, i) => `Karte ${i + 1}: ${k}`).join('. '));
   if (a.gleichung) teile.push(a.gleichung);
   if (a.antworten && a.typ === 'auswahl') {
@@ -100,14 +100,14 @@ function markieren(knopf, richtig) {
 function auswahl(a, antworten) {
   const lang = a.antworten.some((t) => t.length > 18);
   const reihenfolge = mischen(a.antworten);
-  const knoepfe = reihenfolge.map((t) => el('button', {
+  const knoepfe = reihenfolge.map((t, nr) => el('button', {
     type: 'button', class: 'knopf antwort' + (lang ? ' antwort-lang' : ''), 'data-wert': t,
     onclick: (e) => {
       knoepfe.forEach((k) => { k.disabled = true; });
       e.currentTarget.classList.add('gewaehlt');
       antworten(t);
     }
-  }, el('span', {}, formelKnoten(t))));
+  }, el('span', { class: 'nummer', 'aria-hidden': 'true' }, String(nr + 1)), el('span', {}, formelKnoten(t))));
   const wurzel = el('div', {},
     a.gleichung ? el('p', { class: 'gleichung' }, text(a.gleichung)) : null,
     el('div', { class: 'antworten' + (lang ? ' antworten-lang' : '') }, knoepfe));
@@ -332,7 +332,11 @@ function klappt(a, antworten, daten) {
       if (!richtig && endgueltig) markieren(knoepfe[wert ? 1 : 0], true);
       if (richtig || endgueltig) {
         reiheBox.hidden = false;
-        reiheBox.replaceChildren(el('p', { class: 'tipp' }, `So stehen ${oxidElement} und ${a.stoff} in der Reihe:`),
+        const ja = klapptEs(daten.reihe, a.oxid, a.stoff);
+        const produktOxid = daten.reihe.stoffe.find((s) => s.name === a.stoff)?.oxid;
+        reiheBox.replaceChildren(
+          ja && produktOxid ? el('p', { class: 'gleichung ergebnis-gleichung' }, text(`${a.oxid} + ${a.stoff} → ${oxidElement} + ${produktOxid}`)) : null,
+          el('p', { class: 'tipp' }, `So stehen ${oxidElement} und ${a.stoff} in der Reihe:`),
           reiheMitMarken(daten, [oxidElement, a.stoff]));
       }
     },
@@ -359,7 +363,7 @@ function wortgleichung(a, antworten) {
   });
   let gesperrt = false;
   const chipFolge = mischen(a.auswahl);
-  const chips = chipFolge.map((s) => el('button', { type: 'button', class: 'knopf chip',
+  const chips = chipFolge.map((s, nr) => el('button', { type: 'button', class: 'knopf chip',
     onclick: () => {
       if (gesperrt) return;
       const frei = luecken.find((l) => !l.dataset.wert);
@@ -368,7 +372,7 @@ function wortgleichung(a, antworten) {
       frei.replaceChildren(formelKnoten(s));
       beschriften(frei, 'gefuellt');
       aktualisieren();
-    } }, formelKnoten(s)));
+    } }, el('span', { class: 'nummer', 'aria-hidden': 'true' }, String(nr + 1)), formelKnoten(s)));
   const pruefKnopf = el('button', { type: 'button', class: 'knopf knopf-haupt knopf-breit', disabled: true, onclick: () => {
     gesperrt = true;
     pruefKnopf.disabled = true;

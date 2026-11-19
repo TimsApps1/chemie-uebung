@@ -1,5 +1,5 @@
 // Ansicht für die Lehrkraft (hinter der PIN).
-import { el, nameVereinheitlichen, datumVonTag } from './hilfen.js';
+import { el, kurzname, datumVonTag } from './hilfen.js';
 import { kopfSetzen, iconKnopf, fenster, fragen, baustein } from './ui.js';
 import { pinPruefen, pinPruefsumme, freischaltcode, KURSE_PRO_BEREICH } from './codes.js';
 import { anzeigeName, kinder, kindUmbenennen, kinderZusammenfuehren, kindSperren, profil, geraet, geraetAendern } from './profil.js';
@@ -162,32 +162,39 @@ function adminSeite(umgebungRoh) {
 // Notlösung bis Etappe 2: alle Runden eines Kindes mit Code ansehen und kopieren.
 function rundenZeigen(name) {
   const p = profil(name);
-  const runden = p.runden.filter((r) => r.art === 'normal');
-  const codes = runden.map((r) => r.code).filter(Boolean);
+  const runden = p.runden;
+  const codes = runden.filter((r) => r.art === 'normal').map((r) => r.code).filter(Boolean);
   const meldung = el('span', { class: 'kopier-meldung', 'aria-live': 'polite' });
   fenster(el('div', {},
     runden.length ? el('div', { class: 'tabelle-rollen' }, el('table', { class: 'tabelle' },
       el('thead', {}, el('tr', {}, el('th', {}, 'Datum'), el('th', {}, 'Bereich'), el('th', {}, 'Punkte'), el('th', {}, '1. Versuch'))),
       el('tbody', {}, runden.slice().reverse().map((r) => el('tr', {},
-        el('td', {}, datumVonTag(r.tag)), el('td', {}, `${r.bereich} ${'★'.repeat(r.niveau)} ${r.kurs || ''}`),
-        el('td', {}, String(r.punkte)), el('td', {}, `${r.ersterVersuch}/${r.anzahl || 8}`))))))
+        el('td', {}, datumVonTag(r.tag)),
+        el('td', {}, r.art === 'fehler' ? `${r.bereich} Fehler-Runde` : `${r.bereich} ${'★'.repeat(r.niveau)} ${r.kurs || ''}`),
+        el('td', {}, r.art === 'fehler' ? '–' : String(r.punkte)), el('td', {}, `${r.ersterVersuch}/${r.anzahl || 8}`))))))
       : el('p', { class: 'leise' }, 'Noch keine Runden.'),
     codes.length ? el('button', { type: 'button', class: 'knopf', onclick: async () => {
       try { await navigator.clipboard.writeText(codes.join('\n')); meldung.textContent = `✓ ${codes.length} Codes kopiert`; } catch { meldung.textContent = 'Kopieren ging nicht.'; }
     } }, 'Alle Codes kopieren') : null,
+    el('p', { class: 'leise' }, `Endgültig ausgebesserte Fehler: ${p.ausgebessert}`),
     meldung), { titel: anzeigeName(name) });
 }
 
 function umbenennen(alt, fertig) {
-  const feld = el('input', { type: 'text', class: 'eingabe', value: alt, 'aria-label': 'Neuer Name', autocapitalize: 'characters' });
-  fenster(el('div', {}, el('p', {}, `„${alt}“ umbenennen in:`), feld,
-    el('p', { class: 'leise' }, 'Gibt es den neuen Namen schon, werden beide zusammengeführt.')), {
+  const k = kinder().find((x) => x.name === alt);
+  const feld = el('input', { type: 'text', class: 'eingabe', value: k?.anzeige || alt, 'aria-label': 'Vorname und Nachname', autocapitalize: 'words' });
+  const vorschau = el('p', { class: 'leise' });
+  const zeigeKurz = () => { vorschau.textContent = `Kurzname im Punktecode: ${kurzname(feld.value) || '–'}`; };
+  feld.addEventListener('input', zeigeKurz);
+  zeigeKurz();
+  fenster(el('div', {}, el('p', {}, `„${anzeigeName(alt)}“ umbenennen in (Vorname und Nachname):`), feld, vorschau,
+    el('p', { class: 'leise' }, 'Gibt es den neuen Kurznamen schon, werden beide zusammengeführt. Alte Punktecodes behalten den alten Namen.')), {
     titel: 'Umbenennen',
     knoepfe: (zu) => [
       el('button', { type: 'button', class: 'knopf', onclick: zu }, 'Abbrechen'),
       el('button', { type: 'button', class: 'knopf knopf-haupt', onclick: () => {
-        const neu = nameVereinheitlichen(feld.value);
-        if (neu) kindUmbenennen(alt, neu);
+        const neu = kurzname(feld.value);
+        if (neu) kindUmbenennen(alt, neu, feld.value);
         zu();
         fertig();
       } }, 'Speichern')]

@@ -30,6 +30,7 @@ Die Aufgaben stehen in `daten/aufgaben/b3.json` und `daten/aufgaben/b4.json`
 | `bild` | nein | Dateiname eines Bildes in `bilder/`, z. B. `"kupfer.jpg"` |
 | `fehler` | nein | Feste Hinweise für bestimmte falsche Antworten: `{ "falsche Antwort": "Hinweis" }` |
 | `warum` | nein | Nur ★★★ in Bereich 3: Begründungsfrage, siehe unten |
+| `hilfe_vorher` | nein | `false` = „Erklär’s mir“ zeigt vor der Antwort keine Regel (wenn die Regel die Antwort verraten würde) |
 
 **Formeln** schreibt man mit normalen Ziffern: `H2O`, `Al2O3`, `2 H2O`. Die App macht daraus
 automatisch H₂O, Al₂O₃, 2 H₂O. **Fachwörter** aus `fachwoerter.json` werden automatisch

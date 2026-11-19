@@ -1,6 +1,6 @@
 // Kinder auf diesem iPad, ihre Freischaltungen, Runden und Fortschritt.
 // Alles bleibt auf diesem iPad.
-import { lesen, schreiben } from './speicher.js';
+import { lesen, schreiben, entfernen } from './speicher.js';
 import { tagNummer, wocheVonTag } from './hilfen.js';
 
 export const LIEBLINGSELEMENTE = ['H', 'O', 'C', 'N', 'Cl', 'S', 'Na', 'Mg', 'Al', 'Zn', 'Cu', 'Fe'];
@@ -42,12 +42,16 @@ export function kindSperren(name, gesperrt) {
   kinderSpeichern(kinder().map((k) => (k.name === name ? { ...k, gesperrt } : k)));
 }
 
-export function kindUmbenennen(alt, neu) {
-  if (alt === neu) return;
-  if (kindEintrag(neu)) return kinderZusammenfuehren(alt, neu);
-  kinderSpeichern(kinder().map((k) => (k.name === alt ? { ...k, name: neu } : k)));
-  schreiben('kind:' + neu, lesen('kind:' + alt, null));
-  schreiben('kind:' + alt, null);
+// Umbenennen (Lehrkraft): neuer Kurzname und neuer Klarname. Die Runden behalten ihren alten Code.
+export function kindUmbenennen(alt, neu, anzeige = null) {
+  if (alt !== neu && kindEintrag(neu)) {
+    kinderZusammenfuehren(alt, neu);
+  } else if (alt !== neu) {
+    kinderSpeichern(kinder().map((k) => (k.name === alt ? { ...k, name: neu, frueher: [...(k.frueher || []), alt] } : k)));
+    schreiben('kind:' + neu, lesen('kind:' + alt, null));
+    entfernen('kind:' + alt);
+  }
+  if (anzeige) kinderSpeichern(kinder().map((k) => (k.name === neu ? { ...k, anzeige: anzeige.trim().slice(0, 40) } : k)));
 }
 
 // Alle Daten von "von" kommen zu "nach", "von" verschwindet.
@@ -65,7 +69,7 @@ export function kinderZusammenfuehren(von, nach) {
   b.geschichteGesehen = { ...a.geschichteGesehen, ...b.geschichteGesehen };
   profilSpeichern(nach, b);
   kinderSpeichern(kinder().filter((k) => k.name !== von));
-  schreiben('kind:' + von, null);
+  entfernen('kind:' + von);
 }
 
 // ---------- Profil eines Kindes ----------
@@ -129,6 +133,14 @@ export function naechsteRundenNummer(p) {
 
 // Für Wochenziel und Stempel zählen normale Runden und Fehler-Runden ab 4 Aufgaben.
 const zaehltFuerWoche = (r) => r.art === 'normal' || (r.anzahl || 0) >= 4;
+
+// Stempel nachtragen, z. B. wenn das Wochenziel gesenkt wurde.
+export function stempelPruefen(name) {
+  return aendern(name, (p) => {
+    const woche = wocheVonTag(tagNummer());
+    if (rundenInWoche(p, woche) >= p.wochenziel && !p.stempel.includes(woche)) p.stempel.push(woche);
+  });
+}
 
 export function rundenInWoche(p, woche = wocheVonTag(tagNummer())) {
   return p.runden.filter((r) => zaehltFuerWoche(r) && wocheVonTag(r.tag) === woche).length;
@@ -208,7 +220,14 @@ export function kannZaehlen(name, kannId) {
 // ---------- Einstellungen dieses iPads ----------
 
 export function geraet() {
-  return { ton: false, zeitlimitAus: false, serie: 1, ...(lesen('geraet', {}) || {}) };
+  const g = { ton: false, zeitlimitAus: false, serie: 1, ...(lesen('geraet', {}) || {}) };
+  if (!g.kennung) {
+    // Zwei Zeichen, die dieses iPad im Punktecode kennzeichnen (zufällig beim ersten Start).
+    const z = '23456789ABCDEFGHJKMNPQRSTUVWXYZ';
+    g.kennung = z[Math.floor(Math.random() * z.length)] + z[Math.floor(Math.random() * z.length)];
+    schreiben('geraet', g);
+  }
+  return g;
 }
 export function geraetAendern(fn) {
   const g = geraet();

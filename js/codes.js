@@ -46,32 +46,43 @@ export function pinPruefen(pin, gespeichert) {
 }
 
 // ---------- Punktecode ----------
-// LENA-B3-2-0080-0127-E5-007-K9Q
-//   Name · Bereich · Niveau · Punkte · Tag seit 01.08.2025 · Kurs (G/E) + Zahl der Aufgaben, die beim
-//   ersten Versuch richtig waren (0–8) · Rundennummer (001–999, pro Kind und iPad) · Prüfsumme
-// Das ältere Format ohne die letzten beiden Teile wird beim Einlesen weiter akzeptiert.
+// LENASCH-B3-2-0080-0127-E62-K3-007-XYZ
+//   Name · Bereich · Niveau · Punkte · Tag seit 01.08.2025
+//   · Kurs (G/E) + Aufgaben beim 1. Versuch richtig (0–8) + richtige Begründungen (0–9)
+//   · iPad-Kennung (2 Zeichen, entsteht beim ersten Start) · Rundennummer (001–999) · Prüfsumme
+// So bleiben Runden verschiedener Kinder mit gleichem Kurznamen und von verschiedenen iPads unterscheidbar.
+// Das ältere Format NAME-B3-2-0080-0127-XYZ wird beim Einlesen weiter akzeptiert.
 
-export function punktecode({ name, bereich, niveau, punkte, tag, kurs = 'G', erster = 0, nummer = 0 }) {
-  const begrenzt = (z, max) => Math.min(max, Math.max(0, Math.round(z)));
+export function punktecode({ name, bereich, niveau, punkte, tag, kurs = 'G', erster = 0, warum = 0, geraet = '22', nummer = 1 }) {
+  const begrenzt = (z, max) => Math.min(max, Math.max(0, Math.round(z || 0)));
   const teile = [name, bereich, String(niveau), String(begrenzt(punkte, 9999)).padStart(4, '0'),
-    String(begrenzt(tag, 9999)).padStart(4, '0'), `${kurs === 'E' ? 'E' : 'G'}${begrenzt(erster, 9)}`,
-    String(((nummer - 1) % 999 + 999) % 999 + 1).padStart(3, '0')];
+    String(begrenzt(tag, 9999)).padStart(4, '0'), `${kurs === 'E' ? 'E' : 'G'}${begrenzt(erster, 9)}${begrenzt(warum, 9)}`,
+    String(geraet).slice(0, 2).padEnd(2, '2'), String(((nummer - 1) % 999 + 999) % 999 + 1).padStart(3, '0')];
   return [...teile, pruefzeichen(teile.join('-'), 3)].join('-');
 }
 
-// Liefert { ok, code, name, bereich, niveau, punkte, tag, kurs, erster, nummer, grund }.
+// Liefert { ok, code, name, bereich, niveau, punkte, tag, kurs, erster, warum, geraet, nummer, grund }.
 export function punktecodeLesen(eingabe) {
   const code = eingabeSaeubern(eingabe);
-  const neu = code.match(/^([A-Z0-9]{1,8})-(B[1-4])-([1-3])-(\d{4})-(\d{4})-([GE])(\d)-(\d{3})-([A-Z0-9]{3})$/);
+  const neu = code.match(/^([A-Z0-9]{1,8})-(B[1-4])-([1-3])-(\d{4})-(\d{4})-([GE])(\d)(\d)-([A-Z0-9]{2})-(\d{3})-([A-Z0-9]{3})$/);
   const alt = !neu && code.match(/^([A-Z0-9]{1,8})-(B[1-4])-([1-3])-(\d{4})-(\d{4})-([A-Z0-9]{3})$/);
   if (!neu && !alt) return { ok: false, code, grund: 'Aufbau stimmt nicht' };
   const [, name, bereich, niveau, punkte, tag] = neu || alt;
   const teile = [name, bereich, niveau, punkte, tag];
-  if (neu) teile.push(neu[6] + neu[7], neu[8]);
-  const pruef = neu ? neu[9] : alt[6];
+  if (neu) teile.push(neu[6] + neu[7] + neu[8], neu[9], neu[10]);
+  const pruef = neu ? neu[11] : alt[6];
   if (pruefzeichen(teile.join('-'), 3) !== pruef) return { ok: false, code, grund: 'Prüfsumme stimmt nicht' };
-  return {
+  const ergebnis = {
     ok: true, code, name, bereich, niveau: Number(niveau), punkte: Number(punkte), tag: Number(tag),
-    kurs: neu ? neu[6] : null, erster: neu ? Number(neu[7]) : null, nummer: neu ? Number(neu[8]) : null
+    kurs: neu ? neu[6] : null, erster: neu ? Number(neu[7]) : null, warum: neu ? Number(neu[8]) : null,
+    geraet: neu ? neu[9] : null, nummer: neu ? Number(neu[10]) : null
   };
+  // Unmögliche Werte (z. B. mehr Punkte als möglich) gelten als ungültig.
+  if (neu) {
+    const max = 8 * 10 + (ergebnis.niveau === 3 ? 4 * 5 : 0);
+    const passt = ergebnis.punkte <= max && ergebnis.erster <= 8 && ergebnis.warum <= 4 &&
+      ergebnis.punkte >= ergebnis.erster * 10 + ergebnis.warum * 5 && (ergebnis.punkte - ergebnis.warum * 5) % 5 === 0;
+    if (!passt) return { ok: false, code, grund: 'Werte sind nicht möglich' };
+  }
+  return ergebnis;
 }

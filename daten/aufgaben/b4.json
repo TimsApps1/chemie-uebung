@@ -19,7 +19,7 @@
       "frage": "Welches Element hat das Symbol Fe?",
       "antworten": ["Eisen", "Fluor", "Gold", "Kupfer"], "richtig": "Eisen",
       "fehler": { "Fluor": "Fluor hat nur ein F als Symbol." },
-      "denkanstoss": "Fe kommt vom lateinischen Wort Ferrum, so heißt das Metall für Nägel.",
+      "denkanstoss": "Fe kommt von einem lateinischen Wort. Denk an ein Metall, aus dem man Nägel macht.",
       "erklaerung": "Fe ist das Symbol für Eisen." },
 
     { "id": "b4-1-04", "niveau": 1, "typ": "auswahl", "symbol": "❓", "kann": "symbole",
@@ -63,7 +63,7 @@
       "frage": "Welches Element hat das Symbol Cu?",
       "antworten": ["Kupfer", "Chlor", "Calcium", "Kohlenstoff"], "richtig": "Kupfer",
       "fehler": { "Chlor": "Chlor hat das Symbol Cl.", "Calcium": "Calcium hat das Symbol Ca.", "Kohlenstoff": "Kohlenstoff hat nur ein C als Symbol." },
-      "denkanstoss": "Cu kommt vom lateinischen Wort Cuprum, so heißt das rote Metall für Kabel.",
+      "denkanstoss": "Cu kommt von einem lateinischen Wort. Denk an das rote Metall in Kabeln.",
       "erklaerung": "Cu ist das Symbol für Kupfer." },
 
     { "id": "b4-1-12", "niveau": 1, "typ": "auswahl", "symbol": "❓", "kann": "symbole",

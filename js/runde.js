@@ -25,20 +25,23 @@ function passtZumKurs(a, kurs) {
   return a.kurs !== 'E' || kurs === 'E';
 }
 
-export function aufgabenWaehlen(alle, niveau, kurs) {
+// zuletzt = IDs der zuletzt gesehenen Aufgaben; sie kommen nur dran, wenn sonst zu wenig da ist.
+export function aufgabenWaehlen(alle, niveau, kurs, zuletzt = []) {
+  const kuerzlich = new Set(zuletzt);
+  const frischZuerst = (liste) => [...mischen(liste.filter((a) => !kuerzlich.has(a.id))), ...mischen(liste.filter((a) => kuerzlich.has(a.id)))];
   const pool = alle.filter((a) => a.niveau === niveau && passtZumKurs(a, kurs));
   const einstiegPool = niveau > 1
     ? alle.filter((a) => a.niveau === niveau - 1 && passtZumKurs(a, kurs))
     : pool.filter((a) => a.leicht);
   // Einstieg: höchstens eine von der App erzeugte Aufgabe.
-  const einstiegQuelle = mischen(einstiegPool.length >= 2 ? einstiegPool : pool);
+  const einstiegQuelle = frischZuerst(einstiegPool.length >= 2 ? einstiegPool : pool);
   const einstieg = [];
   for (const a of einstiegQuelle) {
     if (einstieg.length >= 2) break;
     if (a.generiert && einstieg.some((x) => x.generiert)) continue;
     einstieg.push(a);
   }
-  const rest = mischen(pool.filter((a) => !einstieg.includes(a)));
+  const rest = frischZuerst(pool.filter((a) => !einstieg.includes(a)));
   // Höchstens 2 Sortieraufgaben (dauern länger) und 3 von der App erzeugte Aufgaben pro Runde,
   // damit die selbst geschriebenen Aufgaben im Mittelpunkt bleiben.
   const auswahl = [];
@@ -134,6 +137,15 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
     return balken;
   }
 
+  // Rückmeldung immer ins Bild holen (sonst liegt sie auf dem iPad unter dem Bildschirmrand).
+  function zeigenWennNoetig(bereich) {
+    new MutationObserver(() => {
+      if (!bereich.childElementCount) return;
+      const ruhig = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      requestAnimationFrame(() => bereich.scrollIntoView({ block: 'nearest', behavior: ruhig ? 'auto' : 'smooth' }));
+    }).observe(bereich, { childList: true });
+  }
+
   function naechste() {
     aufraeumen();
     // Falsch beantwortete Aufgaben kommen am Ende noch einmal.
@@ -148,6 +160,7 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
 
   // Kurzer Konzept-Hinweis für "Erklär's mir" VOR der Antwort (verrät die Lösung nicht).
   function konzeptHilfe(a) {
+    if (a.hilfe_vorher === false) return 'Lies die Frage genau. Tippe auf ein unterstrichenes Wort, wenn du es nicht kennst. Nach deiner Antwort bekommst du hier die ganze Erklärung.';
     const kann = daten.bereiche.flatMap((b) => b.ich_kann || []).find((k) => k.id === a.kann);
     if (kann?.hilfe && (!kann.kurs || kurs === 'E')) return kann.hilfe;
     return a.denkanstoss;
@@ -159,7 +172,8 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
   function zeigeAufgabe(a) {
     let versuch = 1;
     let beantwortetSchon = false;
-    const rueck = el('div', { class: 'rueck-bereich' });
+    const rueck = el('div', { class: 'rueck-bereich', 'aria-live': 'polite' });
+    zeigenWennNoetig(rueck);
     const darstellung = aufgabeDarstellen(a, (wert) => beantwortet(wert), daten);
 
     const erklaeren = el('button', { type: 'button', class: 'knopf knopf-leise knopf-breit', onclick: () => {
@@ -255,7 +269,8 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
   // ★★★: "Warum?" mit drei Begründungen, richtige Begründung = Extrapunkte.
   function warumFrage(aufgabe) {
     const w = { typ: 'auswahl', antworten: aufgabe.warum.antworten, richtig: aufgabe.warum.richtig };
-    const rueck = el('div', { class: 'rueck-bereich' });
+    const rueck = el('div', { class: 'rueck-bereich', 'aria-live': 'polite' });
+    zeigenWennNoetig(rueck);
     const darstellung = aufgabeDarstellen(w, (wert) => {
       const richtig = wert === w.richtig;
       darstellung.ergebnis(wert, richtig, true);
@@ -286,6 +301,7 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
       ersterVersuch: stand.ersterVersuch,
       anzahl: aufgaben.length,
       warumRichtig: stand.warumRichtig,
+      gesehen: [...aufgaben.map((x) => x.id)],
       ausgebessert: stand.ausgebessert,
       falsch: stand.falsch,
       kurs

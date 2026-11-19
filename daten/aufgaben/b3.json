@@ -10,7 +10,7 @@
     { "id": "b3-1-02", "niveau": 1, "typ": "sortieren", "symbol": "↕", "kann": "reihe",
       "frage": "Sortiere von edel (oben) nach unedel (unten).",
       "karten": ["Silber", "Kupfer", "Eisen", "Zink", "Magnesium"],
-      "denkanstoss": "Ein Silberring bleibt lange blank, Magnesium wird an der Luft schnell matt.",
+      "denkanstoss": "Gold glänzt auch nach 1000 Jahren noch, Magnesium wird an der Luft schnell matt.",
       "erklaerung": "Die Reihe geht von edel nach unedel: Silber, Kupfer, Eisen, Zink, Magnesium." },
 
     { "id": "b3-1-03", "niveau": 1, "typ": "klappt", "symbol": "🔥", "leicht": true, "kann": "klappt",
@@ -152,7 +152,7 @@
       "denkanstoss": "Schau, welcher Stoff am Anfang keinen Sauerstoff hat und am Ende schon.",
       "erklaerung": "Magnesium nimmt den Sauerstoff auf und wird zu Magnesiumoxid." },
 
-    { "id": "b3-2-13", "niveau": 2, "typ": "auswahl", "symbol": "❓", "leicht": true, "kann": "redox",
+    { "id": "b3-2-13", "hilfe_vorher": false, "niveau": 2, "typ": "auswahl", "symbol": "❓", "leicht": true, "kann": "redox",
       "frage": "Was passiert bei einer Reduktion?",
       "antworten": ["Ein Stoff gibt Sauerstoff ab.", "Ein Stoff nimmt Sauerstoff auf.", "Ein Stoff schmilzt."], "richtig": "Ein Stoff gibt Sauerstoff ab.",
       "fehler": { "Ein Stoff nimmt Sauerstoff auf.": "Sauerstoff aufnehmen heißt Oxidation." },
@@ -185,7 +185,7 @@
       "denkanstoss": "Das Oxidationsmittel gibt seinen Sauerstoff an den anderen Stoff ab.",
       "erklaerung": "Eisenoxid gibt Sauerstoff an Aluminium ab, also ist Eisenoxid das Oxidationsmittel und wird selbst reduziert." },
 
-    { "id": "b3-2-18", "niveau": 2, "typ": "auswahl", "symbol": "❓", "kurs": "E", "kann": "mittel",
+    { "id": "b3-2-18", "hilfe_vorher": false, "niveau": 2, "typ": "auswahl", "symbol": "❓", "kurs": "E", "kann": "mittel",
       "frage": "Welcher Satz über das Reduktionsmittel stimmt?",
       "antworten": ["Das Reduktionsmittel wird oxidiert.", "Das Reduktionsmittel wird reduziert.", "Das Reduktionsmittel gibt Sauerstoff ab."], "richtig": "Das Reduktionsmittel wird oxidiert.",
       "fehler": { "Das Reduktionsmittel wird reduziert.": "Das Reduktionsmittel reduziert den anderen Stoff und wird dabei selbst oxidiert.", "Das Reduktionsmittel gibt Sauerstoff ab.": "Das Reduktionsmittel nimmt dem Oxid den Sauerstoff weg." },
@@ -203,7 +203,7 @@
     { "id": "b3-3-01", "niveau": 3, "typ": "sortieren", "symbol": "↕", "kann": "reihe",
       "frage": "Sortiere alle Stoffe von edel (oben) nach unedel (unten).",
       "karten": ["Gold", "Silber", "Kupfer", "Blei", "Eisen", "Kohlenstoff", "Zink", "Aluminium", "Magnesium"],
-      "denkanstoss": "Kohlenstoff steht zwischen Eisen und Zink.",
+      "denkanstoss": "Gold ist am edelsten, Magnesium am unedelsten. Wo passt Kohlenstoff hin?",
       "erklaerung": "Die ganze Reihe lautet: Gold, Silber, Kupfer, Blei, Eisen, Kohlenstoff, Zink, Aluminium, Magnesium." },
 
     { "id": "b3-3-02", "niveau": 3, "typ": "klappt", "symbol": "🔥", "leicht": true, "kann": "klappt",
@@ -314,7 +314,7 @@
         "antworten": ["Kohlenstoff nimmt dem Bleioxid den Sauerstoff weg.", "Kohlenstoff gibt Sauerstoff ab.", "Kohlenstoff wird reduziert."],
         "richtig": "Kohlenstoff nimmt dem Bleioxid den Sauerstoff weg." } },
 
-    { "id": "b3-3-15", "niveau": 3, "typ": "auswahl", "symbol": "❓", "kurs": "E", "kann": "mittel",
+    { "id": "b3-3-15", "hilfe_vorher": false, "niveau": 3, "typ": "auswahl", "symbol": "❓", "kurs": "E", "kann": "mittel",
       "frage": "Welcher Satz über das Oxidationsmittel stimmt?",
       "antworten": ["Das Oxidationsmittel gibt Sauerstoff ab und wird dabei reduziert.", "Das Oxidationsmittel nimmt Sauerstoff auf und wird dabei oxidiert.", "Das Oxidationsmittel wird oxidiert."], "richtig": "Das Oxidationsmittel gibt Sauerstoff ab und wird dabei reduziert.",
       "fehler": { "Das Oxidationsmittel nimmt Sauerstoff auf und wird dabei oxidiert.": "Das Oxidationsmittel oxidiert den anderen Stoff und wird dabei selbst reduziert.", "Das Oxidationsmittel wird oxidiert.": "Das Oxidationsmittel oxidiert den anderen Stoff und wird dabei selbst reduziert." },

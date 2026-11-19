@@ -19,6 +19,10 @@ export function schreiben(schluessel, wert) {
   }
 }
 
+export function entfernen(schluessel) {
+  try { localStorage.removeItem(PRAEFIX + schluessel); } catch { /* egal */ }
+}
+
 // Bittet Safari, die Daten nicht von selbst zu löschen.
 // Ergebnis: true = dauerhaft, false = nicht zugesagt, null = Gerät kann das nicht.
 export async function dauerhaftBitten() {

@@ -8,7 +8,7 @@ import {
   fachwoerterSetzen, datenFehlerKasten
 } from './ui.js';
 import {
-  anzeigeName, vorname, ersteWoche, naechsteRundenNummer,
+  anzeigeName, vorname, ersteWoche, naechsteRundenNummer, stempelPruefen,
   kinder, kindEintrag, kindAnlegen, profil, aendern, freischalten, rundeSpeichern, rundenInWoche,
   normaleRunden, bestwert, sterneFuer, niveauVorschlag, faelligeFehler, KANN_SCHWELLE, LIEBLINGSELEMENTE, geraet
 } from './profil.js';
@@ -92,9 +92,9 @@ function werUebt() {
   kopfSetzen();
   const liste = kinder().filter((k) => !k.gesperrt).sort((a, b) => a.name.localeCompare(b.name));
   const namen = el('div', { class: 'namen' },
-    liste.map((k) => el('button', { type: 'button', class: 'knopf knopf-name', onclick: () => startseite(k.name) },
-      baustein(k.element || 'H', { klein: true }), el('span', {}, k.name),
-      k.anzeige && k.anzeige.toUpperCase() !== k.name ? el('small', { class: 'name-voll' }, k.anzeige) : null)),
+    liste.map((k) => el('button', { type: 'button', class: 'knopf knopf-name', onclick: () => startseite(k.name), 'aria-label': k.anzeige || k.name },
+      baustein(k.element || 'H', { klein: true }), el('span', {}, vorname(k.name)),
+      el('small', { class: 'name-kurz' }, k.name))),
     el('button', { type: 'button', class: 'knopf knopf-name knopf-neu', onclick: neuerName }, icon('i-plus'), 'Neuer Name'));
   zeigen(
     datenFehlerKasten(alleFehler()),
@@ -150,7 +150,9 @@ function neuerName() {
       los.disabled = true;
       return;
     }
-    vorschau.replaceChildren(...(n ? ['So heißt du in der App und im Punktecode: ', el('b', {}, n)] : ['Schreib deinen Vornamen und Nachnamen.']));
+    const zweiWoerter = feld.value.trim().split(/\s+/).filter(Boolean).length >= 2;
+    vorschau.replaceChildren(...(n && zweiWoerter ? ['So heißt du in der App und im Punktecode: ', el('b', {}, n)] : ['✏️ Schreib deinen Vornamen und deinen Nachnamen.']));
+    if (!zweiWoerter) { los.disabled = true; return; }
     const eintrag = n && kindEintrag(n);
     if (eintrag?.gesperrt) meldung.textContent = 'Diesen Namen kannst du nicht nehmen. Frag deine Lehrkraft.';
     else if (eintrag) {
@@ -163,11 +165,12 @@ function neuerName() {
   }
   async function anlegen() {
     let n = kurzname();
-    if (!n || kindEintrag(n)?.gesperrt) return;
+    if (!n || kindEintrag(n)?.gesperrt || feld.value.trim().split(/\s+/).length < 2) return;
     const eintrag = kindEintrag(n);
     if (eintrag && eintrag.anzeige && eintrag.anzeige.toLowerCase() !== feld.value.trim().toLowerCase()) {
       // Erst fragen, ob es dasselbe Kind ist – sonst entstehen doppelte Profile.
-      const binIch = await fragen(`Auf diesem iPad gibt es schon „${eintrag.anzeige}“ (${n}) mit dem Element ${eintrag.element}. Bist du das?`,
+      const elementName = daten.elemente.find((e) => e.symbol === eintrag.element)?.name || eintrag.element;
+      const binIch = await fragen(`Auf diesem iPad gibt es schon „${eintrag.anzeige}“ mit dem Lieblingselement ${elementName}. Bist du das?`,
         'Ja, das bin ich', 'Nein, ich bin jemand anderes');
       if (binIch) return startseite(n);
       n = freieVariante(n);
@@ -363,7 +366,7 @@ function bereichSeite(name, bereichId) {
 function rundeStarten(name, bereichId, niveau) {
   const p = profil(name);
   const kurs = p.freigeschaltet[bereichId];
-  const aufgaben = aufgabenWaehlen(daten.aufgaben[bereichId] || [], niveau, kurs);
+  const aufgaben = aufgabenWaehlen(daten.aufgaben[bereichId] || [], niveau, kurs, p.zuletzt || []);
   if (!aufgaben.length) return startseite(name);
   const kannVorher = { ...p.kann };
   rundeSpielen({
@@ -439,7 +442,8 @@ function rundenende(name, ergebnis, kannVorher) {
   const tag = tagNummer();
   const nummer = naechsteRundenNummer(vorher);
   const code = punktecode({ name, bereich: ergebnis.bereich, niveau: ergebnis.niveau, punkte: ergebnis.punkte, tag,
-    kurs: ergebnis.kurs, erster: ergebnis.ersterVersuch, nummer });
+    kurs: ergebnis.kurs, erster: ergebnis.ersterVersuch, warum: ergebnis.warumRichtig, geraet: geraet().kennung, nummer });
+  aendern(name, (x) => { x.zuletzt = [...(ergebnis.gesehen || []), ...(x.zuletzt || [])].slice(0, 16); });
   const p = rundeSpeichern(name, { art: 'normal', bereich: ergebnis.bereich, niveau: ergebnis.niveau, kurs: ergebnis.kurs,
     punkte: ergebnis.punkte, ersterVersuch: ergebnis.ersterVersuch, anzahl: ergebnis.anzahl,
     warumRichtig: ergebnis.warumRichtig, falsch: ergebnis.falsch, nummer, code }, tag);
@@ -454,7 +458,21 @@ function rundenende(name, ergebnis, kannVorher) {
   const neu = [];
   if (rekord) neu.push(neuZeile('🏆', el('b', {}, `Neuer persönlicher Rekord! Vorher: ${alterBest}`), 'stark'));
   if (medailleNeu > medailleAlt) neu.push(neuZeile(medaillen(medailleNeu, true), el('b', {}, `${MEDAILLE[medailleNeu]}-Medaille auf ${sterneText(ergebnis.niveau)} erreicht!`), 'stark medaille-zeile'));
-  for (const k of neueIchKann(name, kannVorher)) neu.push(neuZeile('⭐', ['Neu: ', el('b', {}, text(k.text))], 'stark'));
+  const neuKann = neueIchKann(name, kannVorher);
+  for (const k of neuKann) neu.push(neuZeile('⭐', ['Neu: ', el('b', {}, text(k.text))], 'stark'));
+  if (!neuKann.length) {
+    // "Auf dem Weg": der Ich-kann-Satz mit dem größten Zuwachs in dieser Runde.
+    const jetzt = profil(name).kann;
+    const kandidaten = (b.ich_kann || []).filter((k) => !k.kurs || ergebnis.kurs === 'E')
+      .map((k) => ({ k, vorher: kannVorher[k.id] || 0, nachher: jetzt[k.id] || 0 }))
+      .filter((x) => x.nachher > x.vorher && x.nachher < KANN_SCHWELLE)
+      .sort((x, y) => (y.nachher - y.vorher) - (x.nachher - x.vorher));
+    if (kandidaten.length) {
+      const { k, nachher } = kandidaten[0];
+      neu.push(neuZeile('🧭', ['Auf dem Weg: ', text(k.text), ' ', el('span', { class: 'kann-balken', role: 'img', 'aria-label': `${nachher} von ${KANN_SCHWELLE}` },
+        Array.from({ length: KANN_SCHWELLE }, (_, i) => el('span', { class: i < nachher ? 'voll' : '' })))]));
+    }
+  }
   if (!letzte) neu.push(neuZeile('🚀', 'Deine erste Runde auf diesem Niveau. Gut, dass du angefangen hast!'));
   else if (ergebnis.ersterVersuch > letzte.ersterVersuch) neu.push(neuZeile('↑', `Letztes Mal ${letzte.ersterVersuch}, heute ${ergebnis.ersterVersuch} Aufgaben gleich beim ersten Versuch richtig.`));
   if (ergebnis.ausgebessert) neu.push(neuZeile('✓', `${ergebnis.ausgebessert} ${ergebnis.ausgebessert === 1 ? 'Fehler' : 'Fehler'} am Ende ausgebessert.`));
@@ -519,7 +537,8 @@ async function inZwischenablage(textInhalt, knoten) {
 // Code einer gespeicherten Runde (ältere Runden ohne gespeicherten Code bekommen ihn nachträglich).
 function codeVonRunde(name, p, r, i) {
   return r.code || punktecode({ name, bereich: r.bereich, niveau: r.niveau, punkte: r.punkte, tag: r.tag,
-    kurs: r.kurs || p.freigeschaltet[r.bereich] || 'G', erster: r.ersterVersuch || 0, nummer: r.nummer ?? i + 1 });
+    kurs: r.kurs || p.freigeschaltet[r.bereich] || 'G', erster: r.ersterVersuch || 0, warum: r.warumRichtig || 0,
+    geraet: geraet().kennung, nummer: r.nummer ?? i + 1 });
 }
 
 // ---------- Mein Fortschritt ----------
@@ -532,7 +551,7 @@ function meinFortschritt(name) {
 
   const zielWahl = el('div', { class: 'zeile', role: 'radiogroup', 'aria-label': 'Wochenziel' }, [1, 2, 3].map((n) =>
     el('button', { type: 'button', class: 'knopf' + (p.wochenziel === n ? ' knopf-haupt' : ''), role: 'radio', 'aria-checked': String(p.wochenziel === n),
-      onclick: () => { aendern(name, (x) => { x.wochenziel = n; }); meinFortschritt(name); } }, `${n} ${n === 1 ? 'Runde' : 'Runden'}`)));
+      onclick: () => { aendern(name, (x) => { x.wochenziel = n; }); stempelPruefen(name); meinFortschritt(name); } }, `${n} ${n === 1 ? 'Runde' : 'Runden'}`)));
 
   // Stempelkarte wächst: von der ersten Übungswoche bis heute (höchstens 8 Wochen sichtbar).
   const start = Math.max(ersteWoche(p), heute - 7);
@@ -563,12 +582,18 @@ function meinFortschritt(name) {
         el('span', {}, text(k.text)));
     });
     // Verlauf: die letzten 10 Runden als Säulen (Aufgaben beim ersten Versuch richtig).
-    const letzte10 = p.runden.filter((r) => r.art === 'normal' && r.bereich === b.id).slice(-10);
-    const verlauf = letzte10.length >= 2 ? el('div', { class: 'verlauf' },
-      el('h4', {}, 'Meine letzten Runden'),
-      el('ol', { class: 'saeulen', 'aria-label': 'Aufgaben beim ersten Versuch richtig, letzte Runden: ' + letzte10.map((r) => r.ersterVersuch).join(', ') },
-        letzte10.map((r) => el('li', { style: `--h:${Math.max(4, (r.ersterVersuch / (r.anzahl || 8)) * 100)}%` },
-          el('span', { class: 'saeule' }), el('small', {}, String(r.ersterVersuch)), el('small', { class: 'saeule-niveau' }, sterneText(r.niveau))))),
+    // Getrennt nach Niveau, damit ein Wechsel zu ★★★ nicht wie ein Rückschritt aussieht.
+    const reihen = [1, 2, 3].map((n) => {
+      const letzte = p.runden.filter((r) => r.art === 'normal' && r.bereich === b.id && r.niveau === n).slice(-10);
+      if (letzte.length < 2) return null;
+      return el('div', { class: 'verlauf-reihe' },
+        el('span', { class: 'sterne' }, sterneText(n)),
+        el('ol', { class: 'saeulen', 'aria-label': `${sterneText(n)}: Aufgaben beim ersten Versuch richtig: ` + letzte.map((r) => r.ersterVersuch).join(', ') },
+          letzte.map((r) => el('li', { style: `--h:${Math.max(4, (r.ersterVersuch / (r.anzahl || 8)) * 100)}%` },
+            el('span', { class: 'saeule' }), el('small', {}, String(r.ersterVersuch))))));
+    }).filter(Boolean);
+    const verlauf = reihen.length ? el('div', { class: 'verlauf' },
+      el('h4', {}, 'Meine letzten Runden'), ...reihen,
       el('p', { class: 'tipp' }, 'Zahl = Aufgaben gleich beim ersten Versuch richtig.')) : null;
     return el('section', { class: `karte fortschritt-bereich ${b.id.toLowerCase()}` },
       el('h3', {}, b.titel),

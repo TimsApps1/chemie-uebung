@@ -79,6 +79,45 @@ function klapptAufgaben(reihe, vorhanden) {
   return ausgeglichen;
 }
 
+// ---------- Bereich 3: Wortgleichungen und "Wer wird reduziert?" ----------
+// Nur für Paare, bei denen die Reaktion laut Reihe klappt. Abstand 1–3 (nicht trivial).
+
+function gleichungsAufgaben(reihe, vorhanden) {
+  const stoffe = reihe.stoffe;
+  const verboten = new Set((reihe.nicht_abfragen || []).map(([o, s]) => `${o}|${s}`));
+  const schonDa = new Set(vorhanden.filter((a) => a.links).map((a) => a.links.join('|')));
+  const liste = [];
+  stoffe.forEach((oxidStoff, i) => {
+    if (!oxidStoff.oxid || oxidStoff.name === 'Kohlenstoff') return;
+    stoffe.forEach((stoff, j) => {
+      const abstand = j - i;
+      if (abstand < 1 || abstand > 3 || !stoff.oxid) return;
+      const o = oxidStoff.oxid; const s = stoff.name; const e = oxidStoff.name; const so = stoff.oxid;
+      if (verboten.has(`${o}|${s}`) || schonDa.has(`${o}|${s}`)) return;
+      const niveau = abstand === 1 ? 3 : 2;
+      const id = `${o}-${s}`.toLowerCase();
+      liste.push({
+        id: `gen-w-${id}`, niveau, typ: 'wortgleichung', symbol: '✏️', kann: 'wortgleichung', generiert: true,
+        frage: 'Ergänze die Wortgleichung.', links: [o, s], rechts: ['?', '?'], richtig: [e, so],
+        auswahl: [e, so, o, s, 'Sauerstoff'],
+        denkanstoss: `Der Sauerstoff wandert vom ${o} zum ${s}.`,
+        erklaerung: `${s} nimmt dem ${o} den Sauerstoff weg. So entstehen ${e} und ${so}.`
+      });
+      liste.push({
+        id: `gen-r-${id}`, niveau, typ: 'antippen', symbol: '✋', kann: 'redox', generiert: true,
+        frage: 'Welcher Stoff wird reduziert?', links: [o, s], rechts: [e, so], richtig: o,
+        fehler: {
+          [e]: `${e} hat keinen Sauerstoff. Wer gibt Sauerstoff ab?`,
+          [s]: `${s} nimmt Sauerstoff auf. Das heißt oxidiert.`
+        },
+        denkanstoss: 'Reduziert wird der Stoff, der Sauerstoff abgibt.',
+        erklaerung: `Das ${o} gibt seinen Sauerstoff ab. Es wird reduziert, und ${e} entsteht.`
+      });
+    });
+  });
+  return liste;
+}
+
 // ---------- Bereich 4: Symbole und Namen ----------
 
 function symbolAufgaben(elemente, vorhanden) {
@@ -157,6 +196,6 @@ function zahlAufgaben(vorhanden) {
 
 export function aufgabenErzeugen(d) {
   if (d.app.aufgaben_erzeugen === false) return;
-  if (d.aufgaben.B3 && d.reihe) d.aufgaben.B3.push(...klapptAufgaben(d.reihe, d.aufgaben.B3));
+  if (d.aufgaben.B3 && d.reihe) d.aufgaben.B3.push(...klapptAufgaben(d.reihe, d.aufgaben.B3), ...gleichungsAufgaben(d.reihe, d.aufgaben.B3));
   if (d.aufgaben.B4 && d.elemente.length) d.aufgaben.B4.push(...symbolAufgaben(d.elemente, d.aufgaben.B4), ...zahlAufgaben(d.aufgaben.B4));
 }

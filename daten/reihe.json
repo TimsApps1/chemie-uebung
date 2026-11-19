@@ -8,7 +8,7 @@
     { "name": "Kupfer",      "symbol": "Cu", "oxid": "Kupferoxid" },
     { "name": "Blei",        "symbol": "Pb", "oxid": "Bleioxid" },
     { "name": "Eisen",       "symbol": "Fe", "oxid": "Eisenoxid" },
-    { "name": "Kohlenstoff", "symbol": "C",  "oxid": "Kohlenstoffdioxid", "hinweis": "kein Metall, kann aber den Oxiden der edleren Metalle den Sauerstoff wegnehmen" },
+    { "name": "Kohlenstoff", "symbol": "C",  "oxid": "Kohlenstoffdioxid", "hinweis": "kein Metall. Nimmt den Oxiden von Eisen, Blei und Kupfer den Sauerstoff weg." },
     { "name": "Zink",        "symbol": "Zn", "oxid": "Zinkoxid" },
     { "name": "Aluminium",   "symbol": "Al", "oxid": "Aluminiumoxid" },
     { "name": "Magnesium",   "symbol": "Mg", "oxid": "Magnesiumoxid" }

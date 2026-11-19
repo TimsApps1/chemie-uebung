@@ -22,7 +22,7 @@
         {
           "id": "symbole",
           "text": "Ich kann Elementsymbole richtig schreiben und lesen.",
-          "hilfe": "Ein Symbol hat einen oder zwei Buchstaben: der erste ist groß, der zweite klein. Manche Symbole kommen aus dem Lateinischen, zum Beispiel Fe von Ferrum (Eisen)."
+          "hilfe": "Ein Symbol hat einen oder zwei Buchstaben. Der erste ist groß, der zweite klein. Manche Symbole kommen aus dem Lateinischen."
         },
         {
           "id": "zaehlen",
@@ -68,7 +68,7 @@
         {
           "id": "klappt",
           "text": "Ich kann vorhersagen, ob ein Stoff einem Oxid den Sauerstoff wegnimmt.",
-          "hilfe": "Ein unedlerer Stoff nimmt dem Oxid eines edleren Stoffes beim Erhitzen den Sauerstoff weg, weil er Sauerstoff stärker festhält."
+          "hilfe": "Such beide Stoffe in der Reihe. Der unedlere Stoff hält Sauerstoff stärker fest. Er nimmt dem Oxid den Sauerstoff weg."
         },
         {
           "id": "wortgleichung",

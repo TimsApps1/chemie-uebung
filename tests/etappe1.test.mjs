@@ -38,19 +38,20 @@ test('Freischaltcodes: gültig, getrennt nach Kurs, ohne Verwechslungszeichen', 
   assert.equal(freischaltcodePruefen(freischaltcode('B3', 'G', 1), 2), null, 'alte Serie gesperrt');
 });
 
-test('Punktecode: Aufbau mit Kurs, Erstversuchen und Rundennummer; Prüfsumme erkennt Änderungen', () => {
-  const code = punktecode({ name: 'LENA', bereich: 'B3', niveau: 2, punkte: 80, tag: 127, kurs: 'E', erster: 6, nummer: 7 });
-  assert.match(code, /^LENA-B3-2-0080-0127-E6-007-[23456789ABCDEFGHJKMNPQRSTUVWXYZ]{3}$/);
+test('Punktecode: Kurs, Erstversuche, Begründungen, iPad-Kennung, Rundennummer; Prüfsumme und Plausibilität', () => {
+  const code = punktecode({ name: 'LENASCH', bereich: 'B3', niveau: 3, punkte: 80, tag: 127, kurs: 'E', erster: 6, warum: 2, geraet: 'K3', nummer: 7 });
+  assert.match(code, /^LENASCH-B3-3-0080-0127-E62-K3-007-[23456789ABCDEFGHJKMNPQRSTUVWXYZ]{3}$/);
   const gelesen = punktecodeLesen(code.toLowerCase().replace(/-/g, ' - '));
   assert.equal(gelesen.ok, true);
-  assert.deepEqual([gelesen.punkte, gelesen.kurs, gelesen.erster, gelesen.nummer], [80, 'E', 6, 7]);
-  for (const [alt, neu] of [['0080', '0090'], ['LENA', 'LENE'], ['E6', 'G6'], ['E6', 'E7'], ['-007-', '-008-']]) {
+  assert.deepEqual([gelesen.punkte, gelesen.kurs, gelesen.erster, gelesen.warum, gelesen.geraet, gelesen.nummer], [80, 'E', 6, 2, 'K3', 7]);
+  for (const [alt, neu] of [['0080', '0090'], ['LENASCH', 'LENASCK'], ['E62', 'G62'], ['E62', 'E72'], ['-K3-', '-K4-'], ['-007-', '-008-']]) {
     assert.equal(punktecodeLesen(code.replace(alt, neu)).ok, false, `${alt} -> ${neu}`);
   }
   assert.equal(punktecodeLesen('LENA-B3-2-0080-0127-DQS').ok, true, 'älteres Format');
+  // Unmögliche Werte sind ungültig, auch mit richtiger Prüfsumme
+  assert.equal(punktecodeLesen(punktecode({ name: 'X', bereich: 'B3', niveau: 2, punkte: 999, tag: 1, erster: 8 })).ok, false);
+  assert.equal(punktecodeLesen(punktecode({ name: 'X', bereich: 'B3', niveau: 1, punkte: 30, tag: 1, erster: 8 })).ok, false);
   assert.match(punktecode({ name: 'TOM', bereich: 'B4', niveau: 1, punkte: 60, tag: 10, nummer: 1000 }), /-001-/);
-  assert.notEqual(punktecode({ name: 'TOM', bereich: 'B4', niveau: 1, punkte: 60, tag: 10, nummer: 1 }),
-    punktecode({ name: 'TOM', bereich: 'B4', niveau: 1, punkte: 60, tag: 10, nummer: 2 }));
 });
 
 test('Kurzname aus Vor- und Nachname', async () => {
@@ -59,6 +60,7 @@ test('Kurzname aus Vor- und Nachname', async () => {
   assert.equal(kurzname('Mohammed Kaya'), 'MOHAMKAY');
   assert.equal(kurzname('Lena Özil'), 'LENAOEZ');
   assert.equal(kurzname('Tom'), 'TOM');
+  assert.equal(kurzname('Tom Müller'), 'TOMMUE');
   assert.equal(kurzname('Ayşe Yılmaz'), 'AYSEYIL');
 });
 
@@ -69,6 +71,7 @@ test('Vorlesen: Formeln und Symbole werden buchstabiert', async () => {
   assert.equal(vorlesbar('3 CO2'), '3 mal C O 2');
   assert.equal(vorlesbar('2 MgCl2'), '2 mal M klein g C klein l 2');
   assert.equal(vorlesbar('Klasse 9 Chemie'), 'Klasse 9 Chemie');
+  assert.equal(vorlesbar('2 H-Atome und 1 O-Atom'), '2 H-Atome und 1 O-Atom');
   assert.match(vorlesbar('Welches Symbol hat Natrium? Na, NA'), /N klein a, N A/);
 });
 
@@ -298,19 +301,19 @@ test('Sortieren geht mit Antippen und mit Ziehen', async () => {
 test('Ganze Runde spielen: Punktecode am Ende ist gültig, Abbrechen zählt nicht', async () => {
   const { kontext, seite, fehler } = await neueSeite({ width: 375, height: 800 });
   await seite.evaluate((code) => {
-    localStorage.setItem('chemie:kinder', JSON.stringify([{ name: 'TOM', element: 'Fe', gesperrt: false }]));
+    localStorage.setItem('chemie:kinder', JSON.stringify([{ name: 'TOM', anzeige: 'Tom Becker', element: 'Fe', gesperrt: false }]));
     localStorage.setItem('chemie:kind:TOM', JSON.stringify({ freigeschaltet: { B4: 'G' }, geschichteGesehen: { B4: true } }));
     return code;
   });
   await seite.reload();
-  await seite.getByRole('button', { name: /TOM/ }).click();
+  await seite.getByRole('button', { name: /Tom/ }).click();
 
   // Abbrechen
   await seite.locator('button.bereich.b4').click();
   await seite.locator('.niveau-knopf').first().click();
   await seite.getByRole('button', { name: 'Runde abbrechen' }).click();
   await seite.getByRole('button', { name: 'Ja, abbrechen' }).click();
-  await seite.getByRole('heading', { name: 'Hallo TOM!' }).waitFor();
+  await seite.getByRole('heading', { name: 'Hallo Tom!' }).waitFor();
   assert.equal(await seite.evaluate(() => (JSON.parse(localStorage.getItem('chemie:kind:TOM')).runden || []).length), 0);
 
   // Runde zu Ende spielen (irgendwelche Antworten)
@@ -493,5 +496,70 @@ test('„Klappt es?“: Falsch beim ersten Versuch = Lösung, 0 Punkte, kommt wi
   assert.equal(ergebnis.falsch.length, 1);
   assert.equal(await seite.evaluate(() => Object.keys(JSON.parse(localStorage.getItem('chemie:kind:EMIL')).fehler).length), 1);
   assert.deepEqual(fehler, []);
+  await kontext.close();
+});
+
+test('Nach einer falschen Antwort ist der nächste Knopf sichtbar (iPad 768×950)', async () => {
+  const { kontext, seite, fehler } = await neueSeite({ width: 768, height: 950 });
+  await seite.evaluate(async () => {
+    localStorage.setItem('chemie:kinder', JSON.stringify([{ name: 'EMIL', anzeige: 'Emil Roth', element: 'C', gesperrt: false }]));
+    const { rundeSpielen } = await import('./js/runde.js');
+    const { allesLaden } = await import('./js/daten.js');
+    const d = await allesLaden();
+    const a = d.aufgaben.B4.find((x) => x.typ === 'zahl' && !x.generiert);
+    rundeSpielen({ ziel: document.getElementById('inhalt'), daten: d, name: 'EMIL', bereich: 'B4', niveau: 1, kurs: 'G', aufgaben: [a], art: 'normal', fertig: () => {} });
+  });
+  await seite.locator('.taste').first().waitFor();
+  await seite.getByRole('button', { name: '9', exact: true }).click();
+  await seite.getByRole('button', { name: '9', exact: true }).click();
+  await seite.getByRole('button', { name: 'Prüfen' }).click();
+  const knopf = seite.getByRole('button', { name: 'Nochmal versuchen' });
+  await knopf.waitFor();
+  await seite.waitForTimeout(700);
+  assert.ok(await knopf.evaluate((k) => { const r = k.getBoundingClientRect(); return r.bottom <= window.innerHeight && r.top >= 0; }), 'Knopf liegt außerhalb');
+  assert.deepEqual(fehler, []);
+  await kontext.close();
+});
+
+test('Antwortknöpfe tragen Nummern wie beim Vorlesen', async () => {
+  const { kontext, seite } = await neueSeite();
+  const ok = await seite.evaluate(async () => {
+    const { aufgabeDarstellen, vorleseText } = await import('./js/aufgaben.js');
+    const a = { typ: 'auswahl', frage: 'Was?', antworten: ['Eisen', 'Kupfer', 'Zink'], richtig: 'Eisen' };
+    const d = aufgabeDarstellen(a, () => {}, {});
+    document.getElementById('inhalt').replaceChildren(d.wurzel);
+    const text = vorleseText(a, d.reihenfolge);
+    return [...document.querySelectorAll('.antwort')].every((k) => text.includes(`Antwort ${k.querySelector('.nummer').textContent}: ${k.dataset.wert}`));
+  });
+  assert.equal(ok, true);
+  await kontext.close();
+});
+
+test('Hilfe vor der Antwort verrät bei Auswahl-Aufgaben nie die Lösung', async () => {
+  const { d } = await datenLaden();
+  const hilfe = Object.fromEntries(d.bereiche.flatMap((b) => b.ich_kann || []).map((k) => [k.id, k.hilfe || '']));
+  for (const a of [...d.aufgaben.B3, ...d.aufgaben.B4]) {
+    if (a.typ !== 'auswahl' || a.hilfe_vorher === false || !a.kann) continue;
+    const r = String(a.richtig).replace(/\.$/, '');
+    if (r.length > 3) assert.ok(!hilfe[a.kann].includes(r), `${a.id}: Hilfe enthält „${r}“`);
+  }
+});
+
+test('Umbenennen bildet den Kurznamen richtig und ändert den Klarnamen', async () => {
+  const { kontext, seite } = await neueSeite();
+  const ergebnis = await seite.evaluate(async () => {
+    localStorage.setItem('chemie:kinder', JSON.stringify([{ name: 'TOMMUE', anzeige: 'Tom Müler', element: 'C', gesperrt: false }]));
+    localStorage.setItem('chemie:kind:TOMMUE', JSON.stringify({ freigeschaltet: { B4: 'G' } }));
+    const { kindUmbenennen } = await import('./js/profil.js');
+    const { kurzname } = await import('./js/hilfen.js');
+    kindUmbenennen('TOMMUE', kurzname('Tom Müller'), 'Tom Müller');
+    kindUmbenennen('TOMMUE', kurzname('Tim Müller'), 'Tim Müller');
+    return { kinder: JSON.parse(localStorage.getItem('chemie:kinder')), alt: localStorage.getItem('chemie:kind:TOMMUE'), neu: localStorage.getItem('chemie:kind:TIMMUE') };
+  });
+  assert.equal(ergebnis.kinder.length, 1);
+  assert.equal(ergebnis.kinder[0].name, 'TIMMUE');
+  assert.equal(ergebnis.kinder[0].anzeige, 'Tim Müller');
+  assert.equal(ergebnis.alt, null);
+  assert.ok(ergebnis.neu);
   await kontext.close();
 });

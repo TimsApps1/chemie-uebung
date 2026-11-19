@@ -32,7 +32,7 @@
       ],
       "artikel": "das",
       "mehrzahl": "die Teilchen",
-      "erklaerung": "Ein kleinstes Stück eines Stoffes, zum Beispiel ein Wasser-Teilchen aus 2 H-Atomen und 1 O-Atom."
+      "erklaerung": "Ein kleinstes Stück eines Stoffes, zum Beispiel ein Wasser-Teilchen H2O aus 2 H-Atomen und 1 O-Atom."
     },
     {
       "wort": "Symbol",
@@ -97,7 +97,7 @@
       ],
       "artikel": "das",
       "mehrzahl": "die Erze",
-      "erklaerung": "Ein Gestein, in dem ein Metall zusammen mit anderen Stoffen steckt, oft mit Sauerstoff."
+      "erklaerung": "Ein Gestein, in dem eine Verbindung eines Metalls steckt, oft ein Oxid."
     },
     {
       "wort": "edel",
@@ -276,6 +276,18 @@
       "artikel": "das",
       "mehrzahl": "",
       "erklaerung": "Ein Gemisch aus Aluminium und Eisenoxid. Es wird beim Anzünden sehr heiß, und flüssiges Eisen entsteht."
+    },
+    {
+      "wort": "Stoff",
+      "formen": [
+        "Stoff",
+        "Stoffe",
+        "Stoffes",
+        "Stoffen"
+      ],
+      "artikel": "der",
+      "mehrzahl": "die Stoffe",
+      "erklaerung": "Alles, woraus Dinge bestehen, zum Beispiel Eisen, Wasser oder Sauerstoff."
     }
   ]
 }

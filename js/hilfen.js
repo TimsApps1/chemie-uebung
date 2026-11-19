@@ -152,7 +152,7 @@ function istSymbolFolge(wort) {
 // Für die Sprachausgabe: Formeln und Symbole werden buchstabiert, "2 H2O" -> "2 mal H 2 O".
 export function vorlesbar(text) {
   return String(text)
-    .replace(/\b(\d+) (?=([A-Z][A-Za-z0-9]*)\b)/g, (m, zahl, wort) => (istSymbolFolge(wort) && /[a-z\d]|^[A-Z]{1,3}$/.test(wort) ? `${zahl} mal ` : m))
+    .replace(/\b(\d+) (?=([A-Z][A-Za-z0-9]*)(?![-\w]))/g, (m, zahl, wort) => (istSymbolFolge(wort) && /[a-z\d]|^[A-Z]{1,3}$/.test(wort) ? `${zahl} mal ` : m))
     .replace(/\b[A-Z][A-Za-z0-9]*\b/g, (w) => {
       if (/\d/.test(w) && istFormel(w)) return buchstabieren(w);
       if (w.length <= 4 && istSymbolFolge(w) && (w.length > 1 || bekannteSymbole.has(w))) return buchstabieren(w);

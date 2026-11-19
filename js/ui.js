@@ -218,6 +218,8 @@ let fachwortMuster = null;
 export function fachwoerterSetzen(liste) {
   fachwortListe = liste;
   const formen = liste.flatMap((w) => (w.formen?.length ? w.formen : [w.wort]))
+    .flatMap((f) => [f, f[0].toUpperCase() + f.slice(1)])
+    .filter((f, i, alle) => alle.indexOf(f) === i)
     .sort((a, b) => b.length - a.length)
     .map((f) => f.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
   fachwortMuster = formen.length
@@ -247,7 +249,8 @@ export function text(roh) {
     const start = m.index + m[1].length;
     frag.append(formelKnoten(s.slice(letzte, start)));
     const wort = m[2];
-    const eintrag = fachwortListe.find((w) => (w.formen?.length ? w.formen : [w.wort]).includes(wort));
+    const klein = (x) => x[0].toLowerCase() + x.slice(1);
+    const eintrag = fachwortListe.find((w) => (w.formen?.length ? w.formen : [w.wort]).some((f) => f === wort || klein(f) === klein(wort)));
     frag.append(el('button', {
       type: 'button', class: 'fachwort',
       onclick: (e) => { e.stopPropagation(); fachwortZeigen(eintrag); }
