@@ -56,7 +56,12 @@ export function ausgleichHinweis(a, zahlen) {
   const z = w.zeilen.find((x) => !x.gleich);
   if (!z) return null;
   const weniger = z.links < z.rechts ? 'links' : 'rechts';
-  return `Zähl die ${z.symbol}-Atome: links ${z.links}, rechts ${z.rechts}. Nimm ${weniger} mit dem Plus-Knopf ein ganzes Teilchen dazu, das ${z.symbol} enthält – oder auf der anderen Seite mit dem Minus-Knopf eins weg.`;
+  const mehrSeite = weniger === 'links' ? 'rechts' : 'links';
+  // Minus nur vorschlagen, wenn es auf der anderen Seite wirklich geht (Zahl über 1).
+  const andere = weniger === 'links' ? a.produkte.map((s, i) => [s, zahlen[a.edukte.length + i]]) : a.edukte.map((s, i) => [s, zahlen[i]]);
+  const minusGeht = andere.some(([s, n]) => n > 1 && formelZaehlung(s.formel)[z.symbol]);
+  return `Links ${z.links} ${z.symbol}, rechts ${z.rechts} ${z.symbol}. Tippe ${weniger} auf + bei einem Stoff mit ${z.symbol}.` +
+    (minusGeht ? ` Oder ${mehrSeite} auf −.` : '');
 }
 
 // ---------- Index-Falle: „Atom anhängen“ ----------

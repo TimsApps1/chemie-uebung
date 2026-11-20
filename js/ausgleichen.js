@@ -45,8 +45,9 @@ export function gleichungsBaustelle(a, elemente, { nurAnsehen = false, zahlen: a
   const waageBild = el('div');
   // Ein einziges, festes Live-Element für den Waagensatz: VoiceOver sagt jede Änderung an.
   const waageSatz = el('p', { class: 'waage-satz', 'aria-live': 'polite' });
-  const waageBox = el('div', { class: 'waage-box' }, waageBild);
+  const waageBox = el('div', { class: 'waage-box' }, waageBild, waageSatz);
   const status = el('p', { class: 'bau-status', 'aria-live': 'polite' });
+  const statusZeile = el('div', { class: 'bau-status-zeile', hidden: true }, status, vorlesenKnopf(() => status.textContent, 'Hinweis vorlesen'));
 
   function karte(stoff, i) {
     const n = zahlen[i];
@@ -105,11 +106,12 @@ export function gleichungsBaustelle(a, elemente, { nurAnsehen = false, zahlen: a
     }, 300);
   }
 
-  const melden = (t, art = '') => { status.textContent = t; status.className = `bau-status ${art}`; };
+  const melden = (t, art = '') => { status.textContent = t; status.className = `bau-status ${art}`; statusZeile.hidden = !t; };
 
   function waageZeichnen() {
     if (!waageOffen) {
       waageBild.replaceChildren(el('div', { class: 'waage verdeckt' }, el('p', {}, '⚖ Die Waage ist verdeckt. Zähl die Atome selbst.')));
+      waageSatz.textContent = '';
       return;
     }
     const w = waage(a, zahlen);
@@ -125,8 +127,8 @@ export function gleichungsBaustelle(a, elemente, { nurAnsehen = false, zahlen: a
         baustein(z.symbol, { klein: true, metall: elemente.find((e) => e.symbol === z.symbol)?.metall }),
         el('span', { class: 'waage-zahlen' }, el('span', { class: 'nur-vorlesen' }, `${z.symbol}: links `), String(z.links),
           el('span', { 'aria-hidden': 'true' }, ' | '), el('span', { class: 'nur-vorlesen' }, ', rechts '), String(z.rechts)),
-        el('b', { class: 'marke-zelle' }, el('span', { 'aria-hidden': 'true' }, z.gleich ? '✓' : '✗'), el('span', { class: 'nur-vorlesen' }, z.gleich ? ' gleich' : ' ungleich'))))),
-      waageSatz));
+        el('b', { class: 'marke-zelle' }, el('span', { 'aria-hidden': 'true' }, z.gleich ? '✓' : '✗'), el('span', { class: 'nur-vorlesen' }, z.gleich ? ' gleich' : ' ungleich')))))));
+    waageBox.classList.toggle('gerade', w.ausgeglichen);
     const satz = `${lage}${w.ausgeglichen && !w.kleinste ? ' Aber es geht mit kleineren Zahlen davor.' : ''}`;
     if (waageSatz.textContent !== satz) waageSatz.textContent = satz;
   }
@@ -164,7 +166,7 @@ export function gleichungsBaustelle(a, elemente, { nurAnsehen = false, zahlen: a
 
   zeichnen();
   return {
-    wurzel: el('div', { class: 'ausgleichen' }, kartenBox, tipp, status, waageBox),
+    wurzel: el('div', { class: 'ausgleichen' }, kartenBox, tipp, statusZeile, waageBox),
     zahlen: () => [...zahlen],
     setzeZahlen(neu) { zahlen = [...neu]; zeichnen(); },
     waageZeigen() { waageOffen = true; waageZeichnen(); },
@@ -188,7 +190,8 @@ export function ausgleichenAufgabe(a, antworten, daten, { rundeNiveau = null } =
     beiAenderung: (zahlen) => {
       const w = waage(a, zahlen);
       if (w.geloest && !verdeckt && !fertig) { fertig = true; pruefKnopf.disabled = true; antworten(zahlen); return; }
-      if (w.ausgeglichen && !w.kleinste) bau.melden('💡 Die Waage steht gerade. Es geht aber mit kleineren Zahlen davor.', 'tipp');
+      // Bei verdeckter Waage (★★★) verrät die App nichts – auch nicht, dass sie gerade steht.
+      if (!verdeckt && w.ausgeglichen && !w.kleinste) bau.melden('💡 Die Waage steht gerade. Es geht aber mit kleineren Zahlen davor.', 'tipp');
       else bau.melden('');
     }
   });
@@ -221,9 +224,11 @@ export function ausgleichenAufgabe(a, antworten, daten, { rundeNiveau = null } =
       hilfeGezeigt = true;
       const h = ausgleichHinweis(a, bau.zahlen());
       bau.melden(`💡 ${h || a.denkanstoss}`, 'tipp');
-      pruefKnopf.textContent = 'Lösung zeigen (zählt als Versuch)';
+      pruefKnopf.textContent = 'Prüfen (zählt als Versuch)';
       return;
     }
+    // Der Hinweis steht gleich in der Rückmeldung – nicht doppelt in der Statuszeile.
+    bau.melden('');
     fertig = true;
     pruefKnopf.disabled = true;
     bau.waageZeigen();
@@ -251,7 +256,7 @@ export function ausgleichenAufgabe(a, antworten, daten, { rundeNiveau = null } =
     nochmal(hinweis) {
       fertig = false;
       hilfeGezeigt = true;
-      pruefKnopf.textContent = verdeckt ? '⚖ Wiegen und prüfen' : 'Lösung zeigen (zählt als Versuch)';
+      pruefKnopf.textContent = verdeckt ? '⚖ Wiegen und prüfen' : 'Prüfen (zählt als Versuch)';
       pruefKnopf.disabled = false;
       bau.entsperren();
       if (hinweis) bau.melden(`💡 ${hinweis}`, 'tipp');

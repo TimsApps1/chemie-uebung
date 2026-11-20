@@ -484,7 +484,8 @@
     "Beide Zahlen": "Die kleine Zahl gehört zum Stoff. Nur die große Zahl davor darfst du ändern."
    },
    "denkanstoss": "Was passiert mit dem Stoff, wenn du die kleine Zahl änderst?",
-   "erklaerung": "Nur die große Zahl davor. Sie sagt, wie viele Teilchen es sind."
+   "erklaerung": "Nur die große Zahl davor. Sie sagt, wie viele Teilchen es sind.",
+   "hilfe_vorher": false
   },
   {
    "id": "b2-2-01",
@@ -562,7 +563,7 @@
      "name": "Eisen(III)-oxid",
      "falle": {
       "formel": "Fe2O4",
-      "text": "Aus Fe2O3 würde Fe2O4. Das passt nicht zu den Noppen: 2 Fe(III) haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus Fe2O3 würde Fe2O4. Das ist nicht mehr Eisen(III)-oxid – Eisen(III)-oxid ist immer Fe2O3. Es passt auch nicht zu den Noppen: 2 Fe(III) haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     }
    ],
@@ -573,7 +574,7 @@
     1
    ],
    "denkanstoss": "Fe2O3 braucht 3 O-Atome. Wie viele CuO geben 3 O ab?",
-   "erklaerung": "3 CuO + 2 Fe → 3 Cu + Fe2O3: links 3 Cu, 3 O, 2 Fe, rechts auch."
+   "erklaerung": "3 CuO + 2 Fe → 3 Cu + Fe2O3: links 3 Cu, 3 O, 2 Fe, rechts auch. Eisen bildet zwei Oxide: FeO und Fe2O3. Hier entsteht Fe2O3."
   },
   {
    "id": "b2-2-03",
@@ -598,7 +599,7 @@
      "name": "Aluminiumoxid",
      "falle": {
       "formel": "Al2O4",
-      "text": "Aus Al2O3 würde Al2O4. Das passt nicht zu den Noppen: 2 Al haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus Al2O3 würde Al2O4. Das ist nicht mehr Aluminiumoxid – Aluminiumoxid ist immer Al2O3. Es passt auch nicht zu den Noppen: 2 Al haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     }
    ],
@@ -987,7 +988,7 @@
      "name": "Eisen(III)-oxid",
      "falle": {
       "formel": "Fe2O4",
-      "text": "Aus Fe2O3 würde Fe2O4. Das passt nicht zu den Noppen: 2 Fe(III) haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus Fe2O3 würde Fe2O4. Das ist nicht mehr Eisen(III)-oxid – Eisen(III)-oxid ist immer Fe2O3. Es passt auch nicht zu den Noppen: 2 Fe(III) haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     },
     {
@@ -1005,7 +1006,7 @@
      "name": "Aluminiumoxid",
      "falle": {
       "formel": "Al2O4",
-      "text": "Aus Al2O3 würde Al2O4. Das passt nicht zu den Noppen: 2 Al haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus Al2O3 würde Al2O4. Das ist nicht mehr Aluminiumoxid – Aluminiumoxid ist immer Al2O3. Es passt auch nicht zu den Noppen: 2 Al haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     }
    ],
@@ -1032,7 +1033,7 @@
      "name": "Eisen(III)-oxid",
      "falle": {
       "formel": "Fe2O4",
-      "text": "Aus Fe2O3 würde Fe2O4. Das passt nicht zu den Noppen: 2 Fe(III) haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus Fe2O3 würde Fe2O4. Das ist nicht mehr Eisen(III)-oxid – Eisen(III)-oxid ist immer Fe2O3. Es passt auch nicht zu den Noppen: 2 Fe(III) haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     },
     {
@@ -1140,7 +1141,7 @@
      "name": "Aluminiumoxid",
      "falle": {
       "formel": "Al2O4",
-      "text": "Aus Al2O3 würde Al2O4. Das passt nicht zu den Noppen: 2 Al haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus Al2O3 würde Al2O4. Das ist nicht mehr Aluminiumoxid – Aluminiumoxid ist immer Al2O3. Es passt auch nicht zu den Noppen: 2 Al haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     }
    ],
@@ -1184,7 +1185,7 @@
      "name": "Aluminiumoxid",
      "falle": {
       "formel": "Al2O4",
-      "text": "Aus Al2O3 würde Al2O4. Das passt nicht zu den Noppen: 2 Al haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus Al2O3 würde Al2O4. Das ist nicht mehr Aluminiumoxid – Aluminiumoxid ist immer Al2O3. Es passt auch nicht zu den Noppen: 2 Al haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     }
    ],
@@ -1228,7 +1229,7 @@
      "name": "Aluminiumoxid",
      "falle": {
       "formel": "Al2O4",
-      "text": "Aus Al2O3 würde Al2O4. Das passt nicht zu den Noppen: 2 Al haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus Al2O3 würde Al2O4. Das ist nicht mehr Aluminiumoxid – Aluminiumoxid ist immer Al2O3. Es passt auch nicht zu den Noppen: 2 Al haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     }
    ],
@@ -1254,7 +1255,7 @@
      "name": "Eisen(III)-oxid",
      "falle": {
       "formel": "Fe2O4",
-      "text": "Aus Fe2O3 würde Fe2O4. Das passt nicht zu den Noppen: 2 Fe(III) haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus Fe2O3 würde Fe2O4. Das ist nicht mehr Eisen(III)-oxid – Eisen(III)-oxid ist immer Fe2O3. Es passt auch nicht zu den Noppen: 2 Fe(III) haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     },
     {
@@ -1387,7 +1388,7 @@
      "name": "Eisen(III)-oxid",
      "falle": {
       "formel": "Fe2O4",
-      "text": "Aus Fe2O3 würde Fe2O4. Das passt nicht zu den Noppen: 2 Fe(III) haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus Fe2O3 würde Fe2O4. Das ist nicht mehr Eisen(III)-oxid – Eisen(III)-oxid ist immer Fe2O3. Es passt auch nicht zu den Noppen: 2 Fe(III) haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     }
    ],
@@ -1413,7 +1414,7 @@
      "name": "Aluminiumoxid",
      "falle": {
       "formel": "Al2O4",
-      "text": "Aus Al2O3 würde Al2O4. Das passt nicht zu den Noppen: 2 Al haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus Al2O3 würde Al2O4. Das ist nicht mehr Aluminiumoxid – Aluminiumoxid ist immer Al2O3. Es passt auch nicht zu den Noppen: 2 Al haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     }
    ],
@@ -1496,7 +1497,8 @@
     "3 CuO": "3 CuO sind drei Teilchen Kupfer(II)-oxid, derselbe Stoff."
    },
    "denkanstoss": "Die große Zahl ändert nur die Anzahl. Die kleine Zahl ändert den Stoff.",
-   "erklaerung": "Cu2O ist Kupfer(I)-oxid. Die kleine 2 macht einen anderen Stoff daraus."
+   "erklaerung": "Cu2O ist Kupfer(I)-oxid. Die kleine 2 macht einen anderen Stoff daraus.",
+   "hilfe_vorher": false
   },
   {
    "id": "b2-3-12",
@@ -1516,7 +1518,8 @@
     "Dann stimmt die Waage nie.": "Die Waage kann trotzdem stimmen. Aber es wäre ein anderer Stoff."
    },
    "denkanstoss": "Was passiert mit dem Stoff, wenn du die kleine Zahl änderst?",
-   "erklaerung": "Cu2O ist Kupfer(I)-oxid, ein anderer Stoff als CuO, Kupfer(II)-oxid."
+   "erklaerung": "Cu2O ist Kupfer(I)-oxid, ein anderer Stoff als CuO, Kupfer(II)-oxid.",
+   "hilfe_vorher": false
   },
   {
    "id": "b2-3-13",
@@ -1524,7 +1527,7 @@
    "typ": "auswahl",
    "symbol": "❓",
    "kann": "index",
-   "frage": "Bei 2 H2 + O2 → H2O fehlt ein O rechts. Wie gleichst du richtig aus?",
+   "frage": "Bei 2 H2 + O2 → H2O fehlen rechts Atome. Wie gleichst du richtig aus?",
    "antworten": [
     "2 H2O schreiben",
     "H2O2 schreiben",

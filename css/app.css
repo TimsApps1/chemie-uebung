@@ -1086,3 +1086,6 @@ button.bereich { font: inherit; text-align: left; cursor: pointer; width: 100%; 
 .duell-dran { margin: 0 0 var(--a2); font-size: 1.2rem; }
 .fenster .waage-box { position: static; }
 .waage-schale { font-size: 0.85rem; }
+.teilchen { max-width: 100%; }
+.stoff-name { font-size: 1rem; }
+.falle-knopf { font-size: 0.95rem; }

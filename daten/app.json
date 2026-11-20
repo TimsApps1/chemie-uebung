@@ -6,6 +6,7 @@
   "lob": {
     "erster": ["Richtig!", "Stimmt genau!", "Gut gemacht!", "Sehr gut!", "Genau so!"],
     "zweiter": ["Beim 2. Versuch richtig – gut nachgedacht!", "Richtig! Der Denkanstoß hat geholfen.", "Gut, dass du drangeblieben bist!"],
-    "ausgebessert": ["Ausgebessert! Diesmal hat es geklappt.", "Super, jetzt sitzt es!"]
+    "ausgebessert": ["Ausgebessert! Diesmal hat es geklappt.", "Super, jetzt sitzt es!"],
+    "ausgleichen": ["Die Waage steht gerade – alle Atome passen!", "Links und rechts gleich viele Atome. Stark!", "Sauber ausgeglichen!", "Alle Atome sind wieder da – genau so!"]
   }
 }
