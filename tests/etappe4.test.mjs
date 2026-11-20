@@ -277,3 +277,12 @@ test('★★★: verdeckte Waage verrät auch Vielfache nicht; So geht’s begr�
   assert.deepEqual(fehler, []);
   await kontext.close();
 });
+
+test('Rundenauswahl: dieselbe Reaktion kommt nie zweimal in einer Runde', async () => {
+  const { aufgabenWaehlen } = await import('../js/runde.js');
+  for (const n of [1, 2, 3]) for (let i = 0; i < 300; i++) {
+    const runde = aufgabenWaehlen(b2.aufgaben, n, 'E', []);
+    const schluessel = runde.filter((a) => a.typ === 'ausgleichen').map((a) => [...a.edukte, ...a.produkte].map((s) => s.formel).join('|'));
+    assert.equal(new Set(schluessel).size, schluessel.length, `★${n}: ${schluessel.join(' / ')}`);
+  }
+});

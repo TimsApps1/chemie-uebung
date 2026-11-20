@@ -16,7 +16,7 @@ function noppenFuer(symbol, stoff, elemente) {
   const e = elemente.find((x) => x.symbol === symbol);
   if (!e?.wertigkeit?.length) return 0;
   const nurEinElement = Object.keys(formelZaehlung(stoff.formel)).length === 1;
-  if (nurEinElement && (e.metall || symbol === 'C')) return 0;
+  if (nurEinElement && (e.metall || symbol === 'C' || symbol === 'S')) return 0;
   const roemisch = stoff.name.match(/\((I{1,3}|IV)\)/);
   if (roemisch && e.wertigkeit.length > 1) return ROEMISCH[roemisch[1]];
   return e.wertigkeit[0];
@@ -112,6 +112,7 @@ export function gleichungsBaustelle(a, elemente, { nurAnsehen = false, zahlen: a
     if (!waageOffen) {
       waageBild.replaceChildren(el('div', { class: 'waage verdeckt' }, el('p', {}, '⚖ Die Waage ist verdeckt. Zähl die Atome selbst.')));
       waageSatz.textContent = '';
+      waageBox.classList.remove('offen');
       return;
     }
     const w = waage(a, zahlen);
@@ -129,6 +130,7 @@ export function gleichungsBaustelle(a, elemente, { nurAnsehen = false, zahlen: a
           el('span', { 'aria-hidden': 'true' }, ' | '), el('span', { class: 'nur-vorlesen' }, ', rechts '), String(z.rechts)),
         el('b', { class: 'marke-zelle' }, el('span', { 'aria-hidden': 'true' }, z.gleich ? '✓' : '✗'), el('span', { class: 'nur-vorlesen' }, z.gleich ? ' gleich' : ' ungleich')))))));
     waageBox.classList.toggle('gerade', w.ausgeglichen);
+    waageBox.classList.add('offen');
     const satz = `${lage}${w.ausgeglichen && !w.kleinste ? ' Aber es geht mit kleineren Zahlen davor.' : ''}`;
     if (waageSatz.textContent !== satz) waageSatz.textContent = satz;
   }
@@ -152,14 +154,16 @@ export function gleichungsBaustelle(a, elemente, { nurAnsehen = false, zahlen: a
   }
 
   // Kurzer Tipp, warum O2 als Zweierteilchen, Metalle aber nur mit dem Symbol geschrieben werden.
-  const zweierStoff = alleStoffe(a).find((s) => /^(O|H|N|Cl)2$/.test(s.formel));
+  const zweier = [...new Set(alleStoffe(a).filter((s) => /^(O|H|N|Cl)2$/.test(s.formel)).map((s) => s.formel))];
   const metall = alleStoffe(a).find((s) => elemente.find((e) => e.symbol === s.formel)?.metall);
+  const kohle = alleStoffe(a).some((s) => s.formel === 'C');
   const tippText = [
-    zweierStoff ? `${zweierStoff.name} besteht aus Zweierteilchen (${zweierStoff.formel}).` : '',
-    metall ? 'Metalle bilden große Verbände. Deshalb schreiben wir bei ihnen nur das Symbol.' : ''
+    zweier.length ? `${zweier.join(' und ')} ${zweier.length === 1 ? 'besteht' : 'bestehen'} aus Zweierteilchen.` : '',
+    metall ? 'Metalle bilden große Verbände. Deshalb schreiben wir bei ihnen nur das Symbol.' : '',
+    kohle ? 'Kohlenstoff bildet auch einen großen Verband. Deshalb steht dort nur C.' : ''
   ].filter(Boolean).join(' ');
-  const tippFrage = zweierStoff && metall ? `Warum ${zweierStoff.formel}, aber nur ${metall.formel}?`
-    : zweierStoff ? `Warum ${zweierStoff.formel}?` : metall ? `Warum steht bei ${metall.formel} nur das Symbol?` : '';
+  const tippFrage = zweier.length && metall ? `Warum ${zweier[0]}, aber nur ${metall.formel}?`
+    : zweier.length ? `Warum ${zweier.join(' und ')}?` : metall ? `Warum steht bei ${metall.formel} nur das Symbol?` : kohle ? 'Warum steht bei C nur das Symbol?' : '';
   const tipp = tippText ? el('details', { class: 'tipp-box' },
     el('summary', {}, el('span', {}, '💡 ', formelKnoten(tippFrage))),
     el('div', { class: 'tipp-inhalt' }, el('p', {}, text(tippText)), vorlesenKnopf(tippText, 'Tipp vorlesen'))) : null;
@@ -219,9 +223,10 @@ export function ausgleichenAufgabe(a, antworten, daten, { rundeNiveau = null } =
   // erst der zweite Tipp wertet. ★★★: „Wiegen und prüfen“ wertet sofort.
   let hilfeGezeigt = false;
   const pruefText = verdeckt ? '⚖ Wiegen und prüfen' : '💡 Ich komme nicht weiter';
-  const pruefKnopf = el('button', { type: 'button', class: 'knopf knopf-haupt knopf-breit', onclick: () => {
+  const pruefKnopf = el('button', { type: 'button', class: 'knopf knopf-breit ' + (verdeckt ? 'knopf-haupt' : 'knopf-leise'), onclick: () => {
     if (!verdeckt && !hilfeGezeigt) {
       hilfeGezeigt = true;
+      pruefKnopf.classList.replace('knopf-leise', 'knopf-haupt');
       const h = ausgleichHinweis(a, bau.zahlen());
       bau.melden(`💡 ${h || a.denkanstoss}`, 'tipp');
       pruefKnopf.textContent = 'Prüfen (zählt als Versuch)';
