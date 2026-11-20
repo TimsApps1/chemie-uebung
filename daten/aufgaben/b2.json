@@ -78,7 +78,11 @@
    "produkte": [
     {
      "formel": "ZnO",
-     "name": "Zinkoxid"
+     "name": "Zinkoxid",
+     "falle": {
+      "formel": "ZnO2",
+      "text": "Aus ZnO würde ZnO2. Das passt nicht zu den Noppen: Zn hat 2 Noppen, zwei O-Steine bräuchten 4. Zinkoxid ist immer ZnO. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     },
     {
      "formel": "Cu",
@@ -122,7 +126,11 @@
    "produkte": [
     {
      "formel": "CO2",
-     "name": "Kohlenstoffdioxid"
+     "name": "Kohlenstoffdioxid",
+     "falle": {
+      "formel": "CO3",
+      "text": "Aus CO2 würde CO3. Diesen Stoff gibt es nicht. Kohlenstoffdioxid ist immer CO2. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     }
    ],
    "loesung": [
@@ -160,7 +168,11 @@
    "produkte": [
     {
      "formel": "MgO",
-     "name": "Magnesiumoxid"
+     "name": "Magnesiumoxid",
+     "falle": {
+      "formel": "MgO2",
+      "text": "Aus MgO würde MgO2. Das passt nicht zu den Noppen: Mg hat 2 Noppen, zwei O-Steine bräuchten 4. Magnesiumoxid ist immer MgO. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     }
    ],
    "loesung": [
@@ -238,7 +250,11 @@
    "produkte": [
     {
      "formel": "MgO",
-     "name": "Magnesiumoxid"
+     "name": "Magnesiumoxid",
+     "falle": {
+      "formel": "MgO2",
+      "text": "Aus MgO würde MgO2. Das passt nicht zu den Noppen: Mg hat 2 Noppen, zwei O-Steine bräuchten 4. Magnesiumoxid ist immer MgO. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     }
    ],
    "loesung": [
@@ -343,7 +359,11 @@
    "produkte": [
     {
      "formel": "ZnO",
-     "name": "Zinkoxid"
+     "name": "Zinkoxid",
+     "falle": {
+      "formel": "ZnO2",
+      "text": "Aus ZnO würde ZnO2. Das passt nicht zu den Noppen: Zn hat 2 Noppen, zwei O-Steine bräuchten 4. Zinkoxid ist immer ZnO. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     }
    ],
    "loesung": [
@@ -374,7 +394,11 @@
    "produkte": [
     {
      "formel": "HCl",
-     "name": "Chlorwasserstoff"
+     "name": "Chlorwasserstoff",
+     "falle": {
+      "formel": "HCl2",
+      "text": "Aus HCl würde HCl2. Das passt nicht zu den Noppen: H hat nur 1 Noppe. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     }
    ],
    "loesung": [
@@ -405,7 +429,11 @@
    "produkte": [
     {
      "formel": "NaCl",
-     "name": "Natriumchlorid"
+     "name": "Natriumchlorid",
+     "falle": {
+      "formel": "NaCl2",
+      "text": "Aus NaCl würde NaCl2. Das passt nicht zu den Noppen: Na hat nur 1 Noppe. Kochsalz ist immer NaCl. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     }
    ],
    "loesung": [
@@ -416,6 +444,47 @@
    "denkanstoss": "Cl2 bringt 2 Cl-Atome mit. Wie viele NaCl brauchst du?",
    "erklaerung": "2 Na + Cl2 → 2 NaCl: links 2 Na und 2 Cl, rechts auch.",
    "alltag": "NaCl ist Kochsalz."
+  },
+  {
+   "id": "b2-1-12",
+   "niveau": 1,
+   "typ": "auswahl",
+   "symbol": "❓",
+   "kann": "index",
+   "frage": "Du brauchst zwei Teilchen Wasser. Was schreibst du?",
+   "antworten": [
+    "2 H2O",
+    "H4O2",
+    "H2O2"
+   ],
+   "richtig": "2 H2O",
+   "leicht": true,
+   "fehler": {
+    "H4O2": "Die kleinen Zahlen gehören zum Stoff. Zwei Teilchen schreibt man mit der großen Zahl davor.",
+    "H2O2": "H2O2 ist Wasserstoffperoxid, ein anderer Stoff."
+   },
+   "denkanstoss": "Die große Zahl davor sagt, wie viele Teilchen es sind.",
+   "erklaerung": "2 H2O heißt: zwei Wasserteilchen. Die kleinen Zahlen bleiben gleich."
+  },
+  {
+   "id": "b2-1-13",
+   "niveau": 1,
+   "typ": "auswahl",
+   "symbol": "❓",
+   "kann": "index",
+   "frage": "Welche Zahl darfst du beim Ausgleichen ändern?",
+   "antworten": [
+    "Die große Zahl davor",
+    "Die kleine Zahl unten",
+    "Beide Zahlen"
+   ],
+   "richtig": "Die große Zahl davor",
+   "fehler": {
+    "Die kleine Zahl unten": "Die kleine Zahl gehört zum Stoff. Änderst du sie, entsteht ein anderer Stoff.",
+    "Beide Zahlen": "Die kleine Zahl gehört zum Stoff. Nur die große Zahl davor darfst du ändern."
+   },
+   "denkanstoss": "Was passiert mit dem Stoff, wenn du die kleine Zahl änderst?",
+   "erklaerung": "Nur die große Zahl davor. Sie sagt, wie viele Teilchen es sind."
   },
   {
    "id": "b2-2-01",
@@ -445,7 +514,11 @@
     },
     {
      "formel": "CO2",
-     "name": "Kohlenstoffdioxid"
+     "name": "Kohlenstoffdioxid",
+     "falle": {
+      "formel": "CO3",
+      "text": "Aus CO2 würde CO3. Diesen Stoff gibt es nicht. Kohlenstoffdioxid ist immer CO2. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     }
    ],
    "loesung": [
@@ -486,7 +559,11 @@
     },
     {
      "formel": "Fe2O3",
-     "name": "Eisen(III)-oxid"
+     "name": "Eisen(III)-oxid",
+     "falle": {
+      "formel": "Fe2O4",
+      "text": "Aus Fe2O3 würde Fe2O4. Das passt nicht zu den Noppen: 2 Fe(III) haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     }
    ],
    "loesung": [
@@ -518,7 +595,11 @@
    "produkte": [
     {
      "formel": "Al2O3",
-     "name": "Aluminiumoxid"
+     "name": "Aluminiumoxid",
+     "falle": {
+      "formel": "Al2O4",
+      "text": "Aus Al2O3 würde Al2O4. Das passt nicht zu den Noppen: 2 Al haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     }
    ],
    "loesung": [
@@ -550,7 +631,11 @@
    "produkte": [
     {
      "formel": "Na2O",
-     "name": "Natriumoxid"
+     "name": "Natriumoxid",
+     "falle": {
+      "formel": "Na2O2",
+      "text": "Aus Na2O würde Na2O2. Das gibt es wirklich: Natriumperoxid, ein anderer Stoff. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     }
    ],
    "loesung": [
@@ -571,7 +656,11 @@
    "edukte": [
     {
      "formel": "PbO",
-     "name": "Bleioxid"
+     "name": "Bleioxid",
+     "falle": {
+      "formel": "PbO2",
+      "text": "Aus PbO würde PbO2. Das gibt es wirklich: Bleidioxid, ein anderer Stoff. Er steckt in Autobatterien. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     },
     {
      "formel": "C",
@@ -585,7 +674,11 @@
     },
     {
      "formel": "CO2",
-     "name": "Kohlenstoffdioxid"
+     "name": "Kohlenstoffdioxid",
+     "falle": {
+      "formel": "CO3",
+      "text": "Aus CO2 würde CO3. Diesen Stoff gibt es nicht. Kohlenstoffdioxid ist immer CO2. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     }
    ],
    "loesung": [
@@ -607,7 +700,11 @@
    "edukte": [
     {
      "formel": "CH4",
-     "name": "Methan"
+     "name": "Methan",
+     "falle": {
+      "formel": "CH5",
+      "text": "Aus CH4 würde CH5. Das passt nicht zu den Noppen: C hat nur 4 Noppen. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     },
     {
      "formel": "O2",
@@ -617,7 +714,11 @@
    "produkte": [
     {
      "formel": "CO2",
-     "name": "Kohlenstoffdioxid"
+     "name": "Kohlenstoffdioxid",
+     "falle": {
+      "formel": "CO3",
+      "text": "Aus CO2 würde CO3. Diesen Stoff gibt es nicht. Kohlenstoffdioxid ist immer CO2. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     },
     {
      "formel": "H2O",
@@ -658,7 +759,11 @@
    "produkte": [
     {
      "formel": "NH3",
-     "name": "Ammoniak"
+     "name": "Ammoniak",
+     "falle": {
+      "formel": "NH4",
+      "text": "Aus NH3 würde NH4. Das passt nicht zu den Noppen: N hat nur 3 Noppen. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     }
    ],
    "loesung": [
@@ -726,7 +831,11 @@
    "produkte": [
     {
      "formel": "Cu2S",
-     "name": "Kupfer(I)-sulfid"
+     "name": "Kupfer(I)-sulfid",
+     "falle": {
+      "formel": "Cu2S2",
+      "text": "Aus Cu2S würde Cu2S2. Das passt nicht zu den Noppen: 2 Cu(I) haben 2 Noppen, 2 S-Steine bräuchten 4. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     }
    ],
    "loesung": [
@@ -758,7 +867,11 @@
    "produkte": [
     {
      "formel": "CH4",
-     "name": "Methan"
+     "name": "Methan",
+     "falle": {
+      "formel": "CH5",
+      "text": "Aus CH4 würde CH5. Das passt nicht zu den Noppen: C hat nur 4 Noppen. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     }
    ],
    "loesung": [
@@ -789,7 +902,11 @@
    "produkte": [
     {
      "formel": "FeS",
-     "name": "Eisen(II)-sulfid"
+     "name": "Eisen(II)-sulfid",
+     "falle": {
+      "formel": "FeS2",
+      "text": "Aus FeS würde FeS2. Das gibt es wirklich: Pyrit, auch Katzengold genannt – ein anderer Stoff. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     }
    ],
    "loesung": [
@@ -834,7 +951,11 @@
     },
     {
      "formel": "CO2",
-     "name": "Kohlenstoffdioxid"
+     "name": "Kohlenstoffdioxid",
+     "falle": {
+      "formel": "CO3",
+      "text": "Aus CO2 würde CO3. Diesen Stoff gibt es nicht. Kohlenstoffdioxid ist immer CO2. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     }
    ],
    "loesung": [
@@ -863,7 +984,11 @@
    "edukte": [
     {
      "formel": "Fe2O3",
-     "name": "Eisen(III)-oxid"
+     "name": "Eisen(III)-oxid",
+     "falle": {
+      "formel": "Fe2O4",
+      "text": "Aus Fe2O3 würde Fe2O4. Das passt nicht zu den Noppen: 2 Fe(III) haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     },
     {
      "formel": "Al",
@@ -877,7 +1002,11 @@
     },
     {
      "formel": "Al2O3",
-     "name": "Aluminiumoxid"
+     "name": "Aluminiumoxid",
+     "falle": {
+      "formel": "Al2O4",
+      "text": "Aus Al2O3 würde Al2O4. Das passt nicht zu den Noppen: 2 Al haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     }
    ],
    "loesung": [
@@ -900,7 +1029,11 @@
    "edukte": [
     {
      "formel": "Fe2O3",
-     "name": "Eisen(III)-oxid"
+     "name": "Eisen(III)-oxid",
+     "falle": {
+      "formel": "Fe2O4",
+      "text": "Aus Fe2O3 würde Fe2O4. Das passt nicht zu den Noppen: 2 Fe(III) haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     },
     {
      "formel": "C",
@@ -914,7 +1047,11 @@
     },
     {
      "formel": "CO2",
-     "name": "Kohlenstoffdioxid"
+     "name": "Kohlenstoffdioxid",
+     "falle": {
+      "formel": "CO3",
+      "text": "Aus CO2 würde CO3. Diesen Stoff gibt es nicht. Kohlenstoffdioxid ist immer CO2. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     }
    ],
    "loesung": [
@@ -941,13 +1078,21 @@
     },
     {
      "formel": "CO2",
-     "name": "Kohlenstoffdioxid"
+     "name": "Kohlenstoffdioxid",
+     "falle": {
+      "formel": "CO3",
+      "text": "Aus CO2 würde CO3. Diesen Stoff gibt es nicht. Kohlenstoffdioxid ist immer CO2. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     }
    ],
    "produkte": [
     {
      "formel": "MgO",
-     "name": "Magnesiumoxid"
+     "name": "Magnesiumoxid",
+     "falle": {
+      "formel": "MgO2",
+      "text": "Aus MgO würde MgO2. Das passt nicht zu den Noppen: Mg hat 2 Noppen, zwei O-Steine bräuchten 4. Magnesiumoxid ist immer MgO. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     },
     {
      "formel": "C",
@@ -992,7 +1137,11 @@
     },
     {
      "formel": "Al2O3",
-     "name": "Aluminiumoxid"
+     "name": "Aluminiumoxid",
+     "falle": {
+      "formel": "Al2O4",
+      "text": "Aus Al2O3 würde Al2O4. Das passt nicht zu den Noppen: 2 Al haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     }
    ],
    "loesung": [
@@ -1032,7 +1181,11 @@
     },
     {
      "formel": "Al2O3",
-     "name": "Aluminiumoxid"
+     "name": "Aluminiumoxid",
+     "falle": {
+      "formel": "Al2O4",
+      "text": "Aus Al2O3 würde Al2O4. Das passt nicht zu den Noppen: 2 Al haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     }
    ],
    "loesung": [
@@ -1054,7 +1207,11 @@
    "edukte": [
     {
      "formel": "PbO",
-     "name": "Bleioxid"
+     "name": "Bleioxid",
+     "falle": {
+      "formel": "PbO2",
+      "text": "Aus PbO würde PbO2. Das gibt es wirklich: Bleidioxid, ein anderer Stoff. Er steckt in Autobatterien. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     },
     {
      "formel": "Al",
@@ -1068,7 +1225,11 @@
     },
     {
      "formel": "Al2O3",
-     "name": "Aluminiumoxid"
+     "name": "Aluminiumoxid",
+     "falle": {
+      "formel": "Al2O4",
+      "text": "Aus Al2O3 würde Al2O4. Das passt nicht zu den Noppen: 2 Al haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     }
    ],
    "loesung": [
@@ -1090,7 +1251,11 @@
    "edukte": [
     {
      "formel": "Fe2O3",
-     "name": "Eisen(III)-oxid"
+     "name": "Eisen(III)-oxid",
+     "falle": {
+      "formel": "Fe2O4",
+      "text": "Aus Fe2O3 würde Fe2O4. Das passt nicht zu den Noppen: 2 Fe(III) haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     },
     {
      "formel": "Mg",
@@ -1104,7 +1269,11 @@
     },
     {
      "formel": "MgO",
-     "name": "Magnesiumoxid"
+     "name": "Magnesiumoxid",
+     "falle": {
+      "formel": "MgO2",
+      "text": "Aus MgO würde MgO2. Das passt nicht zu den Noppen: Mg hat 2 Noppen, zwei O-Steine bräuchten 4. Magnesiumoxid ist immer MgO. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     }
    ],
    "loesung": [
@@ -1136,7 +1305,11 @@
    "produkte": [
     {
      "formel": "FeCl3",
-     "name": "Eisen(III)-chlorid"
+     "name": "Eisen(III)-chlorid",
+     "falle": {
+      "formel": "FeCl4",
+      "text": "Aus FeCl3 würde FeCl4. Das passt nicht zu den Noppen: Fe(III) hat nur 3 Noppen. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     }
    ],
    "loesung": [
@@ -1157,7 +1330,11 @@
    "edukte": [
     {
      "formel": "Cu2O",
-     "name": "Kupfer(I)-oxid"
+     "name": "Kupfer(I)-oxid",
+     "falle": {
+      "formel": "Cu2O2",
+      "text": "Aus Cu2O würde Cu2O2. Das wären zwei Teilchen CuO, also Kupfer(II)-oxid: ein anderer Stoff. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     },
     {
      "formel": "C",
@@ -1171,7 +1348,11 @@
     },
     {
      "formel": "CO2",
-     "name": "Kohlenstoffdioxid"
+     "name": "Kohlenstoffdioxid",
+     "falle": {
+      "formel": "CO3",
+      "text": "Aus CO2 würde CO3. Diesen Stoff gibt es nicht. Kohlenstoffdioxid ist immer CO2. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     }
    ],
    "loesung": [
@@ -1203,7 +1384,11 @@
    "produkte": [
     {
      "formel": "Fe2O3",
-     "name": "Eisen(III)-oxid"
+     "name": "Eisen(III)-oxid",
+     "falle": {
+      "formel": "Fe2O4",
+      "text": "Aus Fe2O3 würde Fe2O4. Das passt nicht zu den Noppen: 2 Fe(III) haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     }
    ],
    "loesung": [
@@ -1225,7 +1410,11 @@
    "edukte": [
     {
      "formel": "Al2O3",
-     "name": "Aluminiumoxid"
+     "name": "Aluminiumoxid",
+     "falle": {
+      "formel": "Al2O4",
+      "text": "Aus Al2O3 würde Al2O4. Das passt nicht zu den Noppen: 2 Al haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
     }
    ],
    "produkte": [
@@ -1245,7 +1434,7 @@
    ],
    "denkanstoss": "Al2O3 hat 3 O, O2 hat 2 O. Bei welcher Zahl passen beide zusammen?",
    "erklaerung": "2 Al2O3 → 4 Al + 3 O2: links 4 Al und 6 O, rechts auch.",
-   "alltag": "So gewinnt man Aluminium, mit sehr viel Strom."
+   "alltag": "So ähnlich gewinnt man Aluminium, mit sehr viel Strom."
   },
   {
    "id": "b2-2-13",
@@ -1270,6 +1459,46 @@
    "erklaerung": "2 H2O heißt: zwei Wasserteilchen. Die kleinen Zahlen bleiben gleich."
   },
   {
+   "id": "b2-2-14",
+   "niveau": 2,
+   "typ": "auswahl",
+   "symbol": "❓",
+   "kann": "index",
+   "frage": "Ein Kind schreibt Mg + O → MgO statt Mg + O2. Was ist falsch?",
+   "antworten": [
+    "Sauerstoff besteht aus Zweierteilchen: O2.",
+    "Es fehlt eine große Zahl vor MgO.",
+    "Nichts, das ist richtig."
+   ],
+   "richtig": "Sauerstoff besteht aus Zweierteilchen: O2.",
+   "fehler": {
+    "Es fehlt eine große Zahl vor MgO.": "Das kommt später. Zuerst: Wie schreibt man Sauerstoff?",
+    "Nichts, das ist richtig.": "Schau genau auf den Sauerstoff."
+   },
+   "denkanstoss": "Wie schreibt man Sauerstoff als Stoff?",
+   "erklaerung": "Sauerstoff kommt als Zweierteilchen O2 vor. Richtig ist 2 Mg + O2 → 2 MgO."
+  },
+  {
+   "id": "b2-2-15",
+   "niveau": 2,
+   "typ": "auswahl",
+   "symbol": "❓",
+   "kann": "index",
+   "frage": "Welche Formel ist ein anderer Stoff als Kupfer(II)-oxid?",
+   "antworten": [
+    "Cu2O",
+    "2 CuO",
+    "3 CuO"
+   ],
+   "richtig": "Cu2O",
+   "fehler": {
+    "2 CuO": "2 CuO sind zwei Teilchen Kupfer(II)-oxid, derselbe Stoff.",
+    "3 CuO": "3 CuO sind drei Teilchen Kupfer(II)-oxid, derselbe Stoff."
+   },
+   "denkanstoss": "Die große Zahl ändert nur die Anzahl. Die kleine Zahl ändert den Stoff.",
+   "erklaerung": "Cu2O ist Kupfer(I)-oxid. Die kleine 2 macht einen anderen Stoff daraus."
+  },
+  {
    "id": "b2-3-12",
    "niveau": 3,
    "typ": "auswahl",
@@ -1288,6 +1517,26 @@
    },
    "denkanstoss": "Was passiert mit dem Stoff, wenn du die kleine Zahl änderst?",
    "erklaerung": "Cu2O ist Kupfer(I)-oxid, ein anderer Stoff als CuO, Kupfer(II)-oxid."
+  },
+  {
+   "id": "b2-3-13",
+   "niveau": 3,
+   "typ": "auswahl",
+   "symbol": "❓",
+   "kann": "index",
+   "frage": "Bei 2 H2 + O2 → H2O fehlt ein O rechts. Wie gleichst du richtig aus?",
+   "antworten": [
+    "2 H2O schreiben",
+    "H2O2 schreiben",
+    "O weglassen"
+   ],
+   "richtig": "2 H2O schreiben",
+   "fehler": {
+    "H2O2 schreiben": "H2O2 ist Wasserstoffperoxid, ein anderer Stoff.",
+    "O weglassen": "Atome verschwinden bei einer Reaktion nicht."
+   },
+   "denkanstoss": "Du darfst nur ganze Teilchen dazunehmen.",
+   "erklaerung": "2 H2O: zwei Wasserteilchen. Dann stimmen H und O: 2 H2 + O2 → 2 H2O."
   }
  ]
 }

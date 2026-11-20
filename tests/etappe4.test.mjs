@@ -58,6 +58,11 @@ test('Index-Falle: H2O → H2O2, CuO → Cu2O, nie Ozon', () => {
   assert.match(A.falle(stoff('O2'), elemente).text, /Zweierteilchen/);
   assert.equal(A.falle(stoff('Mg'), elemente).neu, null);
   assert.match(A.falle(stoff('Mg'), elemente).text, /Verbände/);
+  assert.doesNotMatch(A.falle(stoff('S'), elemente).text, /Verband/, 'Schwefel ist kein Metall');
+  // Jede Verbindung hat einen eigenen, fachlich geprüften Fallentext
+  for (const a of reaktionen) for (const s of [...a.edukte, ...a.produkte]) {
+    if (new Set(s.formel.match(/[A-Z][a-z]?/g)).size > 1) assert.ok(s.falle?.text, `${a.id} ${s.formel} ohne Fallentext`);
+  }
   for (const s of reaktionen.flatMap((a) => [...a.edukte, ...a.produkte])) assert.notEqual(A.falle(s, elemente).neu, 'O3', s.formel);
 });
 
@@ -185,5 +190,45 @@ test('So geht’s für Bereich 2 läuft durch, Lehrer-Ansicht kennt B2', async (
   assert.match(await seite.locator('.waage-satz').textContent(), /steht gerade/);
   await seite.getByRole('button', { name: /Los geht/ }).click();
   assert.deepEqual(fehler, []);
+  await kontext.close();
+});
+
+test('Vorlesen: „+“ im Fließtext heißt „plus“, zwischen Stoffen „und“', async () => {
+  const { vorlesbar } = await import('../js/hilfen.js');
+  assert.match(vorlesbar('Nimm rechts mit + ein Teilchen dazu.'), /mit plus ein/);
+  assert.match(vorlesbar('2 Mg + O2 → 2 MgO'), / und /);
+  const a = reaktionen.find((x) => x.id === 'b2-1-06');
+  assert.doesNotMatch(vorlesbar(A.ausgleichHinweis(a, [1, 1, 1])), /mit und/);
+});
+
+test('Ich-kann „index“ ist auf jedem Niveau erreichbar', () => {
+  for (const n of [1, 2, 3]) assert.ok(b2.aufgaben.some((a) => a.kann === 'index' && a.niveau === n), `★${n}`);
+  assert.ok(b2.aufgaben.filter((a) => a.kann === 'index').length >= 6);
+});
+
+test('iPad hoch/quer: alle Karten in einer Reihe, Waage sichtbar, Fokus bleibt nach +, Tipp-Formel tiefgestellt', async () => {
+  for (const vp of [{ width: 768, height: 1024 }, { width: 820, height: 1180 }, { width: 1024, height: 768 }, { width: 1180, height: 820 }]) {
+    const { kontext, seite, fehler } = await seiteMitAufgabe('b2-2-02', vp); // 3 CuO + 2 Fe → 3 Cu + Fe2O3
+    const knopf = seite.getByRole('button', { name: /Ein Teilchen Kupfer\(II\)-oxid mehr/ });
+    await knopf.focus();
+    await seite.keyboard.press('Enter');
+    const m = await seite.evaluate(() => ({
+      tops: [...document.querySelectorAll('.stoff-karte')].map((k) => Math.round(k.getBoundingClientRect().top)),
+      waage: document.querySelector('.waage-box').getBoundingClientRect().bottom,
+      fokus: document.activeElement?.dataset?.aktion
+    }));
+    assert.equal(new Set(m.tops).size, 1, `${vp.width}: Karten in einer Reihe ${m.tops}`);
+    assert.ok(m.waage <= vp.height, `${vp.width}: Waage sichtbar`);
+    assert.equal(m.fokus, 'plus', 'Fokus bleibt auf dem Plus-Knopf');
+    assert.deepEqual(fehler, []);
+    await kontext.close();
+  }
+  const { kontext, seite } = await seiteMitAufgabe('b2-1-06');
+  const lage = await seite.evaluate(() => {
+    const sub = document.querySelector('.tipp-box summary sub');
+    const zeile = document.querySelector('.tipp-box summary span');
+    return { sub: sub.getBoundingClientRect().bottom, text: zeile.getBoundingClientRect().bottom, display: getComputedStyle(sub).verticalAlign };
+  });
+  assert.equal(lage.display, 'sub');
   await kontext.close();
 });

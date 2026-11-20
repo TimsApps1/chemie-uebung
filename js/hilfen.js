@@ -176,6 +176,8 @@ export function vorlesbar(text) {
       return w;
     })
     .replace(/→/g, ' reagieren zu ')
+    // „+“ zwischen Stoffen heißt „und“, im Fließtext („mit + ein Teilchen“) „plus“.
+    .replace(/\s\+\s(?=(?!große)[a-zäöü])/g, ' plus ')
     .replace(/\s\+\s/g, ' und ')
     .replace(/[★✋↕✓✗·]/gu, ' ')
     .replace(/\p{Extended_Pictographic}|\uFE0F/gu, ' ')

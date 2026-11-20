@@ -42,25 +42,25 @@ export function gleichungsBaustelle(a, elemente, { nurAnsehen = false, zahlen: a
   const falleFormel = new Map(); // Stoff-Index -> gezeigte Fallen-Formel (nur kurz)
 
   const kartenBox = el('div', { class: 'gleichung-bau' });
-  const waageBox = el('div', { class: 'waage-box', 'aria-live': 'polite' });
+  const waageBox = el('div', { class: 'waage-box' });
   const status = el('p', { class: 'bau-status', 'aria-live': 'polite' });
 
   function karte(stoff, i) {
     const n = zahlen[i];
-    const klein = n >= 4;
     const formel = falleFormel.get(i);
     const plusMoeglich = n < MAX_ZAHL && steineGesamt(a, zahlen) + atomeIm(stoff.formel) <= MAX_STEINE;
+    // Reihenfolge: Formel, Name, Knöpfe – darunter die Teilchen. So wandern die Knöpfe nicht, wenn Teilchen dazukommen.
     return el('div', { class: 'stoff-karte' + (formel ? ' falle-aktiv' : '') },
-      el('div', { class: 'teilchen-box', 'aria-hidden': 'true' }, Array.from({ length: n }, () => teilchenKnoten(stoff, elemente, klein))),
       el('p', { class: 'stoff-formel' },
         formel ? [el('span', { class: 'marke-falsch' }, '✗ '), formelKnoten(formel)]
           : [el('span', { class: 'stoff-zahl' }, zahlText(n)), formelKnoten(stoff.formel)]),
       el('p', { class: 'stoff-name' }, stoff.name),
       gesperrt ? null : el('div', { class: 'stoff-steuerung' },
-        el('button', { type: 'button', class: 'knopf knopf-rund', disabled: n <= 1, 'aria-label': `Ein Teilchen ${stoff.name} weniger`, onclick: () => aendern(i, -1) }, '−'),
-        el('span', { class: 'stoff-anzahl', 'aria-label': `${n} Teilchen ${stoff.name}` }, String(n)),
-        el('button', { type: 'button', class: 'knopf knopf-rund', disabled: !plusMoeglich, 'aria-label': `Ein Teilchen ${stoff.name} mehr`, onclick: () => aendern(i, +1) }, '+')),
-      gesperrt ? null : el('button', { type: 'button', class: 'knopf knopf-klein knopf-leise falle-knopf', 'aria-label': `Bei ${stoff.name} ein Atom anhängen`, onclick: () => falleZeigen(i) }, '➕ Atom anhängen'));
+        el('button', { type: 'button', class: 'knopf knopf-rund', 'data-stoff': i, 'data-aktion': 'minus', disabled: n <= 1, 'aria-label': `Ein Teilchen ${stoff.name} weniger`, onclick: () => aendern(i, -1) }, '−'),
+        el('span', { class: 'stoff-anzahl', 'aria-hidden': 'true' }, String(n)),
+        el('button', { type: 'button', class: 'knopf knopf-rund', 'data-stoff': i, 'data-aktion': 'plus', disabled: !plusMoeglich, 'aria-label': `Ein Teilchen ${stoff.name} mehr (jetzt ${n})`, onclick: () => aendern(i, +1) }, '+')),
+      el('div', { class: 'teilchen-box' + (n >= 3 ? ' viele' : ''), 'aria-hidden': 'true' }, Array.from({ length: n }, () => teilchenKnoten(stoff, elemente, n >= 4))),
+      gesperrt ? null : el('button', { type: 'button', class: 'knopf knopf-klein knopf-leise falle-knopf', 'data-stoff': i, 'data-aktion': 'falle', 'aria-label': `Bei ${stoff.name} ein Atom anhängen`, onclick: () => falleZeigen(i) }, '➕ Atom anhängen'));
   }
 
   function aendern(i, d) {
@@ -72,19 +72,34 @@ export function gleichungsBaustelle(a, elemente, { nurAnsehen = false, zahlen: a
     beiAenderung([...zahlen]);
   }
 
+  function fokussieren(i, aktion) {
+    const k = kartenBox.querySelector(`[data-stoff="${i}"][data-aktion="${aktion}"]`);
+    (k && !k.disabled ? k : kartenBox.querySelector(`[data-stoff="${i}"]:not([disabled])`))?.focus({ preventScroll: true });
+  }
+
   function falleZeigen(i) {
     const stoff = stoffe[i];
     const f = falle(stoff, elemente);
-    if (f.neu) { falleFormel.set(i, f.neu); zeichnen(); }
-    const zurueck = () => { falleFormel.delete(i); zeichnen(); melden('Zurückgenommen. Ändere nur die große Zahl davor.'); };
-    const zu = fenster(el('div', {},
+    const zurueck = () => {
+      if (!falleFormel.has(i) && !f.neu) { fokussieren(i, 'falle'); return; }
+      falleFormel.delete(i);
+      zeichnen();
+      melden('Zurückgenommen. Ändere nur die große Zahl davor.');
+      fokussieren(i, 'falle');
+    };
+    // Erst das Fenster öffnen (es merkt sich den Knopf), dann die Formel kurz verändert zeigen.
+    fenster(el('div', {},
       f.neu ? el('p', { class: 'falle-zeile' }, formelKnoten(stoff.formel), ' → ', el('span', { class: 'marke-falsch' }, '✗ '), formelKnoten(f.neu)) : null,
       el('p', { class: 'fenster-text' }, text(f.text)),
       el('div', { class: 'zeile-rechts' }, vorlesenKnopf(f.text))),
-    { titel: '⚠ Atom anhängen?', knoepfe: (schliessen) => [el('button', { type: 'button', class: 'knopf knopf-haupt', onclick: () => { schliessen(); zurueck(); } }, '↩ Zurücknehmen')] });
+    { titel: '⚠ Atom anhängen?', knoepfe: (schliessen) => [el('button', { type: 'button', class: 'knopf knopf-haupt', onclick: () => { schliessen(); zurueck(); } }, f.neu ? '↩ Zurücknehmen' : 'Verstanden')] });
+    if (f.neu) { falleFormel.set(i, f.neu); zeichnen(); }
     // Auch beim Schließen über den Hintergrund zurücknehmen.
-    const wache = setInterval(() => { if (!document.querySelector('.fenster-hintergrund') || !falleFormel.has(i)) { clearInterval(wache); if (falleFormel.has(i)) zurueck(); } }, 300);
-    return zu;
+    const wache = setInterval(() => {
+      if (document.querySelector('.fenster-hintergrund')) return;
+      clearInterval(wache);
+      if (falleFormel.has(i)) zurueck();
+    }, 300);
   }
 
   const melden = (t, art = '') => { status.textContent = t; status.className = `bau-status ${art}`; };
@@ -95,30 +110,37 @@ export function gleichungsBaustelle(a, elemente, { nurAnsehen = false, zahlen: a
       return;
     }
     const w = waage(a, zahlen);
-    const neigung = w.ausgeglichen ? 0 : -w.kipp * 7;
-    const lage = w.ausgeglichen ? 'Die Waage steht gerade.' : w.kipp > 0 ? 'Die Waage kippt nach links.' : w.kipp < 0 ? 'Die Waage kippt nach rechts.' : 'Die Waage wackelt: Die Elemente passen noch nicht.';
+    // Gleich viele Atome insgesamt, aber nicht pro Element: Die Waage wackelt (steht nicht gerade).
+    const neigung = w.ausgeglichen ? 0 : w.kipp === 0 ? 4 : -w.kipp * 8;
+    const lage = w.ausgeglichen ? '✓ Die Waage steht gerade.' : w.kipp > 0 ? 'Die Waage kippt nach links.' : w.kipp < 0 ? 'Die Waage kippt nach rechts.' : 'Die Waage wackelt: Die Elemente passen noch nicht.';
     waageBox.replaceChildren(el('div', { class: 'waage' + (w.ausgeglichen ? ' gerade' : '') },
-      el('div', { class: 'waage-bild', role: 'img', 'aria-label': lage },
+      el('div', { class: 'waage-bild', 'aria-hidden': 'true' },
         el('div', { class: 'waage-balken', style: `transform: rotate(${neigung}deg)` },
           el('span', { class: 'waage-schale' }, 'links'), el('span', { class: 'waage-schale' }, 'rechts')),
         el('div', { class: 'waage-fuss' })),
-      el('table', { class: 'waage-tabelle' },
-        el('thead', {}, el('tr', {}, el('th', {}, 'Element'), el('th', {}, 'links'), el('th', {}, 'rechts'), el('th', {}, el('span', { class: 'nur-vorlesen' }, 'gleich?')))),
-        el('tbody', {}, w.zeilen.map((z) => el('tr', { class: z.gleich ? 'gleich' : 'ungleich' },
-          el('th', { scope: 'row' }, baustein(z.symbol, { klein: true, metall: elemente.find((e) => e.symbol === z.symbol)?.metall })),
-          el('td', {}, String(z.links)), el('td', {}, String(z.rechts)),
-          el('td', { class: 'marke-zelle' }, z.gleich ? '✓' : '✗'))))),
-      el('p', { class: 'waage-satz' }, lage, w.ausgeglichen && !w.kleinste ? ' Aber es geht mit kleineren Zahlen.' : '')));
+      el('ul', { class: 'waage-liste', 'aria-label': 'Atome pro Element' }, w.zeilen.map((z) => el('li', { class: z.gleich ? 'gleich' : 'ungleich' },
+        baustein(z.symbol, { klein: true, metall: elemente.find((e) => e.symbol === z.symbol)?.metall }),
+        el('span', { class: 'waage-zahlen' }, el('span', { class: 'nur-vorlesen' }, `${z.symbol}: links `), String(z.links),
+          el('span', { 'aria-hidden': 'true' }, ' | '), el('span', { class: 'nur-vorlesen' }, ', rechts '), String(z.rechts)),
+        el('b', { class: 'marke-zelle', 'aria-label': z.gleich ? 'gleich' : 'ungleich' }, z.gleich ? '✓' : '✗')))),
+      el('p', { class: 'waage-satz', 'aria-live': 'polite' }, lage, w.ausgeglichen && !w.kleinste ? ' Aber es geht mit kleineren Zahlen davor.' : '')));
   }
 
   function zeichnen() {
-    const teile = [];
+    // Fokus merken (VoiceOver, Tastatur, Schaltersteuerung) und nach dem Neuzeichnen wiederherstellen.
+    const aktiv = kartenBox.contains(document.activeElement) ? document.activeElement : null;
+    const merke = aktiv ? [aktiv.dataset.stoff, aktiv.dataset.aktion] : null;
+    const edukte = []; const produkte = [];
     stoffe.forEach((s, i) => {
-      if (i === a.edukte.length) teile.push(el('span', { class: 'gleichung-pfeil', 'aria-label': 'reagiert zu' }, '→'));
-      else if (i > 0) teile.push(el('span', { class: 'gleichung-plus', 'aria-hidden': 'true' }, '+'));
-      teile.push(karte(s, i));
+      const ziel = i < a.edukte.length ? edukte : produkte;
+      if (ziel.length) ziel.push(el('span', { class: 'gleichung-plus', 'aria-hidden': 'true' }, '+'));
+      ziel.push(karte(s, i));
     });
-    kartenBox.replaceChildren(...teile);
+    kartenBox.replaceChildren(
+      el('div', { class: 'gleichung-seite' }, edukte),
+      el('span', { class: 'gleichung-pfeil', role: 'img', 'aria-label': 'reagiert zu' }, '→'),
+      el('div', { class: 'gleichung-seite' }, produkte));
+    if (merke) fokussieren(merke[0], merke[1]);
     waageZeichnen();
   }
 
@@ -132,8 +154,8 @@ export function gleichungsBaustelle(a, elemente, { nurAnsehen = false, zahlen: a
   const tippFrage = zweierStoff && metall ? `Warum ${zweierStoff.formel}, aber nur ${metall.formel}?`
     : zweierStoff ? `Warum ${zweierStoff.formel}?` : metall ? `Warum steht bei ${metall.formel} nur das Symbol?` : '';
   const tipp = tippText ? el('details', { class: 'tipp-box' },
-    el('summary', {}, '💡 ', formelKnoten(tippFrage)),
-    el('p', {}, text(tippText))) : null;
+    el('summary', {}, el('span', {}, '💡 ', formelKnoten(tippFrage))),
+    el('div', { class: 'tipp-inhalt' }, el('p', {}, text(tippText)), vorlesenKnopf(tippText, 'Tipp vorlesen'))) : null;
 
   zeichnen();
   return {
@@ -160,7 +182,7 @@ export function ausgleichenAufgabe(a, antworten, daten) {
     beiAenderung: (zahlen) => {
       const w = waage(a, zahlen);
       if (w.geloest && !verdeckt && !fertig) { fertig = true; pruefKnopf.disabled = true; antworten(zahlen); return; }
-      if (w.ausgeglichen && !w.kleinste) bau.melden(`💡 Die Waage steht gerade. Es geht aber mit kleineren Zahlen.`, 'tipp');
+      if (w.ausgeglichen && !w.kleinste) bau.melden('💡 Die Waage steht gerade. Es geht aber mit kleineren Zahlen davor.', 'tipp');
       else bau.melden('');
     }
   });

@@ -141,7 +141,7 @@
         "bild": null
       },
       "niveaus": {
-        "1": "Prüfen mit der Waage und kleine Zahlen davor.",
+        "1": "Prüfen mit der Waage und Zahlen davor bis 2.",
         "2": "Zahlen davor bei zwei Stoffen gleichzeitig.",
         "3": "Thermit, Hochofen und mehr. Die Waage zeigt sich erst beim Wiegen."
       },
@@ -154,7 +154,7 @@
         {
           "id": "teilchen",
           "text": "Ich kann mit der Zahl davor ganze Teilchen dazunehmen.",
-          "hilfe": "Die große Zahl davor sagt, wie viele Teilchen es gibt. Mit + nimmst du ein ganzes Teilchen dazu."
+          "hilfe": "Die große Zahl davor sagt, wie viele Teilchen es gibt. Mit dem Plus-Knopf nimmst du ein ganzes Teilchen dazu."
         },
         {
           "id": "index",

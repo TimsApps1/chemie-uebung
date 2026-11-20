@@ -205,7 +205,7 @@ export function uebersichtReiter({ neu }) {
   const meldung = el('span', { class: 'kopier-meldung', 'aria-live': 'polite' });
   return [
     karte('Übersicht pro Kind',
-      el('p', { class: 'leise' }, 'Pro Niveau: Bestwert (Ø Durchschnitt, % der Aufgaben beim 1. Versuch richtig) · Zahl der Runden. Tippe auf einen Namen für alle Runden und den Verlauf. Bei B1 (Bauen) zählt das erste fertig gebaute Modell (alle Noppen belegt) als 1. Versuch.'),
+      el('p', { class: 'leise' }, 'Pro Niveau: Bestwert (Ø Durchschnitt, % der Aufgaben beim 1. Versuch richtig) · Zahl der Runden. Tippe auf einen Namen für alle Runden und den Verlauf. Bei B1 (Bauen) zählt das erste fertig gebaute Modell (alle Noppen belegt) als 1. Versuch. Bei B2 ★/★★ hilft die Waage live mit; was ein Kind ohne Hilfe kann, zeigt B2 ★★★ (Waage verdeckt).'),
       zeitWahl,
       liste.length ? el('div', { class: 'tabelle-rollen' }, el('table', { class: 'tabelle uebersicht-tabelle' },
         el('thead', {}, el('tr', {}, el('th', {}, 'Name'), el('th', {}, 'Runden'), lehrerBereiche(d).map((b) => el('th', {}, BEREICH_KURZ[b])), el('th', {}, 'Zuletzt'))),

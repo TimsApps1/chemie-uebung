@@ -51,44 +51,35 @@ export function gleichungText(a, zahlen) {
 export function ausgleichHinweis(a, zahlen) {
   const w = waage(a, zahlen);
   if (w.ausgeglichen && !w.kleinste) {
-    return `Die Waage steht gerade, aber es geht mit kleineren Zahlen. Teile alle Zahlen durch ${ggT(zahlen)}.`;
+    return `Die Waage steht gerade, aber es geht mit kleineren Zahlen davor. Teile alle Zahlen davor durch ${ggT(zahlen)}.`;
   }
   const z = w.zeilen.find((x) => !x.gleich);
   if (!z) return null;
   const weniger = z.links < z.rechts ? 'links' : 'rechts';
-  return `Zähl die ${z.symbol}-Atome: links ${z.links}, rechts ${z.rechts}. Nimm ${weniger} mit + ein ganzes Teilchen dazu, das ${z.symbol} enthält.`;
+  return `Zähl die ${z.symbol}-Atome: links ${z.links}, rechts ${z.rechts}. Nimm ${weniger} mit dem Plus-Knopf ein ganzes Teilchen dazu, das ${z.symbol} enthält – oder auf der anderen Seite mit dem Minus-Knopf eins weg.`;
 }
 
 // ---------- Index-Falle: „Atom anhängen“ ----------
 // Liefert { neu, text }: Wie sähe die Formel mit einem Atom mehr aus, und warum ist das nicht erlaubt?
 
-function formelMitEinemMehr(formel) {
-  const teile = [...String(formel).matchAll(/([A-Z][a-z]?)(\d*)/g)].map((m) => [m[1], m[2] ? Number(m[2]) : 1]);
-  if (!teile.length) return formel;
-  teile[teile.length - 1][1] += 1;
-  return teile.map(([s, n]) => s + (n > 1 ? n : '')).join('');
-}
-
 export function falle(stoff, elemente = []) {
-  if (stoff.falle?.formel) {
-    return { neu: stoff.falle.formel, text: stoff.falle.text || `Dann wäre es nicht mehr ${stoff.name}, sondern ein anderer Stoff.` };
+  if (stoff.falle?.text) {
+    return { neu: stoff.falle.formel || null, text: stoff.falle.text };
   }
   const z = formelZaehlung(stoff.formel);
   const symbole = Object.keys(z);
-  const regel = 'Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor: Nimm mit + ein ganzes Teilchen dazu.';
+  const regel = 'Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor: Nimm mit dem Plus-Knopf ein ganzes Teilchen dazu.';
   if (symbole.length === 1) {
     const sym = symbole[0];
     const el = elemente.find((e) => e.symbol === sym);
-    if (z[sym] === 2) {
-      return { neu: null, text: `${stoff.name} besteht aus Zweierteilchen: ${stoff.formel}. Ein drittes Atom gehört nicht dazu. ${regel}` };
-    }
-    return {
-      neu: null,
-      text: `${el?.metall ? 'Metalle bilden große Verbände.' : `${stoff.name} bildet einen großen Verband.`} Deshalb schreiben wir nur das Symbol ${sym}. ${regel}`
-    };
+    if (z[sym] === 2) return { neu: null, text: `${stoff.name} besteht aus Zweierteilchen: ${stoff.formel}. Ein drittes Atom gehört nicht dazu. ${regel}` };
+    const grund = el?.metall ? 'Metalle bilden große Verbände. Deshalb schreiben wir nur das Symbol.'
+      : sym === 'C' ? 'Kohlenstoff bildet einen großen Verband. Deshalb schreiben wir nur das Symbol C.'
+        : `Bei ${stoff.name} schreiben wir vereinfacht nur das Symbol ${sym}.`;
+    return { neu: null, text: `${grund} ${regel}` };
   }
-  const neu = formelMitEinemMehr(stoff.formel);
-  return { neu, text: `Aus ${stoff.formel} würde ${neu}. Das wäre ein anderer Stoff, nicht mehr ${stoff.name}. ${regel}` };
+  // Verbindung ohne eigenen Text in den Daten: ehrlich bleiben, nichts Falsches behaupten.
+  return { neu: null, text: `Hängst du an ${stoff.formel} ein Atom an, ist es nicht mehr ${stoff.name}. ${regel}` };
 }
 
 // ---------- Prüfen der Daten (für daten.js) ----------

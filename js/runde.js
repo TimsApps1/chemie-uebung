@@ -46,9 +46,12 @@ export function aufgabenWaehlen(alle, niveau, kurs, zuletzt = []) {
   // damit die selbst geschriebenen Aufgaben im Mittelpunkt bleiben.
   const auswahl = [];
   const zahl = (liste, test) => liste.filter(test).length;
+  // „Ist die Gleichung ausgeglichen?“ (Ja/Nein) zählt als eigene Art: höchstens 2 pro Runde, sonst wird zu viel geraten.
+  const art = (x) => (x.typ === 'ausgleichen' && x.pruefen ? 'pruefen' : x.typ);
   const passt = (a, liste) => !(a.typ === 'sortieren' && zahl(liste, (x) => x.typ === 'sortieren') >= 2) &&
+    !(art(a) === 'pruefen' && zahl(liste, (x) => art(x) === 'pruefen') >= 2) &&
     !(a.generiert && zahl(liste, (x) => x.generiert) >= 3) &&
-    zahl(liste, (x) => x.typ === a.typ) < 4;
+    zahl(liste, (x) => art(x) === art(a)) < 4;
   for (const a of rest) {
     if (auswahl.length >= RUNDE_LAENGE - einstieg.length) break;
     if (passt(a, [...einstieg, ...auswahl])) auswahl.push(a);

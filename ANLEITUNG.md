@@ -107,6 +107,7 @@ Es werden immer die Runden der letzten 6 Wochen abgegeben, du kannst also ruhig 
   Eine Waage zählt jedes Element links und rechts. Stimmt alles, erscheint die Gleichung. Auf ★★★ ist die Waage
   verdeckt, bis das Kind auf „Wiegen“ tippt – das zählt als Versuch. Der Knopf „Atom anhängen“ zeigt,
   warum man die kleinen Zahlen nicht ändern darf (z. B. H₂O → H₂O₂), und nimmt die Änderung gleich zurück.
+  Für Noten: Auf ★ und ★★ hilft die Waage beim Probieren mit. Was ein Kind ohne Hilfe kann, zeigt ★★★.
 - **Bereich 1 (Formeln bauen, nur E-Kurs)** erscheint in Übersicht, Tabelle und Beamer wie die anderen Bereiche.
   Beim Bauen wird automatisch geprüft, sobald alle Noppen belegt sind. „Beim 1. Versuch richtig“ heißt dort:
   Das erste fertig gebaute Modell war richtig.

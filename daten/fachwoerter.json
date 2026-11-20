@@ -318,6 +318,46 @@
       "artikel": "die",
       "mehrzahl": "die Bindungen",
       "erklaerung": "Damit halten zwei Atome zusammen. Im Modell ist das ein Steg von einer Noppe zur Noppe eines anderen Steins."
+    },
+    {
+      "wort": "Gleichung",
+      "formen": [
+        "Gleichung",
+        "Gleichungen",
+        "Reaktionsgleichung"
+      ],
+      "artikel": "die",
+      "mehrzahl": "die Gleichungen",
+      "erklaerung": "Sie zeigt mit Formeln, welche Stoffe reagieren (links) und welche entstehen (rechts)."
+    },
+    {
+      "wort": "ausgeglichen",
+      "formen": [
+        "ausgeglichen",
+        "ausgleichen"
+      ],
+      "artikel": "",
+      "mehrzahl": "",
+      "erklaerung": "Links und rechts gibt es von jedem Element gleich viele Atome. Atome gehen bei einer Reaktion nicht verloren."
+    },
+    {
+      "wort": "Zweierteilchen",
+      "formen": [
+        "Zweierteilchen"
+      ],
+      "artikel": "das",
+      "mehrzahl": "die Zweierteilchen",
+      "erklaerung": "Zwei gleiche Atome, die zusammenhalten, zum Beispiel O2 oder H2."
+    },
+    {
+      "wort": "Verband",
+      "formen": [
+        "Verband",
+        "Verbände"
+      ],
+      "artikel": "der",
+      "mehrzahl": "die Verbände",
+      "erklaerung": "Sehr viele Atome hängen zusammen, zum Beispiel in einem Metall. Man schreibt dann nur das Symbol."
     }
   ]
 }

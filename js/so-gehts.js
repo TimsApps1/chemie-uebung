@@ -66,9 +66,9 @@ const MG_O2 = {
 
 const SCHRITTE_B2 = [
   { zahlen: [1, 1, 1], text: 'Links stehen die Stoffe vor der Reaktion, rechts danach. Die Waage zählt jedes Element: links 2 O, rechts nur 1 O. Sie kippt.' },
-  { zahlen: [1, 1, 2], text: 'Mit + nimmst du ein ganzes Teilchen dazu: 2 MgO. Jetzt passt O. Aber rechts sind 2 Mg, links nur 1.' },
-  { zahlen: [2, 1, 2], text: 'Links auch +: 2 Mg. Jetzt steht die Waage gerade. Die Gleichung heißt 2 Mg + O2 → 2 MgO.' },
-  { zahlen: [2, 1, 2], text: 'Die kleinen Zahlen darfst du nicht ändern. Aus H2O würde H2O2, ein anderer Stoff. Der Knopf „Atom anhängen“ zeigt dir das.' }
+  { zahlen: [1, 1, 2], text: 'Mit dem Plus-Knopf nimmst du ein ganzes Teilchen dazu: 2 MgO. Jetzt passt O. Aber rechts sind 2 Mg, links nur 1.' },
+  { zahlen: [2, 1, 2], text: 'Links auch Plus: 2 Mg. Jetzt steht die Waage gerade. Die Gleichung heißt 2 Mg + O2 → 2 MgO.' },
+  { zahlen: [2, 1, 2], text: 'Die kleinen Zahlen darfst du nicht ändern. Aus MgO würde MgO2 – das passt nicht zu den Noppen. Der Knopf „Atom anhängen“ zeigt dir das.' }
 ];
 
 export function soGehtsAusgleichen(elemente, weiter) {
