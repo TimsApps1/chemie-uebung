@@ -81,7 +81,7 @@
      "name": "Zinkoxid",
      "falle": {
       "formel": "ZnO2",
-      "text": "Aus ZnO würde ZnO2. Das passt nicht zu den Noppen: Zn hat 2 Noppen, zwei O-Steine bräuchten 4. Zinkoxid ist immer ZnO. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus ZnO würde ZnO2. Das ist ein anderer Stoff, nicht mehr Zinkoxid. Zinkoxid ist immer ZnO. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     },
     {
@@ -171,7 +171,7 @@
      "name": "Magnesiumoxid",
      "falle": {
       "formel": "MgO2",
-      "text": "Aus MgO würde MgO2. Das passt nicht zu den Noppen: Mg hat 2 Noppen, zwei O-Steine bräuchten 4. Magnesiumoxid ist immer MgO. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus MgO würde MgO2. Das ist ein anderer Stoff, nicht mehr Magnesiumoxid. Magnesiumoxid ist immer MgO. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     }
    ],
@@ -253,7 +253,7 @@
      "name": "Magnesiumoxid",
      "falle": {
       "formel": "MgO2",
-      "text": "Aus MgO würde MgO2. Das passt nicht zu den Noppen: Mg hat 2 Noppen, zwei O-Steine bräuchten 4. Magnesiumoxid ist immer MgO. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus MgO würde MgO2. Das ist ein anderer Stoff, nicht mehr Magnesiumoxid. Magnesiumoxid ist immer MgO. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     }
    ],
@@ -362,7 +362,7 @@
      "name": "Zinkoxid",
      "falle": {
       "formel": "ZnO2",
-      "text": "Aus ZnO würde ZnO2. Das passt nicht zu den Noppen: Zn hat 2 Noppen, zwei O-Steine bräuchten 4. Zinkoxid ist immer ZnO. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus ZnO würde ZnO2. Das ist ein anderer Stoff, nicht mehr Zinkoxid. Zinkoxid ist immer ZnO. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     }
    ],
@@ -834,7 +834,7 @@
      "name": "Kupfer(I)-sulfid",
      "falle": {
       "formel": "Cu2S2",
-      "text": "Aus Cu2S würde Cu2S2. Das passt nicht zu den Noppen: 2 Cu(I) haben 2 Noppen, 2 S-Steine bräuchten 4. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus Cu2S würde Cu2S2. Das ist ein anderer Stoff, nicht mehr Kupfer(I)-sulfid. Kupfer(I)-sulfid ist immer Cu2S. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     }
    ],
@@ -1091,7 +1091,7 @@
      "name": "Magnesiumoxid",
      "falle": {
       "formel": "MgO2",
-      "text": "Aus MgO würde MgO2. Das passt nicht zu den Noppen: Mg hat 2 Noppen, zwei O-Steine bräuchten 4. Magnesiumoxid ist immer MgO. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus MgO würde MgO2. Das ist ein anderer Stoff, nicht mehr Magnesiumoxid. Magnesiumoxid ist immer MgO. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     },
     {
@@ -1272,7 +1272,7 @@
      "name": "Magnesiumoxid",
      "falle": {
       "formel": "MgO2",
-      "text": "Aus MgO würde MgO2. Das passt nicht zu den Noppen: Mg hat 2 Noppen, zwei O-Steine bräuchten 4. Magnesiumoxid ist immer MgO. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus MgO würde MgO2. Das ist ein anderer Stoff, nicht mehr Magnesiumoxid. Magnesiumoxid ist immer MgO. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     }
    ],
@@ -1333,7 +1333,7 @@
      "name": "Kupfer(I)-oxid",
      "falle": {
       "formel": "Cu2O2",
-      "text": "Aus Cu2O würde Cu2O2. Das wären zwei Teilchen CuO, also Kupfer(II)-oxid: ein anderer Stoff. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus Cu2O würde Cu2O2. Dann käme auf jedes Cu-Atom ein O-Atom wie bei CuO – das ist ein anderer Stoff, nicht mehr Kupfer(I)-oxid. Kupfer(I)-oxid ist immer Cu2O. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     },
     {
@@ -1464,16 +1464,16 @@
    "typ": "auswahl",
    "symbol": "❓",
    "kann": "index",
-   "frage": "Ein Kind schreibt Mg + O → MgO statt Mg + O2. Was ist falsch?",
+   "frage": "Ein Kind schreibt: Mg + O → MgO. Was stimmt hier nicht?",
    "antworten": [
     "Sauerstoff besteht aus Zweierteilchen: O2.",
-    "Es fehlt eine große Zahl vor MgO.",
-    "Nichts, das ist richtig."
+    "Magnesium müsste Mg2 heißen.",
+    "Es ist alles richtig."
    ],
    "richtig": "Sauerstoff besteht aus Zweierteilchen: O2.",
    "fehler": {
-    "Es fehlt eine große Zahl vor MgO.": "Das kommt später. Zuerst: Wie schreibt man Sauerstoff?",
-    "Nichts, das ist richtig.": "Schau genau auf den Sauerstoff."
+    "Magnesium müsste Mg2 heißen.": "Metalle bilden große Verbände. Man schreibt nur das Symbol Mg.",
+    "Es ist alles richtig.": "Schau genau auf den Sauerstoff."
    },
    "denkanstoss": "Wie schreibt man Sauerstoff als Stoff?",
    "erklaerung": "Sauerstoff kommt als Zweierteilchen O2 vor. Richtig ist 2 Mg + O2 → 2 MgO."

@@ -574,6 +574,7 @@ function modell(a, antworten, daten) {
 
 const DARSTELLUNG = { auswahl, zahl, sortieren, klappt, wortgleichung, antippen, bauen, modell, ausgleichen: ausgleichenAufgabe };
 
-export function aufgabeDarstellen(a, antworten, daten) {
-  return DARSTELLUNG[a.typ](a, antworten, daten);
+// optionen: { rundeNiveau } – z. B. damit in einer ★★★-Runde auch die leichteren Einstiegsaufgaben ohne Hilfe laufen.
+export function aufgabeDarstellen(a, antworten, daten, optionen = {}) {
+  return DARSTELLUNG[a.typ](a, antworten, daten, optionen);
 }

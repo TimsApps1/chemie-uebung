@@ -1084,3 +1084,5 @@ button.bereich { font: inherit; text-align: left; cursor: pointer; width: 100%; 
 .duell-balken span { display: block; height: 100%; background: var(--haupt); }
 .duell-punkte { font-size: 1.1rem; }
 .duell-dran { margin: 0 0 var(--a2); font-size: 1.2rem; }
+.fenster .waage-box { position: static; }
+.waage-schale { font-size: 0.85rem; }
