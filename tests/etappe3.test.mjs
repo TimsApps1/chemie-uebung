@@ -365,3 +365,42 @@ test('Beamer: nie mehr als 5 Namen, auch bei Gleichstand', async () => {
   assert.deepEqual(r.rest, { anzahl: 5, wert: 60 }, JSON.stringify(r));
   await kontext.close();
 });
+
+// ---------- Nachbesserung nach Prüfrunde 3 ----------
+
+test('Keine Konfliktmarker in Dateien der App', async () => {
+  for (const datei of ['css/app.css', 'index.html', 'sw.js', ...(await fs.readdir(path.join(WURZEL, 'js'))).map((d) => `js/${d}`)]) {
+    const t = await fs.readFile(path.join(WURZEL, datei), 'utf8');
+    assert.doesNotMatch(t, /^(<{7}|={7}|>{7})/m, datei);
+  }
+});
+
+test('3D-Lage: In keiner Lösung von Bereich 1 kreuzen sich Stege', async () => {
+  const { positionen, kreuzungen } = await import('../js/baustelle.js');
+  const d = JSON.parse(await fs.readFile(path.join(WURZEL, 'daten/aufgaben/b1.json'), 'utf8'));
+  for (const a of d.aufgaben.filter((x) => x.formel)) {
+    const m = L.loesungsModell(a.formel, [...(a.start || []), ...a.steine], elemente);
+    assert.equal(kreuzungen(m, positionen(m)), 0, `${a.id} ${a.formel}`);
+  }
+});
+
+test('Richtiges Verhältnis mit zu vielen Steinen (Fe2O2 statt FeO) ist kein Fehlversuch', () => {
+  const m = L.leeresModell();
+  L.ersterStein(m, art('Fe(II)'));
+  const o1 = L.anstecken(m, art('O'), 1).id;
+  const fe2 = L.anstecken(m, art('Fe(II)'), o1).id;
+  const o2 = L.anstecken(m, art('O'), fe2).id;
+  L.verbinden(m, o2, 1);
+  const e = L.bauErgebnis(m, 'FeO');
+  assert.equal(e.voll, true);
+  assert.equal(e.vielfaches, true);
+  assert.match(L.bauHinweis(m, 'FeO', elemente), /Verhältnis stimmt/);
+});
+
+test('Beamer-Namen sind eindeutig: Lena Schmidt und Lena Schneider', async () => {
+  const { beamerName } = await import('../js/lehrer-daten.js');
+  const d = { klasse: [{ id: 'a', anzeige: 'Lena Schmidt' }, { id: 'b', anzeige: 'Lena Schneider' }, { id: 'c', anzeige: 'Tom Berg' }] };
+  assert.equal(beamerName(d, 'a'), 'Lena Schm.');
+  assert.equal(beamerName(d, 'b'), 'Lena Schn.');
+  assert.equal(beamerName(d, 'c'), 'Tom B.');
+});

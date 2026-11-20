@@ -17,7 +17,7 @@ function schritte(elemente) {
     { modell: ho, text: 'An jede Noppe kommt genau eine Bindung. H hat nur 1 Noppe. Am O ist noch 1 Noppe frei – sie ist gelb.' },
     { modell: hoh, text: 'Jetzt sind alle Noppen belegt. Keine Noppe ist mehr gelb. Fertig: H2O.' },
     { modell: mgo, text: 'Zwei Noppen können auch zum selben Partner gehen. Mg und O haben je 2 Noppen: zwei Stege zwischen Mg und O. MgO.' },
-    { modell: halb, text: 'So baust du: Tippe unten einen Stein an, dann eine freie (gelbe) Noppe. Zum Verbinden tippst du erst den einen Stein an, dann den anderen. Hier: Mg, dann O.' }
+    { modell: halb, text: 'Neuer Stein: Tippe ihn unten an, dann eine gelbe Noppe. Verbinden: Tippe Mg an, dann O.' }
   ];
 }
 
@@ -29,6 +29,7 @@ export function soGehtsZeigen(elemente, weiter) {
   const zaehler = el('p', { class: 'leise' });
   const zurueck = el('button', { type: 'button', class: 'knopf', onclick: () => zeige(nr - 1) }, '◀ Zurück');
   let schliessen = null;
+  let ueberspringen = null;
   const weiterKnopf = el('button', { type: 'button', class: 'knopf knopf-haupt', onclick: () => {
     if (nr < liste.length - 1) return zeige(nr + 1);
     schliessen?.();
@@ -40,6 +41,7 @@ export function soGehtsZeigen(elemente, weiter) {
     zaehler.textContent = `Schritt ${nr + 1} von ${liste.length}`;
     zurueck.disabled = nr === 0;
     weiterKnopf.textContent = nr === liste.length - 1 ? 'Los geht’s ➜' : 'Weiter ▶';
+    if (ueberspringen) ueberspringen.hidden = nr === liste.length - 1;
     bau.setzeModell(liste[nr].modell);
   }
   schliessen = fenster(el('div', { class: 'so-gehts' },
@@ -48,7 +50,7 @@ export function soGehtsZeigen(elemente, weiter) {
     zaehler,
     el('p', { class: 'tipp' }, 'Die Wertigkeit ist ein Hilfsmodell. Später lernst du mehr darüber.')),
   { titel: '🧱 So geht’s', knoepfe: (zu) => [
-    el('button', { type: 'button', class: 'knopf knopf-leise', onclick: () => { zu(); weiter?.(); } }, 'Überspringen'),
+    ueberspringen = el('button', { type: 'button', class: 'knopf knopf-leise', onclick: () => { zu(); weiter?.(); } }, 'Überspringen'),
     zurueck, weiterKnopf] });
   zeige(0);
   weiterKnopf.focus({ preventScroll: true });

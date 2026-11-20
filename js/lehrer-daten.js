@@ -186,7 +186,16 @@ export function beamerName(d, id) {
   const k = d.klasse.find((x) => x.id === id);
   if (!k) return kindName(d, id);
   const teile = k.anzeige.split(' ');
-  return teile.length > 1 ? `${teile[0]} ${teile[teile.length - 1][0]}.` : teile[0];
+  if (teile.length < 2) return teile[0];
+  const vor = teile[0];
+  const nach = teile[teile.length - 1];
+  // So viele Buchstaben des Nachnamens, bis der Name in der Klasse eindeutig ist: „Lena Schm.“ / „Lena Schn.“
+  const andere = d.klasse.filter((x) => x.id !== id).map((x) => x.anzeige.split(' ')).filter((t) => t.length > 1 && t[0].toLowerCase() === vor.toLowerCase()).map((t) => t[t.length - 1].toLowerCase());
+  for (let n = 1; n < nach.length; n++) {
+    const anfang = nach.slice(0, n).toLowerCase();
+    if (!andere.some((x) => x.startsWith(anfang))) return `${vor} ${nach.slice(0, n)}.`;
+  }
+  return `${vor} ${nach}`;
 }
 
 // ---------- Auswertung ----------

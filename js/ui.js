@@ -149,8 +149,8 @@ export function vorlesenStoppen() {
   try { window.speechSynthesis?.cancel(); } catch { /* egal */ }
 }
 
-export function vorlesenKnopf(textOderFunktion) {
-  return iconKnopf('i-laut', 'Vorlesen', () => {
+export function vorlesenKnopf(textOderFunktion, beschriftung = 'Vorlesen') {
+  return iconKnopf('i-laut', beschriftung, () => {
     vorlesen(typeof textOderFunktion === 'function' ? textOderFunktion() : textOderFunktion);
   });
 }

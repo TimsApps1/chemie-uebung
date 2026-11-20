@@ -7,7 +7,7 @@ import { text, baustein, fenster } from './ui.js';
 import { klapptEs, richtigeZahl } from './daten.js';
 import { formelModell } from './modell3d.js';
 import { baustelle } from './baustelle.js';
-import { steinArt, leeresModell, ersterStein, bauErgebnis, bauHinweis, loesungsModell } from './bausteine-logik.js';
+import { steinArt, leeresModell, ersterStein, bauErgebnis, bauHinweis, loesungsModell, VIELFACHES } from './bausteine-logik.js';
 
 // ---------- Prüfen ----------
 
@@ -508,6 +508,8 @@ function bauen(a, antworten, daten) {
       formelZeile.replaceChildren('Formel: ', el('b', {}, e.geloest ? formelKnoten(a.formel) : '?'));
       // Sind alle Noppen belegt, wird automatisch geprüft – auch ein falsches Modell zählt dann als Versuch.
       // So heißt „1. Versuch richtig“ beim Bauen dasselbe wie sonst: Das erste fertige Modell war richtig.
+      // Ausnahme: richtiges Verhältnis mit zu vielen Steinen (Fe2O2) – nur Hinweis, kein Fehlversuch.
+      if (e.voll && e.vielfaches) { bau.melden(VIELFACHES, 'warnung'); return; }
       if (e.voll && !fertig) { fertig = true; pruefKnopf.disabled = true; antworten(m); }
     }
   });
@@ -515,6 +517,7 @@ function bauen(a, antworten, daten) {
   let erinnert = false;
   const pruefKnopf = el('button', { type: 'button', class: 'knopf knopf-haupt knopf-breit', onclick: () => {
     const e = bauErgebnis(bau.modell(), a.formel);
+    if (e.vielfaches && !erinnert) { erinnert = true; bau.melden(VIELFACHES, 'warnung'); return; }
     if (!erinnert && (e.offen > 0 || !e.formel) && !e.zuViel.length) {
       erinnert = true;
       bau.melden(`${e.formel ? `Noch ${e.offen === 1 ? '1 Noppe' : `${e.offen} Noppen`} frei. Fülle erst alle Noppen.` : 'Es liegt noch kein Stein. Tippe unten auf einen Stein.'} Kommst du nicht weiter? Tippe nochmal auf „Fertig – prüfen“.`, 'warnung');

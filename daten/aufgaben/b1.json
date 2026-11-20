@@ -17,7 +17,8 @@
    ],
    "leicht": true,
    "denkanstoss": "Na hat 1 Noppe. Wie viele Cl brauchst du?",
-   "erklaerung": "Na hat 1 Noppe, Cl hat 1. Ein Cl reicht: NaCl."
+   "erklaerung": "Na hat 1 Noppe, Cl hat 1. Ein Cl reicht: NaCl.",
+   "alltag": "NaCl ist Kochsalz."
   },
   {
    "id": "b1-1-03",
@@ -35,7 +36,8 @@
    ],
    "leicht": true,
    "denkanstoss": "H hat nur 1 Noppe.",
-   "erklaerung": "H und Cl haben je 1 Noppe: HCl."
+   "erklaerung": "H und Cl haben je 1 Noppe: HCl.",
+   "alltag": "HCl in Wasser ist Salzsäure. Auch dein Magen macht sie."
   },
   {
    "id": "b1-1-04",
@@ -53,7 +55,8 @@
    ],
    "denkanstoss": "O hat 2 Noppen. Jedes H hat nur 1.",
    "erklaerung": "O hat 2 Noppen. Dafür brauchst du 2 H-Steine: H2O.",
-   "leicht": true
+   "leicht": true,
+   "alltag": "H2O ist Wasser."
   },
   {
    "id": "b1-1-01",
@@ -87,7 +90,8 @@
     "Zn"
    ],
    "denkanstoss": "Zn und O haben gleich viele Noppen. Zwei Noppen können zum selben Partner gehen.",
-   "erklaerung": "Zn und O haben je 2 Noppen: ZnO."
+   "erklaerung": "Zn und O haben je 2 Noppen: ZnO.",
+   "alltag": "ZnO steckt in Sonnencreme und Wundsalbe."
   },
   {
    "id": "b1-1-06",
@@ -155,7 +159,8 @@
     "S"
    ],
    "denkanstoss": "S hat 2 Noppen, H nur 1.",
-   "erklaerung": "S hat 2 Noppen. Dafür brauchst du 2 H-Steine: H2S."
+   "erklaerung": "S hat 2 Noppen. Dafür brauchst du 2 H-Steine: H2S.",
+   "alltag": "H2S riecht nach faulen Eiern."
   },
   {
    "id": "b1-1-10",
@@ -315,7 +320,8 @@
     "O"
    ],
    "denkanstoss": "Al hat 3 Noppen, O hat 2. Die Al-Steine und die O-Steine brauchen zusammen gleich viele Noppen.",
-   "erklaerung": "2 Al-Steine haben 6 Noppen, 3 O-Steine haben auch 6: Al2O3."
+   "erklaerung": "2 Al-Steine haben 6 Noppen, 3 O-Steine haben auch 6: Al2O3.",
+   "alltag": "Al2O3 schützt Alufolie. Als Kristall heißt es Rubin oder Saphir."
   },
   {
    "id": "b1-2-02",
@@ -331,7 +337,8 @@
    ],
    "leicht": true,
    "denkanstoss": "C hat 4 Noppen. Jedes O braucht 2 davon.",
-   "erklaerung": "C hat 4 Noppen, jedes O 2. Zwei O füllen C: CO2."
+   "erklaerung": "C hat 4 Noppen, jedes O 2. Zwei O füllen C: CO2.",
+   "alltag": "CO2 atmest du aus. Es macht die Blasen im Sprudel."
   },
   {
    "id": "b1-2-03",
@@ -347,7 +354,8 @@
    ],
    "leicht": true,
    "denkanstoss": "N hat 3 Noppen, H nur 1.",
-   "erklaerung": "N hat 3 Noppen. Dafür brauchst du 3 H-Steine: NH3."
+   "erklaerung": "N hat 3 Noppen. Dafür brauchst du 3 H-Steine: NH3.",
+   "alltag": "NH3 (Ammoniak) riecht stechend. Daraus macht man Dünger."
   },
   {
    "id": "b1-2-04",
@@ -362,7 +370,8 @@
     "H"
    ],
    "denkanstoss": "C hat 4 Noppen, H nur 1.",
-   "erklaerung": "C hat 4 Noppen. Dafür brauchst du 4 H-Steine: CH4."
+   "erklaerung": "C hat 4 Noppen. Dafür brauchst du 4 H-Steine: CH4.",
+   "alltag": "CH4 ist Erdgas."
   },
   {
    "id": "b1-2-05",
@@ -519,7 +528,8 @@
     "O"
    ],
    "denkanstoss": "Die römische Zahl sagt, welchen Eisen-Stein du brauchst.",
-   "erklaerung": "Eisen(III) hat 3 Noppen. 2 Fe-Steine haben 6 Noppen, 3 O-Steine auch 6: Fe2O3."
+   "erklaerung": "Eisen(III) hat 3 Noppen. 2 Fe-Steine haben 6 Noppen, 3 O-Steine auch 6: Fe2O3.",
+   "alltag": "Fe2O3 ist der rote Rost."
   },
   {
    "id": "b1-3-02",
@@ -552,7 +562,8 @@
     "O"
    ],
    "denkanstoss": "Kupfer(I) hat nur 1 Noppe.",
-   "erklaerung": "Kupfer(I) hat 1 Noppe. O hat 2, also brauchst du 2 Cu-Steine: Cu2O."
+   "erklaerung": "Kupfer(I) hat 1 Noppe. O hat 2, also brauchst du 2 Cu-Steine: Cu2O.",
+   "alltag": "Cu2O ist rot. Es entsteht auf Kupfer."
   },
   {
    "id": "b1-3-04",
@@ -569,7 +580,8 @@
    ],
    "leicht": true,
    "denkanstoss": "Die römische Zahl sagt, welchen Kupfer-Stein du brauchst.",
-   "erklaerung": "Kupfer(II) hat 2 Noppen, O auch 2: CuO."
+   "erklaerung": "Kupfer(II) hat 2 Noppen, O auch 2: CuO.",
+   "alltag": "CuO ist schwarz. Du kennst es vom Versuch mit Kupferblech in der Flamme."
   },
   {
    "id": "b1-3-05",
@@ -718,7 +730,7 @@
     "3": "Mit 3 Al hättest du 9 Noppen. Das passt nicht zu den O-Steinen.",
     "6": "6 ist die Zahl der Noppen, nicht der Steine."
    },
-   "denkanstoss": "Suche die kleinste Zahl, die durch 3 und durch 2 teilbar ist.",
+   "denkanstoss": "Bei welcher Noppenzahl haben die Al-Steine und die O-Steine gleich viele? Wie viele Al-Steine sind das?",
    "erklaerung": "2 Al-Steine haben 6 Noppen (2 · 3), 3 O-Steine haben auch 6 Noppen (3 · 2). Also 2 Al-Steine."
   }
  ]

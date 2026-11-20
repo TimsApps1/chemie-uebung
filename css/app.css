@@ -958,7 +958,6 @@ button.bereich { font: inherit; text-align: left; cursor: pointer; width: 100%; 
 .bau-liste li.markiert { outline: 2px solid var(--haupt); }
 .bau-liste-text { flex: 1; min-width: 12em; }
 .baustelle.gesperrt .bau-liste .knopf { display: none; }
-=======
 /* ---------- Etappe 2, Prüfrunde 1 ---------- */
 :root { --rand-kraeftig: #868ea6; }
 .qr-bild { width: min(420px, 80vw, calc(100dvh - 300px)); min-width: 200px; }
@@ -989,3 +988,6 @@ button.bereich { font: inherit; text-align: left; cursor: pointer; width: 100%; 
 .bau-status-zeile { display: flex; align-items: center; gap: var(--a2); }
 .bau-status-zeile .bau-status { flex: 1; }
 .bau-leer { margin: 0; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center; padding: 16px; font-weight: 700; font-size: 1.15rem; color: var(--text-leise); }
+.bau-stein-knopf small.bau-noppenzahl { font-size: 0.95rem; color: var(--text); }
+.bau-liste-box summary::before { content: '▸'; margin-right: 6px; }
+.bau-liste-box[open] summary::before { content: '▾'; }

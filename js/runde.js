@@ -251,7 +251,9 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
           const satz = 'Gut zu wissen: Die Formel zeigt nur das Zahlenverhältnis. In Wirklichkeit hängen sehr viele Atome zusammen.';
           gutZuWissen = el('div', { class: 'gut-zu-wissen' }, el('p', {}, '💡 ', text(satz)), vorlesenKnopf(satz));
         }
-        rueck.replaceChildren(rueckmeldung(true, lobText, null, plus, gutZuWissen));
+        // Alltagsbezug (optional in den Daten): ein Satz, woher man den Stoff kennt.
+        const alltag = a.alltag ? el('div', { class: 'gut-zu-wissen' }, el('p', {}, '🌍 ', text(a.alltag)), vorlesenKnopf(a.alltag, 'Satz vorlesen')) : null;
+        rueck.replaceChildren(rueckmeldung(true, lobText, null, plus, alltag || gutZuWissen ? [alltag, gutZuWissen].filter(Boolean) : null));
         weiterKnopf(a, true);
         return;
       }
@@ -262,7 +264,7 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
           rueck.replaceChildren();
           darstellung.nochmal();
           // Fokus auf das erste wieder bedienbare Element (VoiceOver, Tastatur, Schaltersteuerung).
-          darstellung.wurzel.querySelector('button:not([disabled]), [role="button"]')?.focus();
+          (darstellung.wurzel.querySelector('.bau-stein-knopf') || darstellung.wurzel.querySelector('button:not([disabled]), [role="button"]'))?.focus();
         } }, 'Nochmal versuchen');
         rueck.replaceChildren(rueckmeldung(false, 'Noch nicht.', hinweis, 0, null, hinweis), nochmal);
         nochmal.focus({ preventScroll: true });

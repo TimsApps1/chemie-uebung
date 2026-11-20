@@ -112,13 +112,8 @@ export function positionen(m) {
   return pos;
 }
 
-function entspannen(glieder, m, pos) {
-  if (glieder.length < 3) return;
-  const mitte = pos.get(glieder[0]).clone();
-  const kanten = m.bindungen.filter((b) => glieder.includes(b.a) && glieder.includes(b.b));
-  // Nur Ringe entspannen (z. B. Fe2O3 als Raute); Bäume und Ketten behalten ihr ruhiges Schema.
-  if (kanten.length < glieder.length) return;
-  for (let runde = 0; runde < 120; runde++) {
+function entspannenLauf(glieder, kanten, pos) {
+  for (let runde = 0; runde < 150; runde++) {
     const kraft = new Map(glieder.map((id) => [id, new THREE.Vector3()]));
     for (let i = 0; i < glieder.length; i++) {
       for (let j = i + 1; j < glieder.length; j++) {
@@ -138,6 +133,56 @@ function entspannen(glieder, m, pos) {
     }
     for (const id of glieder) pos.get(id).addScaledVector(kraft.get(id).clampLength(0, 0.4), 0.5);
   }
+}
+
+// Wie viele Stege kreuzen sich? (Stege mit gemeinsamem Stein zählen nicht.)
+export function kreuzungen(m, pos) {
+  const strecken = m.bindungen.filter((b) => pos.get(b.a) && pos.get(b.b));
+  const seite = (p, q, r) => Math.sign((q.x - p.x) * (r.y - p.y) - (q.y - p.y) * (r.x - p.x));
+  let n = 0;
+  for (let i = 0; i < strecken.length; i++) {
+    for (let j = i + 1; j < strecken.length; j++) {
+      const x = strecken[i]; const y = strecken[j];
+      if (x.a === y.a || x.a === y.b || x.b === y.a || x.b === y.b) continue;
+      const [a, b, c, d] = [pos.get(x.a), pos.get(x.b), pos.get(y.a), pos.get(y.b)];
+      if (seite(a, b, c) * seite(a, b, d) < 0 && seite(c, d, a) * seite(c, d, b) < 0) n++;
+    }
+  }
+  return n;
+}
+
+function entspannen(glieder, m, pos) {
+  if (glieder.length < 3) return;
+  const mitte = pos.get(glieder[0]).clone();
+  const kanten = m.bindungen.filter((b) => glieder.includes(b.a) && glieder.includes(b.b));
+  // Nur Ringe entspannen (z. B. Fe2O3); Bäume und Ketten behalten ihr ruhiges Schema.
+  if (kanten.length < glieder.length) return;
+  // Zwei „Knoten“, an denen alle anderen hängen (Al2O3, Fe2O3, Al2S3 als Ring): festes, kreuzungsfreies Schema.
+  // Metall links und rechts, die anderen Steine in einer Spalte dazwischen.
+  const nachbarn = (id) => new Set(kanten.filter((b) => b.a === id || b.b === id).map((b) => (b.a === id ? b.b : b.a)));
+  const knoten = glieder.filter((id) => nachbarn(id).size === glieder.length - 2);
+  if (knoten.length === 2 && glieder.every((id) => knoten.includes(id) || [...nachbarn(id)].every((n) => knoten.includes(n)))) {
+    const mitteListe = glieder.filter((id) => !knoten.includes(id));
+    pos.set(knoten[0], new THREE.Vector3(mitte.x - ABSTAND * 0.95, mitte.y, 0));
+    pos.set(knoten[1], new THREE.Vector3(mitte.x + ABSTAND * 0.95, mitte.y, 0));
+    mitteListe.forEach((id, i) => pos.set(id, new THREE.Vector3(mitte.x, mitte.y + (i - (mitteListe.length - 1) / 2) * ABSTAND * 0.75, 0)));
+    return;
+  }
+  // Mehrere feste Startlagen probieren und die ohne gekreuzte Stege nehmen (immer gleich, kein Zufall beim Kind).
+  const nurDiese = { bindungen: kanten };
+  let beste = null;
+  for (let versuch = 0; versuch < 10; versuch++) {
+    const probe = new Map(glieder.map((id, i) => {
+      if (versuch === 0) return [id, pos.get(id).clone()];
+      const w = (i * (versuch * 2.399 + 0.7)) % (Math.PI * 2);
+      return [id, new THREE.Vector3(Math.cos(w) * ABSTAND, Math.sin(w) * ABSTAND, 0)];
+    }));
+    entspannenLauf(glieder, kanten, probe);
+    const k = kreuzungen(nurDiese, probe);
+    if (!beste || k < beste.k) beste = { k, probe };
+    if (k === 0) break;
+  }
+  for (const id of glieder) pos.set(id, beste.probe.get(id));
   // Wieder um den ersten Stein zentrieren (damit das Modell nicht wandert).
   const schwerpunkt = glieder.reduce((v, id) => v.add(pos.get(id)), new THREE.Vector3()).divideScalar(glieder.length);
   for (const id of glieder) pos.get(id).sub(schwerpunkt).add(mitte);
@@ -535,9 +580,10 @@ export function baustelle({ leiste = [], modell = leeresModell(), nurAnsehen = f
   if (!mit3d) buehne.replaceChildren(el('p', { class: 'leise' }, 'Auf diesem Gerät gibt es kein 3D. Baue mit der Liste unten.'));
   melden(nurAnsehen ? 'Mit einem Finger drehen, mit zwei Fingern zoomen.' : naechsterSchritt(m));
 
+  const statusZeile = nurAnsehen ? status : el('div', { class: 'bau-status-zeile' }, status, vorlesenKnopf(() => status.textContent, 'Hinweis vorlesen'));
   const wurzel = el('div', { class: 'baustelle' + (nurAnsehen ? ' nur-ansehen' : '') },
     buehne,
-    nurAnsehen ? status : el('div', { class: 'bau-status-zeile' }, status, vorlesenKnopf(() => status.textContent)),
+    statusZeile,
     zaehler,
     nurAnsehen ? null : leisteKnoten,
     steuerung,
@@ -569,10 +615,11 @@ export function baustelle({ leiste = [], modell = leeresModell(), nurAnsehen = f
     melden,
     modell: () => kopie(m),
     setzeModell(neu) { m = kopie(neu); verlauf.length = 0; loesenModus = false; wartendeNoppe = null; gewaehlteArt = null; melden(nurAnsehen ? '' : naechsterSchritt(m)); zeichnen(); },
-    sperren() { nurAnsehen = true; melden(''); wurzel.classList.add('gesperrt'); leisteKnoten.remove(); steuerung?.remove(); zeichnen(); },
+    sperren() { nurAnsehen = true; melden(''); statusZeile.hidden = true; wurzel.classList.add('gesperrt'); leisteKnoten.remove(); steuerung?.remove(); zeichnen(); },
     entsperren() {
       nurAnsehen = false;
       wurzel.classList.remove('gesperrt');
+      statusZeile.hidden = false;
       melden(naechsterSchritt(m));
       if (!wurzel.contains(leisteKnoten)) zaehler.after(leisteKnoten);
       if (steuerung && !wurzel.contains(steuerung)) leisteKnoten.after(steuerung);

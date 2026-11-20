@@ -166,7 +166,11 @@ export function bauErgebnis(m, zielFormel) {
   const ziel = formelZaehlung(zielFormel);
   const voll = m.steine.length > 0 && offen === 0;
   const passt = gleicheZaehlung(zaehlung, ziel);
+  // Richtiges Verhältnis, aber zu viele Steine (z. B. Fe2O2 statt FeO): kein Fehler im Prinzip.
+  const faktor = Object.keys(ziel).length ? (zaehlung[Object.keys(ziel)[0]] || 0) / ziel[Object.keys(ziel)[0]] : 0;
+  const vielfaches = !passt && Number.isInteger(faktor) && faktor > 1 && gleicheZaehlung(zaehlung, Object.fromEntries(Object.entries(ziel).map(([k, v]) => [k, v * faktor])));
   return {
+    vielfaches,
     geloest: voll && passt && zusammenhaengend(m),
     voll, passt, offen, zaehlung, formel: m.steine.length ? formelVon(zaehlung) : '',
     zusammen: zusammenhaengend(m),
@@ -174,6 +178,8 @@ export function bauErgebnis(m, zielFormel) {
     zuWenig: Object.keys(ziel).filter((s) => (zaehlung[s] || 0) < ziel[s])
   };
 }
+
+export const VIELFACHES = 'Das Verhältnis stimmt! Eine Formel schreibt man mit den kleinsten Zahlen. Es geht mit weniger Steinen: Zwei Noppen können zum selben Partner gehen.';
 
 // Hinweis nach einem Fehlversuch (ohne die Lösung zu verraten).
 // steinarten = alle Steine der Aufgabe (Start + Leiste), name = Aufgabentext (für die römische Zahl),
@@ -186,6 +192,7 @@ export function bauHinweis(m, zielFormel, elemente, { steinarten = [], name = ''
     return s ? s.wertigkeit : elemente.find((x) => x.symbol === sym)?.wertigkeit?.[0];
   };
   if (!m.steine.length) return 'Tippe unten auf einen Stein. Er kommt in die Mitte.';
+  if (e.vielfaches) return VIELFACHES;
   // Falscher Stein bei zwei Wertigkeiten (z. B. Cu(II) statt Cu(I))?
   if (steinarten.length) {
     const loesung = loesungsModell(zielFormel, steinarten, elemente);

@@ -22,6 +22,7 @@ Die Aufgaben stehen in `daten/aufgaben/b1.json`, `b3.json` und `b4.json` (späte
 | `frage` | ja | Arbeitsanweisung, **höchstens ein Satz** |
 | `symbol` | ja | Ein Zeichen vor der Frage: ✋ antippen, ↕ sortieren, 🔢 zählen, ✏️ ergänzen, ❓ auswählen |
 | `denkanstoss` | ja | Hilfe nach dem 1. Fehler. Verrät die Lösung **nicht**. |
+| `alltag` | nein | Ein Satz nach der richtigen Lösung, woher man den Stoff kennt, z. B. „NaCl ist Kochsalz.“ |
 | `erklaerung` | ja | Ein Satz, der die Lösung erklärt (nach dem 2. Fehler und bei „Erklär’s mir“) |
 | `kurs` | nein | `"E"` = nur E-Kurs. Fehlt das Feld, gilt die Aufgabe für beide Kurse. |
 | `leicht` | nein | `true` = gut als Einstieg (die ersten zwei Aufgaben einer Runde sind leichter) |
