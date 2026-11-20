@@ -141,11 +141,11 @@ function adminSeite(umgebungRoh) {
         liste.length > 1 ? el('button', { type: 'button', class: 'knopf knopf-klein', onclick: () => zusammenfuehren(k.name, liste, neu) }, 'Zusammenführen') : null,
         el('button', { type: 'button', class: 'knopf knopf-klein', onclick: () => { kindSperren(k.name, !k.gesperrt); neu(); } }, k.gesperrt ? 'Entsperren' : 'Sperren'),
         el('button', { type: 'button', class: 'knopf knopf-klein', onclick: async () => {
-          if (await fragen(`„${anzeigeName(k.name)}“ mit allen Runden von diesem iPad löschen? Das geht nicht rückgängig.`, 'Ja, löschen', 'Abbrechen')) { kindLoeschen(k.name); neu(); }
+          if (await fragen(`„${anzeigeName(k.name)}“ mit allen Runden von diesem iPad löschen? Das geht nicht rückgängig.`, 'Ja, löschen', 'Abbrechen', { hauptIstNein: true })) { kindLoeschen(k.name); neu(); }
         } }, 'Löschen'))));
   });
   const alleLoeschen = liste.length ? el('button', { type: 'button', class: 'knopf', onclick: async () => {
-    if (await fragen('Alle Namen und Ergebnisse auf diesem iPad löschen (z. B. am Schuljahresende)? Das geht nicht rückgängig.', 'Ja, alles löschen', 'Abbrechen')) {
+    if (await fragen('Alle Namen und Ergebnisse auf diesem iPad löschen (z. B. am Schuljahresende)? Das geht nicht rückgängig.', 'Ja, alles löschen', 'Abbrechen', { hauptIstNein: true })) {
       liste.forEach((k) => kindLoeschen(k.name));
       neu();
     }
@@ -207,7 +207,7 @@ function adminSeite(umgebungRoh) {
 
 let reiter = 'ergebnisse';
 
-// Notlösung bis Etappe 2: alle Runden eines Kindes mit Code ansehen und kopieren.
+// Alle Runden eines Kindes auf diesem iPad ansehen und kopieren.
 function rundenZeigen(name) {
   const p = profil(name);
   const runden = p.runden;

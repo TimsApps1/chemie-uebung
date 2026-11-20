@@ -208,3 +208,97 @@ test('Schüler: „Ergebnisse zeigen“ öffnet einen QR-Code, „Alle Codes kop
   assert.deepEqual(fehler, []);
   await kontext.close();
 });
+
+test('Gelöschte Runden kommen beim nächsten Einlesen (und aus einer Sicherung) nicht zurück', async () => {
+  const { kontext, seite } = await neueSeite();
+  const r = await seite.evaluate(async (klasse) => {
+    const L = await import('./js/lehrer-daten.js');
+    L.allesLoeschen();
+    L.klasseSpeichern(L.klasseAusText(klasse));
+    const text = await (await fetch('tests/beispielcodes.txt')).text();
+    L.einlesen(text);
+    const code = L.lehrerDaten().runden[0].code;
+    const sicherungVorher = L.sicherungErstellen();
+    L.rundeLoeschen(code);
+    const nochmal = L.einlesen(text);
+    L.sicherungEinlesen(sicherungVorher);
+    return { anzahl: L.lehrerDaten().runden.length, geloescht: nochmal.geloescht.length, neu: nochmal.neu.length, drin: L.lehrerDaten().runden.some((x) => x.code === code) };
+  }, KLASSE);
+  assert.deepEqual(r, { anzahl: 15, geloescht: 1, neu: 0, drin: false });
+  await kontext.close();
+});
+
+test('Klassenliste ändern (Kind oben einfügen) behält Zuordnungen', async () => {
+  const { kontext, seite } = await neueSeite();
+  const r = await seite.evaluate(async ([klasse, variante]) => {
+    const L = await import('./js/lehrer-daten.js');
+    L.allesLoeschen();
+    L.klasseSpeichern(L.klasseAusText(klasse));
+    L.einlesen(variante);
+    const offen = L.nichtZugeordnet();
+    L.aliasSetzen(offen[0].schluessel, L.lehrerDaten().klasse.find((k) => k.anzeige === 'Tom Berg').id);
+    L.klasseSpeichern(L.klasseAusText('Anna Neu; G\n' + klasse));
+    const tom = L.uebersicht().find((k) => k.name === 'Tom Berg');
+    return { tom: tom.runden, offen: L.nichtZugeordnet().length, namen: L.uebersicht().map((k) => k.name) };
+  }, [KLASSE, punktecode({ name: 'TOMBER', bereich: 'B3', niveau: 1, punkte: 30, tag: 470, erster: 3, kennung: namensKennung('Tom Bergg'), geraet: 'X3', nummer: 1 })]);
+  assert.equal(r.tom, 1);
+  assert.equal(r.offen, 0);
+  assert.ok(r.namen.every((n) => !/^k\d|^\?/.test(n)), r.namen.join(', '));
+  await kontext.close();
+});
+
+test('Abgebrochene Sicherung gilt nicht als gemacht', async () => {
+  const { kontext, seite } = await neueSeite();
+  const r = await seite.evaluate(async () => {
+    const L = await import('./js/lehrer-daten.js');
+    L.allesLoeschen();
+    const vorher = L.lehrerDaten().letzteSicherung;
+    L.sicherungErstellen();
+    return { vorher, nachher: L.lehrerDaten().letzteSicherung };
+  });
+  assert.equal(r.nachher, r.vorher);
+  await kontext.close();
+});
+
+test('QR-Fenster im Querformat (1024×690): „Nächster“ ist sichtbar und nicht verdeckt', async () => {
+  const { kontext, seite } = await neueSeite({ width: 1024, height: 690 });
+  const codes = [];
+  for (let i = 1; i <= 9; i++) codes.push(punktecode({ name: 'MIRAWOL', bereich: 'B4', niveau: 1, punkte: 50, tag: 470, erster: 5, kennung: namensKennung('Mira Wolf'), geraet: 'Q7', nummer: i }));
+  await seite.evaluate(async (liste) => { const { qrZeigen } = await import('./js/qr.js'); await qrZeigen(liste, 'Mira'); }, codes);
+  const knopf = seite.getByRole('button', { name: 'Nächster ▶' });
+  await knopf.waitFor();
+  const sichtbar = await knopf.evaluate((k) => {
+    const r = k.getBoundingClientRect();
+    const oben = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+    return r.bottom <= window.innerHeight && r.top >= 0 && (oben === k || k.contains(oben));
+  });
+  assert.ok(sichtbar, '„Nächster“ ist verdeckt oder außerhalb');
+  await knopf.click();
+  await seite.getByText('QR 2 von 2').waitFor();
+  await kontext.close();
+});
+
+test('Beamer-Vorschau zeigt jede Platznummer nur einmal; Kurs-Filter wirkt', async () => {
+  const { kontext, seite } = await neueSeite();
+  const r = await seite.evaluate(async (klasse) => {
+    const L = await import('./js/lehrer-daten.js');
+    const { wocheVonTag } = await import('./js/hilfen.js');
+    L.allesLoeschen();
+    L.klasseSpeichern(L.klasseAusText(klasse));
+    L.einlesen(await (await fetch('tests/beispielcodes.txt')).text());
+    return { g: L.bestenliste(L.lehrerDaten(), { bereich: 'B3', niveau: 1, woche: wocheVonTag(470), kurs: 'G' }).length,
+      e: L.bestenliste(L.lehrerDaten(), { bereich: 'B3', niveau: 1, woche: wocheVonTag(470), kurs: 'E' }).length };
+  }, KLASSE);
+  assert.deepEqual(r, { g: 5, e: 0 });
+  await seite.getByRole('button', { name: 'Lehrkraft' }).click();
+  for (const z of '4711') await seite.getByRole('button', { name: z, exact: true }).click();
+  await seite.getByRole('button', { name: 'OK' }).click();
+  await seite.getByRole('button', { name: '🏆 Beamer' }).click();
+  const zurueck = await seite.evaluate(async () => { const { wocheVonTag, tagNummer } = await import('./js/hilfen.js'); return wocheVonTag(tagNummer()) - wocheVonTag(470); });
+  for (let i = 0; i < zurueck; i++) await seite.getByRole('button', { name: 'Woche davor' }).click();
+  await seite.getByRole('button', { name: 'B3 Redox' }).click();
+  const erste = await seite.locator('.vorschau-liste li').first();
+  assert.equal(await erste.evaluate((li) => getComputedStyle(li.parentElement).listStyleType), 'none');
+  assert.match(await erste.textContent(), /^1\. Lena S\./);
+  await kontext.close();
+});

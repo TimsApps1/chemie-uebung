@@ -207,7 +207,7 @@ function heuteUebenPlan(name, p) {
   const frei = bereicheFrei(p).filter((b) => !b.kommt_bald);
   if (!frei.length) return null;
   const fehlerFaellig = faelligeFehler(p, frei.map((b) => b.id));
-  if (fehlerFaellig.length) return { art: 'fehler', text: `Erst ${fehlerFaellig.length === 1 ? 'deinen Fehler' : `deine ${Math.min(fehlerFaellig.length, RUNDE_LAENGE)} Fehler`} von früher ausbessern` };
+  if (fehlerFaellig.length) return { art: 'fehler', text: `${fehlerFaellig.length === 1 ? '1 Fehler' : `${Math.min(fehlerFaellig.length, RUNDE_LAENGE)} Fehler`} ausbessern – du schaffst das!` };
   const letzte = p.letzte && frei.some((b) => b.id === p.letzte.bereich) ? p.letzte : { bereich: frei[0].id, niveau: 1 };
   return { art: 'normal', bereich: letzte.bereich, niveau: letzte.niveau,
     text: `${bereichInfo(letzte.bereich).titel} · ${sterneText(letzte.niveau)}` };
@@ -486,12 +486,13 @@ function rundenende(name, ergebnis, kannVorher) {
     }
   }
   if (!letzte) neu.push(neuZeile('🚀', 'Deine erste Runde auf diesem Niveau. Gut, dass du angefangen hast!'));
-  else if (ergebnis.ersterVersuch > letzte.ersterVersuch) neu.push(neuZeile('↑', `Letztes Mal ${letzte.ersterVersuch}, heute ${ergebnis.ersterVersuch} Aufgaben gleich beim ersten Versuch richtig.`));
+  else if (ergebnis.ersterVersuch > letzte.ersterVersuch) neu.push(neuZeile('↑', `Letztes Mal ${letzte.ersterVersuch}, heute ${ergebnis.ersterVersuch} ${ergebnis.ersterVersuch === 1 ? 'Aufgabe' : 'Aufgaben'} gleich beim ersten Versuch richtig.`));
   if (ergebnis.ausgebessert) neu.push(neuZeile('✓', `${ergebnis.ausgebessert} ${ergebnis.ausgebessert === 1 ? 'Fehler' : 'Fehler'} am Ende ausgebessert.`));
-  if (neu.length === 0 || (letzte && !rekord && medailleNeu <= medailleAlt && !(ergebnis.ersterVersuch > letzte.ersterVersuch))) {
+  if (neu.length === 0 || ergebnis.punkte < 30 || (letzte && !rekord && medailleNeu <= medailleAlt && !(ergebnis.ersterVersuch > letzte.ersterVersuch))) {
     neu.push(neuZeile('💪', zweiterVersuch > 0
       ? `${zweiterVersuch} ${zweiterVersuch === 1 ? 'Aufgabe' : 'Aufgaben'} mit Denkanstoß geschafft – genau so lernt man.`
-      : 'Du bleibst dran – jede Runde macht dich sicherer.'));
+      : ergebnis.punkte < 30 ? 'Die Lösungen hast du jetzt gesehen. Sie kommen unter „Meine Fehler“ wieder – dann klappt es.'
+        : 'Du bleibst dran – jede Runde macht dich sicherer.'));
   }
   neu.push(wochenzielZeile(p, wocheVorher));
 
@@ -507,7 +508,7 @@ function rundenende(name, ergebnis, kannVorher) {
     el('section', { class: 'karte ergebnis' },
       el('div', { class: 'anweisung-zeile' }, el('h2', { class: 'titel' }, 'Runde geschafft!'),
         vorlesenKnopf(() => `Runde geschafft! ${ergebnis.punkte} Punkte. ${[...document.querySelectorAll('.neu-zeile')].map((z) => z.textContent).join('. ')}`)),
-      el('p', { class: 'ergebnis-punkte' }, String(ergebnis.punkte)),
+      el('p', { class: 'ergebnis-punkte' + (ergebnis.punkte < 30 ? ' ergebnis-klein' : '') }, String(ergebnis.punkte)),
       el('p', { class: 'ergebnis-einheit' }, 'Punkte'),
       ergebnis.warumRichtig ? el('p', { class: 'leise' }, `davon ${ergebnis.warumRichtig * 5} Extrapunkte für gute Begründungen`) : null,
       el('ul', { class: 'neu-liste' }, neu),

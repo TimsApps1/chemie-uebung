@@ -39,7 +39,7 @@ export async function qrZeigen(codes, name) {
   let nr = 0;
   const bild = el('img', { class: 'qr-bild', alt: 'QR-Code mit deinen Punktecodes' });
   const info = el('p', { class: 'qr-info', 'aria-live': 'polite' });
-  const zurueck = el('button', { type: 'button', class: 'knopf', onclick: () => zeigeSeite(nr - 1) }, '◀');
+  const zurueck = el('button', { type: 'button', class: 'knopf', 'aria-label': 'Vorheriger QR-Code', onclick: () => zeigeSeite(nr - 1) }, '◀ Zurück');
   const weiter = el('button', { type: 'button', class: 'knopf knopf-haupt', onclick: () => zeigeSeite(nr + 1) }, 'Nächster ▶');
   function zeigeSeite(i) {
     nr = Math.max(0, Math.min(seiten.length - 1, i));
@@ -48,18 +48,24 @@ export async function qrZeigen(codes, name) {
     qr.make();
     bild.src = qr.createDataURL(8, 4);
     info.textContent = seiten.length > 1
-      ? `QR ${nr + 1} von ${seiten.length} · Wenn deine Lehrkraft „✓“ sagt, tippe auf „Nächster“.`
+      ? `QR ${nr + 1} von ${seiten.length}. Hat deine Lehrkraft ihn gescannt? Dann tippe auf „Nächster“.`
       : `${codes.length} ${codes.length === 1 ? 'Runde' : 'Runden'} · Halte das iPad zu deiner Lehrkraft.`;
     zurueck.disabled = nr === 0;
     weiter.disabled = nr === seiten.length - 1;
   }
   zeigeSeite(0);
   fenster(el('div', { class: 'qr-box' },
-    el('p', { class: 'leise' }, `${name}: deine Runden der letzten Wochen`),
-    bild, info,
-    seiten.length > 1 ? el('div', { class: 'zeile qr-blaettern' }, zurueck, weiter) : null,
-    el('div', { class: 'zeile-rechts' }, vorlesenKnopf('Halte das iPad zu deiner Lehrkraft. Sie scannt den QR-Code.'))),
-  { titel: '📷 Ergebnisse zeigen' });
+    el('div', { class: 'qr-kopf' }, info, vorlesenKnopf(() => info.textContent)),
+    bild),
+  {
+    titel: '📷 Ergebnisse zeigen',
+    // Blättern in der festen Knopfleiste, damit es auch im Querformat sichtbar bleibt.
+    knoepfe: (zu) => [
+      seiten.length > 1 ? zurueck : null,
+      seiten.length > 1 ? weiter : null,
+      el('button', { type: 'button', class: 'knopf' + (seiten.length > 1 ? '' : ' knopf-haupt'), onclick: zu }, 'Schließen')
+    ].filter(Boolean)
+  });
 }
 
 // ---------- Lehrkraft: QR scannen ----------
@@ -115,7 +121,7 @@ export async function qrScannen(gefunden) {
       if (ergebnis?.data && !gesehen.has(ergebnis.data)) {
         gesehen.add(ergebnis.data);
         const text = gefunden(ergebnis.data);
-        meldungen.prepend(el('li', {}, text));
+        meldungen.prepend(el('li', { class: text.startsWith('✗') ? 'ungueltig' : '' }, text));
         if (navigator.vibrate) navigator.vibrate(60);
       }
     }

@@ -4,11 +4,20 @@ import { lesen, schreiben } from './speicher.js';
 import { punktecodeLesen, namensKennung } from './codes.js';
 import { kurzname, tagNummer, wocheVonTag, datumVonTag } from './hilfen.js';
 
+// Beginn des laufenden Schulhalbjahres (01.08. oder 01.02.) als Tag-Nummer.
+export function halbjahresBeginn(tag = tagNummer()) {
+  const START = Date.UTC(2025, 7, 1);
+  const d = new Date(START + tag * 86400000);
+  const jahr = d.getUTCFullYear();
+  const beginn = d.getUTCMonth() >= 7 ? Date.UTC(jahr, 7, 1) : d.getUTCMonth() >= 1 ? Date.UTC(jahr, 1, 1) : Date.UTC(jahr - 1, 7, 1);
+  return Math.round((beginn - START) / 86400000);
+}
+
 const SCHLUESSEL = 'lehrer';
 export const ERINNERUNG_TAGE = 7;
 
 function leer() {
-  return { version: 1, runden: [], klasse: [], alias: {}, letzteSicherung: null, ersteDaten: null };
+  return { version: 1, runden: [], klasse: [], alias: {}, geloescht: [], letzteSicherung: null, ersteDaten: null };
 }
 
 export function lehrerDaten() {
@@ -47,12 +56,14 @@ export function fastCodes(text) {
 export function einlesen(text, quelle = 'text') {
   const d = lehrerDaten();
   const vorhanden = new Set(d.runden.map((r) => r.code));
-  const bericht = { neu: [], doppelt: [], ungueltig: [] };
+  const bericht = { neu: [], doppelt: [], ungueltig: [], geloescht: [], speicherVoll: false };
+  const geloescht = new Set(d.geloescht || []);
   const gefunden = codesAusText(text);
   for (const code of gefunden) {
     const r = punktecodeLesen(code);
     if (!r.ok) { bericht.ungueltig.push({ code, grund: r.grund }); continue; }
     if (vorhanden.has(r.code)) { bericht.doppelt.push(r.code); continue; }
+    if (geloescht.has(r.code)) { bericht.geloescht.push(r.code); continue; }
     if (r.tag > tagNummer() + 1) { bericht.ungueltig.push({ code, grund: 'Datum liegt in der Zukunft' }); continue; }
     vorhanden.add(r.code);
     const runde = {
@@ -70,26 +81,35 @@ export function einlesen(text, quelle = 'text') {
   }
   if (bericht.neu.length) {
     d.ersteDaten = d.ersteDaten || Date.now();
-    speichern(d);
+    if (!speichern(d)) { bericht.speicherVoll = true; bericht.neu = []; }
   }
   return bericht;
 }
 
+// Gelöschte Runden werden gemerkt, damit sie beim nächsten Einlesen nicht zurückkommen.
 export function rundeLoeschen(code) {
   const d = lehrerDaten();
   d.runden = d.runden.filter((r) => r.code !== code);
-  speichern(d);
+  d.geloescht = [...new Set([...(d.geloescht || []), code])];
+  return speichern(d);
 }
 
 // ---------- Klassenliste ----------
 // Eine Zeile pro Kind: "Vorname Nachname" und optional "; E" oder "; G".
 
 export function klasseAusText(text) {
-  return String(text || '').split(/\r?\n/).map((z) => z.trim()).filter(Boolean).map((zeile, i) => {
+  // Die ID hängt nur am Namen (nicht an der Zeile): Einfügen oder Löschen von Zeilen ändert nichts.
+  const vergeben = new Set();
+  return String(text || '').split(/\r?\n/).map((z) => z.trim()).filter(Boolean).map((zeile) => {
     const [namensTeil, kursTeil] = zeile.split(/[;,\t]/);
     const anzeige = namensTeil.trim().replace(/\s+/g, ' ');
     const kurs = /^\s*e\s*$/i.test(kursTeil || '') ? 'E' : /^\s*g\s*$/i.test(kursTeil || '') ? 'G' : '';
-    return { id: `k${i + 1}-${kurzname(anzeige)}`, anzeige, kurz: kurzname(anzeige), kennung: namensKennung(anzeige), kurs };
+    const kurz = kurzname(anzeige);
+    const kennung = namensKennung(anzeige);
+    let id = `${kurz}-${kennung}`;
+    for (let n = 2; vergeben.has(id); n++) id = `${kurz}-${kennung}-${n}`;
+    vergeben.add(id);
+    return { id, anzeige, kurz, kennung, kurs };
   }).filter((k) => k.kurz);
 }
 
@@ -111,8 +131,9 @@ export const rundenSchluessel = (r) => `${r.name}|${r.kennung || ''}`;
 
 export function kindVonRunde(d, r) {
   const s = rundenSchluessel(r);
-  if (d.alias[s]) return d.alias[s];
   if (!d.klasse.length) return `?${s}`; // ohne Klassenliste: jede Kennung ist ein eigenes Kind
+  // Zuordnung nur nutzen, wenn es das Kind in der Klassenliste (noch) gibt.
+  if (d.alias[s] && d.klasse.some((k) => k.id === d.alias[s])) return d.alias[s];
   const genau = d.klasse.filter((k) => k.kurz === r.name && k.kennung === r.kennung);
   if (genau.length === 1) return genau[0].id;
   return null;
@@ -179,11 +200,11 @@ export function wochenText(woche) {
 }
 
 // Die besten 5 einer Woche für Bereich + Niveau. Gleicher Wert = gleicher Platz.
-export function bestenliste(d, { bereich, niveau, woche }, anzahl = 5) {
+export function bestenliste(d, { bereich, niveau, woche, kurs = '' }, anzahl = 5) {
   const nachKind = rundenNachKind(d);
   const werte = [];
   for (const [id, runden] of nachKind) {
-    const passend = runden.filter((r) => r.bereich === bereich && r.niveau === niveau && wocheVonTag(r.tag) === woche);
+    const passend = runden.filter((r) => r.bereich === bereich && r.niveau === niveau && wocheVonTag(r.tag) === woche && (!kurs || r.kurs === kurs));
     if (!passend.length) continue;
     werte.push({ id, name: beamerName(d, id), wert: wochenwert(passend), runden: passend.length });
   }
@@ -197,10 +218,12 @@ export function bestenliste(d, { bereich, niveau, woche }, anzahl = 5) {
 }
 
 // Übersicht pro Kind und Bereich (für die Lehrkraft, nicht für den Beamer).
-export function uebersicht(d = lehrerDaten()) {
+// abTag: nur Runden ab diesem Tag (z. B. Beginn des Halbjahres).
+export function uebersicht(d = lehrerDaten(), { abTag = null } = {}) {
   const nachKind = rundenNachKind(d);
   const woche = aktuelleWoche();
-  return [...nachKind.entries()].map(([id, runden]) => {
+  return [...nachKind.entries()].map(([id, alleRunden]) => {
+    const runden = abTag === null ? alleRunden : alleRunden.filter((r) => r.tag >= abTag);
     const proBereich = {};
     for (const b of ['B4', 'B3', 'B1', 'B2']) {
       const rb = runden.filter((r) => r.bereich === b);
@@ -256,10 +279,10 @@ export function csvRunden(d = lehrerDaten()) {
   return '﻿' + [kopf, ...zeilen].map((z) => z.map(csvZelle).join(';')).join('\r\n');
 }
 
-export function csvUebersicht(d = lehrerDaten()) {
+export function csvUebersicht(d = lehrerDaten(), optionen = {}) {
   const kopf = ['Name', 'Runden gesamt', 'Runden diese Woche'];
   for (const b of ['B4', 'B3']) for (const n of [1, 2, 3]) kopf.push(`${b} Niveau ${n}: Runden`, `${b} Niveau ${n}: Bestwert`, `${b} Niveau ${n}: Schnitt`, `${b} Niveau ${n}: 1. Versuch %`);
-  const zeilen = uebersicht(d).map((k) => {
+  const zeilen = uebersicht(d, optionen).map((k) => {
     const z = [k.name, k.runden, k.dieseWoche];
     for (const b of ['B4', 'B3']) for (const n of [1, 2, 3]) {
       const x = k.proBereich[b]?.proNiveau[n];
@@ -272,11 +295,16 @@ export function csvUebersicht(d = lehrerDaten()) {
 
 // ---------- Sicherung ----------
 
+// Inhalt der Sicherung (ohne Nebenwirkung). Erst nach erfolgreichem Speichern sicherungGespeichert() aufrufen.
 export function sicherungErstellen() {
+  const d = lehrerDaten();
+  return JSON.stringify({ art: 'chemie-uebung-sicherung', version: 1, erstellt: new Date().toISOString(), daten: d }, null, 1);
+}
+
+export function sicherungGespeichert() {
   const d = lehrerDaten();
   d.letzteSicherung = Date.now();
   speichern(d);
-  return JSON.stringify({ art: 'chemie-uebung-sicherung', version: 1, erstellt: new Date().toISOString(), daten: d }, null, 1);
 }
 
 // Führt eine Sicherung mit den vorhandenen Daten zusammen (nichts geht verloren).
@@ -286,9 +314,11 @@ export function sicherungEinlesen(text) {
   if (inhalt?.art !== 'chemie-uebung-sicherung' || !inhalt.daten) return { ok: false, grund: 'Die Datei ist keine Sicherung dieser App.' };
   const d = lehrerDaten();
   const vorhanden = new Set(d.runden.map((r) => r.code));
+  d.geloescht = [...new Set([...(d.geloescht || []), ...(inhalt.daten.geloescht || [])])];
+  const geloescht = new Set(d.geloescht);
   let neu = 0;
   for (const r of inhalt.daten.runden || []) {
-    if (!r?.code || vorhanden.has(r.code) || !punktecodeLesen(r.code).ok) continue;
+    if (!r?.code || vorhanden.has(r.code) || geloescht.has(r.code) || !punktecodeLesen(r.code).ok) continue;
     d.runden.push(r);
     vorhanden.add(r.code);
     neu++;
@@ -296,7 +326,7 @@ export function sicherungEinlesen(text) {
   if (!d.klasse.length && Array.isArray(inhalt.daten.klasse)) d.klasse = inhalt.daten.klasse;
   d.alias = { ...(inhalt.daten.alias || {}), ...d.alias };
   d.ersteDaten = d.ersteDaten || inhalt.daten.ersteDaten || Date.now();
-  speichern(d);
+  if (!speichern(d)) return { ok: false, grund: 'Der Speicher auf diesem iPad ist voll.' };
   return { ok: true, neu };
 }
 
