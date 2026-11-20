@@ -249,22 +249,23 @@ function beamerInhalt(d, woche, fuerLehrkraft = false) {
     };
   }
   if (w.ansicht === 'teams') {
-    const teams = teamWerte(d, { woche });
-    const alleNull = teams.length && teams.every((t) => t.wert === 0);
+    const alle = teamWerte(d, { woche });
+    // Auf dem Beamer nur Teams mit Punkten in der Rangliste; Teams ohne Punkte stehen neutral darunter.
+    const teams = fuerLehrkraft ? alle : alle.filter((t) => t.wert > 0);
+    const starten = fuerLehrkraft ? [] : alle.filter((t) => t.wert === 0);
     return {
       titel: '👥 Teams',
       untertitel: 'Teamwert = Durchschnitt aller Mitglieder',
       satz: `Woche ${wochenText(woche)} · pro Kind die 3 besten Runden der Woche (alle Bereiche)`,
-      knoten: !teams.length ? el('p', { class: 'beamer-leer' }, 'Noch keine Teams angelegt.')
-        : alleNull ? el('p', { class: 'beamer-leer' }, 'Diese Woche geht’s los – noch hat kein Team Punkte.')
+      knoten: !alle.length ? el('p', { class: 'beamer-leer' }, 'Noch keine Teams angelegt.')
+        : !teams.length ? el('p', { class: 'beamer-leer' }, 'Diese Woche geht’s los – noch hat kein Team Punkte.')
           : el('ol', { class: 'rangliste' }, teams.map((t) => el('li', { class: 'rang' },
             // Gleicher Teamwert = gleicher Platz; Medaillenfarbe nur mit Punkten.
             el('span', { class: `rang-platz${t.wert > 0 ? ` platz-${t.platz}` : ''}` }, String(t.platz)),
-            // Auf dem Beamer nie zeigen, wie viele NICHT geübt haben (niemand bloßstellen) – nur das Positive.
-            el('span', { class: 'rang-name' }, t.name, fuerLehrkraft ? el('small', { class: 'rang-info' }, ` ${t.aktiv} von ${t.mitglieder} haben geübt`)
-              : t.aktiv === t.mitglieder ? el('small', { class: 'rang-info' }, ' · alle haben geübt ✓') : null),
+            // Wie viele geübt haben, sieht nur die Lehrkraft (niemand bloßstellen).
+            el('span', { class: 'rang-name' }, t.name, fuerLehrkraft ? el('small', { class: 'rang-info' }, ` ${t.aktiv} von ${t.mitglieder} haben geübt`) : null),
             el('span', { class: 'rang-punkte' }, String(t.wert))))),
-      rest: null
+      rest: starten.length ? `Startet noch: ${starten.map((t) => t.name).join(', ')}` : null
     };
   }
   if (w.ansicht === 'ziel') {
@@ -333,7 +334,7 @@ function teamsKarte(neu) {
   const anzahl = el('select', { class: 'eingabe auswahl-feld', 'aria-label': 'Zahl der Teams' },
     [2, 3, 4, 5, 6, 7, 8].map((n) => el('option', { value: n, selected: n === 4 }, `${n} Teams`)));
   const zeigeVorschau = () => {
-    const { teams, unbekannt } = teamsAusText(feld.value, d.klasse);
+    const { teams, unbekannt, mehrdeutig } = teamsAusText(feld.value, d.klasse);
     const zaehl = new Map();
     teams.forEach((t) => t.mitglieder.forEach((id) => zaehl.set(id, (zaehl.get(id) || 0) + 1)));
     const mehrfach = [...zaehl].filter(([, n]) => n > 1).map(([id]) => kindName(d, id));
@@ -344,6 +345,7 @@ function teamsKarte(neu) {
       teams.length ? el('ul', { class: 'vorschau-liste' }, teams.map((t) => el('li', {}, `${t.name}: ${t.mitglieder.length} ${t.mitglieder.length === 1 ? 'Kind' : 'Kinder'}`))) : null,
       unbekannt.length ? el('p', { class: 'meldung' }, `⚠ Nicht in der Klassenliste: ${unbekannt.join(', ')}`) : null,
       mehrfach.length ? el('p', { class: 'meldung' }, `⚠ In mehreren Teams: ${mehrfach.join(', ')}`) : null,
+      mehrdeutig.length ? el('p', { class: 'meldung' }, `⚠ Nicht eindeutig – bitte den vollen Namen schreiben: ${mehrdeutig.join(', ')}`) : null,
       weg.length ? el('p', { class: 'meldung' }, `⚠ ${weg.length} ${weg.length === 1 ? 'Kind ist' : 'Kinder sind'} nicht mehr in der Klassenliste und ${weg.length === 1 ? 'zählt' : 'zählen'} nicht mehr mit. Bitte Teams prüfen und speichern.`) : null,
       teams.length && ohneTeam.length ? el('p', { class: 'leise' }, `Ohne Team: ${ohneTeam.join(', ')}`) : null
     ].filter(Boolean));
@@ -375,7 +377,9 @@ function zielKarte(neu) {
     el('p', { class: 'leise' }, k.eingestellt ? 'Punkte, die die ganze Klasse in einer Woche zusammen schaffen soll.'
       : `Noch nicht eingestellt. Vorschlag: ${k.ziel} Punkte pro Woche (150 pro Kind).`),
     el('div', { class: 'zeile' }, feld, el('button', { type: 'button', class: 'knopf knopf-haupt', onclick: () => {
-      klassenzielSetzen(Number(feld.value));
+      const ziel = Number(feld.value);
+      if (!(ziel >= 100)) { meldung.textContent = '⚠ Bitte eine Zahl ab 100 eingeben.'; return; }
+      klassenzielSetzen(ziel);
       meldung.textContent = '✓ Gespeichert';
       setTimeout(neu, 700);
     } }, 'Ziel speichern'), meldung));

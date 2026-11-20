@@ -131,6 +131,8 @@ Es werden immer die Runden der letzten 6 Wochen abgegeben, du kannst also ruhig 
 - **Abzeichen** (in „Mein Fortschritt“): nur für Fleiß und Verbesserung – 10 und 25 Runden geübt, 5 und 20 Fehler
   ausgebessert, 3-mal den eigenen Rekord verbessert, 3 Wochenziele geschafft.
 - **Meine Fehler:** Falsche Aufgaben kommen nach 1 Tag, 3 Tagen und 1 Woche wieder (Knopf „Heute üben“).
+- Meine Fehler, Abzeichen und Stempel liegen auf dem iPad, auf dem das Kind übt. Am besten übt jedes Kind
+  immer am selben iPad.
 
 ## 7. Sicherung – bitte regelmäßig!
 

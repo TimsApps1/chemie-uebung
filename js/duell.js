@@ -146,11 +146,11 @@ export function duellStarten({ ziel, daten, zurueck }) {
       zeigen(el('section', { class: 'karte ergebnis' },
         el('div', { class: 'anweisung-zeile' }, el('h2', { class: 'titel' }, '🤝 Gut gespielt, beide!'),
           vorlesenKnopf(`Gut gespielt, beide! ${vorname(erster.name)} hat zuerst ${DUELL_ZIEL} Punkte erreicht. ` +
-            spieler.map((x) => `${vorname(x.name)}: ${x.punkte} Punkte, ${x.richtig} richtig.`).join(' '))),
+            spieler.map((x) => `${vorname(x.name)}: ${x.richtig} richtig.`).join(' '))),
         el('p', { class: 'ergebnis-satz' }, `${vorname(erster.name)} hat zuerst ${DUELL_ZIEL} Punkte erreicht.`),
         el('ul', { class: 'neu-liste' }, spieler.map((s) => el('li', { class: 'neu-zeile' },
           el('span', { class: 'neu-zeichen', 'aria-hidden': 'true' }, '⭐'),
-          el('span', {}, el('b', {}, vorname(s.name)), ` · ${sterneText(s.niveau)} · ${s.punkte} Punkte · ${s.richtig} ${s.richtig === 1 ? 'Aufgabe' : 'Aufgaben'} richtig`)))),
+          el('span', {}, el('b', {}, `${vorname(s.name)}: ${s.richtig} ${s.richtig === 1 ? 'Aufgabe' : 'Aufgaben'} richtig`), el('small', { class: 'leise' }, ` · ${sterneText(s.niveau)} · ${s.punkte} Punkte`))))),
         el('p', { class: 'leise' }, 'Im Duell gibt es keinen Punktecode. Es zählt nur der Spaß.'),
         el('button', { type: 'button', class: 'knopf knopf-haupt knopf-gross knopf-breit', onclick: spielen }, '⚔ Nochmal'),
         el('button', { type: 'button', class: 'knopf knopf-gross knopf-breit', onclick: zurueck }, 'Fertig')));

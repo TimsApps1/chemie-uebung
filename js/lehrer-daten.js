@@ -467,23 +467,28 @@ export function teamsSetzen(teams) {
 }
 
 export function teamsAusText(text, klasse) {
+  // Alle passenden Kinder suchen; bei mehreren Treffern (z. B. zwei „Lena“) nicht raten, sondern warnen.
   const finde = (n) => {
     const t = n.trim().toLowerCase().replace(/\s+/g, ' ');
-    return klasse.find((k) => k.anzeige.toLowerCase() === t) || klasse.find((k) => k.kurz.toLowerCase() === t) ||
-      klasse.find((k) => k.anzeige.toLowerCase().startsWith(t + ' ') || k.anzeige.toLowerCase().split(' ')[0] === t && klasse.filter((x) => x.anzeige.toLowerCase().split(' ')[0] === t).length === 1);
+    const genau = klasse.filter((k) => k.anzeige.toLowerCase() === t || k.kurz.toLowerCase() === t);
+    if (genau.length) return genau;
+    return klasse.filter((k) => k.anzeige.toLowerCase().startsWith(t + ' ') || k.anzeige.toLowerCase().split(' ')[0] === t);
   };
   const teams = [];
   const unbekannt = [];
+  const mehrdeutig = [];
   for (const zeile of String(text || '').split(/\r?\n/).map((z) => z.trim()).filter(Boolean)) {
     const [kopf, rest] = zeile.includes(':') ? zeile.split(/:(.*)/s) : [`Team ${teams.length + 1}`, zeile];
     const mitglieder = [];
     for (const n of (rest || '').split(/[,;]/).map((x) => x.trim()).filter(Boolean)) {
-      const k = finde(n);
-      if (k) { if (!mitglieder.includes(k.id)) mitglieder.push(k.id); } else unbekannt.push(n);
+      const treffer = finde(n);
+      if (treffer.length === 1) { if (!mitglieder.includes(treffer[0].id)) mitglieder.push(treffer[0].id); }
+      else if (treffer.length > 1) mehrdeutig.push(`${n} (${treffer.map((k) => k.anzeige).join(' / ')})`);
+      else unbekannt.push(n);
     }
     teams.push({ name: kopf.trim() || `Team ${teams.length + 1}`, mitglieder });
   }
-  return { teams, unbekannt };
+  return { teams, unbekannt, mehrdeutig };
 }
 
 export function teamsAlsText(d = lehrerDaten()) {
@@ -513,9 +518,9 @@ export function teamWerte(d, { woche }) {
   // Nur Kinder, die noch in der Klassenliste stehen (Abgänge zählen nicht mehr mit).
   const inKlasse = new Set(d.klasse.map((k) => k.id));
   const liste = (d.teams || []).map((t) => ({ ...t, mitglieder: t.mitglieder.filter((id) => inKlasse.has(id)) })).filter((t) => t.mitglieder.length).map((t) => {
-    const werte = t.mitglieder.map((id) => wochenwert((nachKind.get(id) || []).filter((r) => wocheVonTag(r.tag) === woche)));
-    const summe = werte.reduce((s, w) => s + w, 0);
-    return { name: t.name, wert: Math.round(summe / t.mitglieder.length), mitglieder: t.mitglieder.length, aktiv: werte.filter((w) => w > 0).length };
+    const rundenDerWoche = t.mitglieder.map((id) => (nachKind.get(id) || []).filter((r) => wocheVonTag(r.tag) === woche));
+    const summe = rundenDerWoche.reduce((s, r) => s + wochenwert(r), 0);
+    return { name: t.name, wert: Math.round(summe / t.mitglieder.length), mitglieder: t.mitglieder.length, aktiv: rundenDerWoche.filter((r) => r.length > 0).length };
   }).sort((a, b) => b.wert - a.wert || a.name.localeCompare(b.name));
   // Gleicher Wert = gleicher Platz.
   let platz = 0; let letzter = null;

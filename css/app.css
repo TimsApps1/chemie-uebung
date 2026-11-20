@@ -513,9 +513,6 @@ b, strong { font-weight: 700; }
   width: 1.4em; height: 1.4em; border-radius: 50%;
   background: var(--haupt-hell); color: var(--haupt-dunkel);
 }
-.rang:nth-child(1) .rang-platz { background: var(--stern); color: var(--stern-text); }
-.rang:nth-child(2) .rang-platz { background: #d6dce4; color: var(--text); }
-.rang:nth-child(3) .rang-platz { background: #e8a46c; color: #2b1203; }
 .rang-name { letter-spacing: 0.04em; }
 .rang-punkte { font-variant-numeric: tabular-nums; color: var(--haupt-dunkel); }
 

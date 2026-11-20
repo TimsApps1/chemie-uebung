@@ -237,3 +237,15 @@ test('Teams: gleicher Wert = gleicher Platz, Abgänge zählen nicht, kein „nul
   assert.deepEqual(fehler, []);
   await kontext.close();
 });
+
+test('Teams: mehrdeutige Vornamen werden nicht geraten', async () => {
+  const { kontext, seite } = await neueSeite();
+  const r = await seite.evaluate(async () => {
+    const L = await import('./js/lehrer-daten.js');
+    const klasse = L.klasseAusText('Lena Schmidt\nLena Schneider\nTom Berg');
+    return L.teamsAusText('Rot: Lena, Tom', klasse);
+  });
+  assert.equal(r.teams[0].mitglieder.length, 1, 'nur Tom');
+  assert.equal(r.mehrdeutig.length, 1);
+  await kontext.close();
+});
