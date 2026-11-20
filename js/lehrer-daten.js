@@ -487,7 +487,8 @@ export function teamsAusText(text, klasse) {
 }
 
 export function teamsAlsText(d = lehrerDaten()) {
-  return (d.teams || []).map((t) => `${t.name}: ${t.mitglieder.map((id) => kindName(d, id)).join(', ')}`).join('\n');
+  const inKlasse = new Set(d.klasse.map((k) => k.id));
+  return (d.teams || []).map((t) => `${t.name}: ${t.mitglieder.filter((id) => inKlasse.has(id)).map((id) => kindName(d, id)).join(', ')}`).join('\n');
 }
 
 // Vorschlag für gemischte Teams: Kinder nach ihrem Durchschnitt sortieren und „im Zickzack“ verteilen.
@@ -509,11 +510,16 @@ export function teamVorschlag(d, anzahlTeams) {
 
 export function teamWerte(d, { woche }) {
   const nachKind = rundenNachKind(d);
-  return (d.teams || []).filter((t) => t.mitglieder.length).map((t) => {
+  // Nur Kinder, die noch in der Klassenliste stehen (Abgänge zählen nicht mehr mit).
+  const inKlasse = new Set(d.klasse.map((k) => k.id));
+  const liste = (d.teams || []).map((t) => ({ ...t, mitglieder: t.mitglieder.filter((id) => inKlasse.has(id)) })).filter((t) => t.mitglieder.length).map((t) => {
     const werte = t.mitglieder.map((id) => wochenwert((nachKind.get(id) || []).filter((r) => wocheVonTag(r.tag) === woche)));
     const summe = werte.reduce((s, w) => s + w, 0);
     return { name: t.name, wert: Math.round(summe / t.mitglieder.length), mitglieder: t.mitglieder.length, aktiv: werte.filter((w) => w > 0).length };
   }).sort((a, b) => b.wert - a.wert || a.name.localeCompare(b.name));
+  // Gleicher Wert = gleicher Platz.
+  let platz = 0; let letzter = null;
+  return liste.map((t, i) => { if (t.wert !== letzter) { platz = i + 1; letzter = t.wert; } return { ...t, platz }; });
 }
 
 // Klassenziel: alle Punkte der Klasse in dieser Woche zusammen.
@@ -524,7 +530,9 @@ export function klassenzielSetzen(ziel) {
 }
 
 export function klassenStand(d, { woche }) {
-  const summe = d.runden.filter((r) => wocheVonTag(r.tag) === woche).reduce((s, r) => s + r.punkte, 0);
+  // Mit Klassenliste zählen nur Runden zugeordneter Kinder (wie bei Teams und Bestenliste).
+  const runden = d.klasse.length ? [...rundenNachKind(d).values()].flat() : d.runden;
+  const summe = runden.filter((r) => wocheVonTag(r.tag) === woche).reduce((s, r) => s + r.punkte, 0);
   const ziel = d.klassenziel || Math.max(500, d.klasse.length * 150);
   return { summe, ziel, eingestellt: Boolean(d.klassenziel), anteil: Math.min(1, summe / ziel) };
 }

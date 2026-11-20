@@ -28,7 +28,8 @@ function passtZumKurs(a, kurs) {
 }
 
 // zuletzt = IDs der zuletzt gesehenen Aufgaben; sie kommen nur dran, wenn sonst zu wenig da ist.
-export function aufgabenWaehlen(alle, niveau, kurs, zuletzt = []) {
+// ohneEinstieg: keine zwei leichteren Aufgaben am Anfang (z. B. im Duell: jedes Kind spielt genau sein Niveau).
+export function aufgabenWaehlen(alle, niveau, kurs, zuletzt = [], { ohneEinstieg = false } = {}) {
   const kuerzlich = new Set(zuletzt);
   const frischZuerst = (liste) => [...mischen(liste.filter((a) => !kuerzlich.has(a.id))), ...mischen(liste.filter((a) => kuerzlich.has(a.id)))];
   const pool = alle.filter((a) => a.niveau === niveau && passtZumKurs(a, kurs));
@@ -40,7 +41,7 @@ export function aufgabenWaehlen(alle, niveau, kurs, zuletzt = []) {
   // Dieselbe Reaktion nicht zweimal in einer Runde (z. B. einmal ausgleichen, einmal „Ist sie ausgeglichen?“).
   const reaktion = (x) => (x.typ === 'ausgleichen' ? [...x.edukte, ...x.produkte].map((s) => s.formel).join('|') : null);
   const einstieg = [];
-  for (const a of einstiegQuelle) {
+  for (const a of ohneEinstieg ? [] : einstiegQuelle) {
     if (einstieg.length >= 2) break;
     if (a.generiert && einstieg.some((x) => x.generiert)) continue;
     if (reaktion(a) && einstieg.some((x) => reaktion(x) === reaktion(a))) continue;

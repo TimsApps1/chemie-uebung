@@ -163,7 +163,7 @@ test('Duell: zwei Kinder abwechselnd, eigenes Niveau, „Gut gespielt, beide!“
   });
   await seite.getByRole('button', { name: 'Ada Ahorn' }).click();
   await seite.getByRole('button', { name: 'Bea Birke' }).click();
-  await seite.getByRole('radio', { name: /★★★, 3 Punkte/ }).first().click(); // Ada auf ★★★
+  await seite.getByRole('radio', { name: /drei Sterne, 3 Punkte/ }).first().click(); // Ada auf ★★★
   await seite.getByRole('button', { name: /Los geht/ }).click();
   const richtigTippen = async () => {
     const frage = (await seite.locator('.anweisung span').last().textContent()).trim();
@@ -171,8 +171,10 @@ test('Duell: zwei Kinder abwechselnd, eigenes Niveau, „Gut gespielt, beide!“
     await seite.locator(`.antwort[data-wert="${wert}"]`).click();
   };
   const reihenfolge = [];
+  const fragenListe = [];
   for (let zug = 0; zug < 12; zug++) {
-    reihenfolge.push((await seite.locator('.duell-dran b').textContent()).replace(' ist dran', ''));
+    reihenfolge.push((await seite.locator('.duell-dran-name').textContent()).replace(' ist dran', ''));
+    fragenListe.push((await seite.locator('.anweisung span').last().textContent()).trim());
     await richtigTippen();
     const weiter = seite.getByRole('button', { name: /Weiter:|Zum Ergebnis/ });
     const text = await weiter.textContent();
@@ -181,11 +183,57 @@ test('Duell: zwei Kinder abwechselnd, eigenes Niveau, „Gut gespielt, beide!“
   }
   await seite.getByRole('heading', { name: /Gut gespielt, beide!/ }).waitFor();
   assert.deepEqual(reihenfolge.slice(0, 4), ['Ada', 'Bea', 'Ada', 'Bea'], 'abwechselnd');
+  for (let i = 1; i < fragenListe.length; i++) assert.notEqual(fragenListe[i], fragenListe[i - 1], 'nie dieselbe Aufgabe direkt hintereinander');
   // Ada (★★★, 3 P.) hat nach 4 richtigen Antworten 12 ≥ 10 Punkte
   assert.match(await seite.locator('.ergebnis-satz').textContent(), /Ada hat zuerst 10 Punkte/);
   assert.equal(await seite.locator('.code').count(), 0, 'kein Punktecode');
   const runden = await seite.evaluate(async () => (await import('./js/profil.js')).profil('ADAAHO').runden.length);
   assert.equal(runden, 0, 'Duell wird nicht als Runde gespeichert');
+  assert.deepEqual(fehler, []);
+  await kontext.close();
+});
+
+test('Duell-Auswahl: nur das eigene Niveau (keine leichteren Einstiegsaufgaben)', async () => {
+  const { aufgabenWaehlen } = await import('../js/runde.js');
+  const fs = await import('node:fs');
+  const b4 = JSON.parse(fs.readFileSync(new URL('../daten/aufgaben/b4.json', import.meta.url), 'utf8')).aufgaben;
+  for (let i = 0; i < 50; i++) {
+    assert.ok(aufgabenWaehlen(b4, 3, 'E', [], { ohneEinstieg: true }).every((a) => a.niveau === 3));
+  }
+});
+
+test('Teams: gleicher Wert = gleicher Platz, Abgänge zählen nicht, kein „null“ im Editor, Beamer verrät nicht, wer nicht geübt hat', async () => {
+  const { kontext, seite, fehler } = await neueSeite({ width: 1024, height: 768 });
+  const codes = [code('Ada Ahorn', { erster: 8, tag: 470, nummer: 1 }), code('Cem Celik', { erster: 8, tag: 470, nummer: 2 })];
+  const r = await seite.evaluate(async ({ codes, namen }) => {
+    const L = await import('./js/lehrer-daten.js');
+    const { wocheVonTag } = await import('./js/hilfen.js');
+    L.allesLoeschen();
+    L.klasseSpeichern(L.klasseAusText(namen.join('\n')));
+    L.einlesen(codes.join('\n'));
+    const d0 = L.lehrerDaten();
+    L.teamsSetzen(L.teamsAusText('Rot: Ada Ahorn, Bea Birke\nBlau: Cem Celik, Dana Dorn', d0.klasse).teams);
+    const gleich = L.teamWerte(L.lehrerDaten(), { woche: wocheVonTag(470) }).map((t) => `${t.platz}:${t.wert}`);
+    // Bea verlässt die Klasse
+    L.klasseSpeichern(L.klasseAusText(namen.filter((n) => n !== 'Bea Birke').join('\n')));
+    const nachAbgang = L.teamWerte(L.lehrerDaten(), { woche: wocheVonTag(470) }).map((t) => `${t.name}:${t.wert}:${t.mitglieder}`);
+    return { gleich, nachAbgang, text: L.teamsAlsText() };
+  }, { codes, namen: NAMEN });
+  assert.deepEqual(r.gleich, ['1:40', '1:40']);
+  assert.deepEqual(r.nachAbgang, ['Rot:80:1', 'Blau:40:2']);
+  assert.doesNotMatch(r.text, /-[A-Z0-9]{2}\b/, 'keine technischen IDs im Teams-Text');
+  await seite.getByRole('button', { name: 'Lehrkraft' }).click();
+  for (const z of '4711') await seite.getByRole('button', { name: z, exact: true }).click();
+  await seite.getByRole('button', { name: 'OK' }).click();
+  await seite.getByRole('button', { name: '🏆 Beamer' }).click();
+  await seite.getByRole('button', { name: /👥 Teams/ }).first().click();
+  assert.doesNotMatch(await seite.locator('main, body').first().innerText(), /\bnull\b/);
+  await seite.getByRole('button', { name: '👥 Klasse' }).click();
+  assert.doesNotMatch(await seite.locator('body').innerText(), /\bnull\b/);
+  await seite.getByRole('button', { name: '🏆 Beamer' }).click();
+  await seite.getByRole('button', { name: /Beamer-Ansicht öffnen/ }).click();
+  const beamer = await seite.locator('.beamer-flaeche').innerText();
+  assert.doesNotMatch(beamer, /von \d+ haben geübt/);
   assert.deepEqual(fehler, []);
   await kontext.close();
 });

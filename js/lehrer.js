@@ -232,7 +232,7 @@ let beamerWahl = { ansicht: 'beste', bereich: 'B3', niveau: 1, woche: null, kurs
 const ANSICHTEN = [['beste', '🏆 Die besten 5'], ['verbessert', '📈 Am meisten verbessert'], ['teams', '👥 Teams'], ['ziel', '🎯 Klassenziel']];
 
 // Inhalt der Beamer-Ansicht (auch als Vorschau im Reiter genutzt).
-function beamerInhalt(d, woche) {
+function beamerInhalt(d, woche, fuerLehrkraft = false) {
   const w = beamerWahl;
   if (w.ansicht === 'verbessert') {
     const liste = amMeistenVerbessert(d, { ...w, woche });
@@ -250,15 +250,20 @@ function beamerInhalt(d, woche) {
   }
   if (w.ansicht === 'teams') {
     const teams = teamWerte(d, { woche });
+    const alleNull = teams.length && teams.every((t) => t.wert === 0);
     return {
       titel: '👥 Teams',
       untertitel: 'Teamwert = Durchschnitt aller Mitglieder',
       satz: `Woche ${wochenText(woche)} · pro Kind die 3 besten Runden der Woche (alle Bereiche)`,
-      knoten: teams.length ? el('ol', { class: 'rangliste' }, teams.map((t, i) => el('li', { class: 'rang' },
-        el('span', { class: `rang-platz platz-${i + 1}` }, String(i + 1)),
-        el('span', { class: 'rang-name' }, t.name, el('small', { class: 'rang-info' }, ` ${t.aktiv} von ${t.mitglieder} haben geübt`)),
-        el('span', { class: 'rang-punkte' }, String(t.wert)))))
-        : el('p', { class: 'beamer-leer' }, 'Noch keine Teams angelegt.'),
+      knoten: !teams.length ? el('p', { class: 'beamer-leer' }, 'Noch keine Teams angelegt.')
+        : alleNull ? el('p', { class: 'beamer-leer' }, 'Diese Woche geht’s los – noch hat kein Team Punkte.')
+          : el('ol', { class: 'rangliste' }, teams.map((t) => el('li', { class: 'rang' },
+            // Gleicher Teamwert = gleicher Platz; Medaillenfarbe nur mit Punkten.
+            el('span', { class: `rang-platz${t.wert > 0 ? ` platz-${t.platz}` : ''}` }, String(t.platz)),
+            // Auf dem Beamer nie zeigen, wie viele NICHT geübt haben (niemand bloßstellen) – nur das Positive.
+            el('span', { class: 'rang-name' }, t.name, fuerLehrkraft ? el('small', { class: 'rang-info' }, ` ${t.aktiv} von ${t.mitglieder} haben geübt`)
+              : t.aktiv === t.mitglieder ? el('small', { class: 'rang-info' }, ' · alle haben geübt ✓') : null),
+            el('span', { class: 'rang-punkte' }, String(t.wert))))),
       rest: null
     };
   }
@@ -309,8 +314,14 @@ function beamerAnsicht() {
         ANSICHTEN.map(([a, t]) => el('button', { type: 'button', class: 'knopf' + (a === beamerWahl.ansicht ? ' knopf-haupt' : ''),
           onclick: () => { beamerWahl.ansicht = a; flaeche.remove(); beamerAnsicht(); } }, t)),
         mitNiveau ? [1, 2, 3].map((n) => el('button', { type: 'button', class: 'knopf' + (n === beamerWahl.niveau ? ' knopf-haupt' : ''),
+          'aria-label': ['', 'ein Stern', 'zwei Sterne', 'drei Sterne'][n], 'aria-pressed': String(n === beamerWahl.niveau),
           onclick: () => { beamerWahl.niveau = n; flaeche.remove(); beamerAnsicht(); } }, sterneText(n))) : null)));
+  // Beamer-Fläche: Fokus hinein, Escape schließt.
+  flaeche.setAttribute('aria-modal', 'true');
+  flaeche.addEventListener('keydown', (e) => { if (e.key === 'Escape') schliessen(); });
+  flaeche.querySelector('.beamer-zu')?.focus();
   document.body.append(flaeche);
+  flaeche.querySelector('.beamer-zu')?.focus();
 }
 
 function teamsKarte(neu) {
@@ -323,9 +334,19 @@ function teamsKarte(neu) {
     [2, 3, 4, 5, 6, 7, 8].map((n) => el('option', { value: n, selected: n === 4 }, `${n} Teams`)));
   const zeigeVorschau = () => {
     const { teams, unbekannt } = teamsAusText(feld.value, d.klasse);
-    vorschau.replaceChildren(
+    const zaehl = new Map();
+    teams.forEach((t) => t.mitglieder.forEach((id) => zaehl.set(id, (zaehl.get(id) || 0) + 1)));
+    const mehrfach = [...zaehl].filter(([, n]) => n > 1).map(([id]) => kindName(d, id));
+    const ohneTeam = d.klasse.filter((k) => !zaehl.has(k.id)).map((k) => k.anzeige);
+    const weg = (d.teams || []).flatMap((t) => t.mitglieder).filter((id) => !d.klasse.some((k) => k.id === id));
+    // Nur echte Knoten einfügen (null würde als Text „null“ erscheinen).
+    vorschau.replaceChildren(...[
       teams.length ? el('ul', { class: 'vorschau-liste' }, teams.map((t) => el('li', {}, `${t.name}: ${t.mitglieder.length} ${t.mitglieder.length === 1 ? 'Kind' : 'Kinder'}`))) : null,
-      unbekannt.length ? el('p', { class: 'meldung' }, `⚠ Nicht in der Klassenliste: ${unbekannt.join(', ')}`) : null);
+      unbekannt.length ? el('p', { class: 'meldung' }, `⚠ Nicht in der Klassenliste: ${unbekannt.join(', ')}`) : null,
+      mehrfach.length ? el('p', { class: 'meldung' }, `⚠ In mehreren Teams: ${mehrfach.join(', ')}`) : null,
+      weg.length ? el('p', { class: 'meldung' }, `⚠ ${weg.length} ${weg.length === 1 ? 'Kind ist' : 'Kinder sind'} nicht mehr in der Klassenliste und ${weg.length === 1 ? 'zählt' : 'zählen'} nicht mehr mit. Bitte Teams prüfen und speichern.`) : null,
+      teams.length && ohneTeam.length ? el('p', { class: 'leise' }, `Ohne Team: ${ohneTeam.join(', ')}`) : null
+    ].filter(Boolean));
   };
   feld.addEventListener('input', zeigeVorschau);
   zeigeVorschau();
@@ -365,7 +386,7 @@ export function beamerReiter({ neu }) {
   const wahl = (feld, wert, text) => el('button', { type: 'button', class: 'knopf' + (beamerWahl[feld] === wert ? ' knopf-haupt' : ''),
     onclick: () => { beamerWahl[feld] = wert; if (feld === 'bereich' && NUR_E.includes(wert)) beamerWahl.kurs = ''; neu(); } }, text);
   const d = lehrerDaten();
-  const inhalt = beamerInhalt(d, woche);
+  const inhalt = beamerInhalt(d, woche, true);
   const mitNiveau = beamerWahl.ansicht === 'beste' || beamerWahl.ansicht === 'verbessert';
   return [karte('Rangliste für den Beamer',
     el('p', { class: 'leise' }, 'Gezeigt werden nur die Besten, die am meisten Verbesserten (höchstens 5), Teams oder das Klassenziel. Niemand wird vorgeführt.'),
@@ -403,12 +424,13 @@ export function klasseReiter({ neu }) {
   const zeigeVorschau = () => {
     const liste = klasseAusText(feld.value);
     const doppelt = liste.filter((k, i) => liste.some((x, j) => j !== i && x.kurz === k.kurz && x.kennung === k.kennung));
-    vorschau.replaceChildren(
+    vorschau.replaceChildren(...[
       liste.length ? el('div', { class: 'tabelle-rollen' }, el('table', { class: 'tabelle' },
         el('thead', {}, el('tr', {}, el('th', {}, 'Name'), el('th', {}, 'Kurzname im Code'), el('th', {}, 'Kennung'), el('th', {}, 'Kurs'))),
         el('tbody', {}, liste.map((k) => el('tr', {}, el('td', {}, k.einWort ? `⚠ ${k.anzeige}` : k.anzeige), el('td', {}, el('code', {}, k.kurz)), el('td', {}, el('code', {}, k.kennung)), el('td', {}, k.kurs || '–')))))) : null,
       doppelt.length ? el('p', { class: 'meldung' }, `⚠ Doppelt: ${[...new Set(doppelt.map((k) => k.anzeige))].join(', ')}`) : null,
-      liste.some((k) => k.einWort) ? el('p', { class: 'meldung' }, `⚠ Nur ein Wort: ${liste.filter((k) => k.einWort).map((k) => k.anzeige).join(', ')}. Die Kinder müssen Vor- und Nachnamen eintippen – bitte beides eintragen.`) : null);
+      liste.some((k) => k.einWort) ? el('p', { class: 'meldung' }, `⚠ Nur ein Wort: ${liste.filter((k) => k.einWort).map((k) => k.anzeige).join(', ')}. Die Kinder müssen Vor- und Nachnamen eintippen – bitte beides eintragen.`) : null
+    ].filter(Boolean));
   };
   feld.addEventListener('input', zeigeVorschau);
   zeigeVorschau();
@@ -466,7 +488,7 @@ export function sicherungReiter({ neu }) {
   karte('Alle Ergebnisse löschen',
     el('p', { class: 'leise' }, 'Zum Beispiel am Schuljahresende. Vorher unbedingt sichern!'),
     el('button', { type: 'button', class: 'knopf', onclick: async () => {
-      if (await fragen('Alle eingelesenen Ergebnisse, die Klassenliste und die Zuordnungen auf diesem iPad löschen?', 'Ja, alles löschen', 'Abbrechen', { hauptIstNein: true })) {
+      if (await fragen('Alle eingelesenen Ergebnisse, die Klassenliste, die Zuordnungen, die Teams und das Klassenziel auf diesem iPad löschen?', 'Ja, alles löschen', 'Abbrechen', { hauptIstNein: true })) {
         allesLoeschen();
         neu();
       }

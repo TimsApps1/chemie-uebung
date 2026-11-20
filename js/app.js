@@ -431,7 +431,8 @@ function fehlerRundeEnde(name, ergebnis, kannVorher) {
   const weiterPlan = heuteUebenPlan(name, profil(name));
   kopfMitName(name);
   zeigen(el('section', { class: 'karte ergebnis' },
-    el('h2', { class: 'titel' }, 'Fehler-Runde geschafft!'),
+    el('div', { class: 'anweisung-zeile' }, el('h2', { class: 'titel' }, 'Fehler-Runde geschafft!'),
+      vorlesenKnopf(() => document.querySelector('.ergebnis')?.innerText || 'Fehler-Runde geschafft!')),
     el('p', { class: 'ergebnis-satz' }, `${ergebnis.anzahl} ${ergebnis.anzahl === 1 ? 'Fehler' : 'Fehler'} geübt` +
       (ergebnis.ausgebessert ? ` · ${ergebnis.ausgebessert} endgültig erledigt` : '')),
     el('ul', { class: 'neu-liste' },

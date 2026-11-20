@@ -1094,3 +1094,6 @@ button.bereich { font: inherit; text-align: left; cursor: pointer; width: 100%; 
 .fenster .waage-box.offen { position: static; box-shadow: none; }
 .ausgleichen .bau-status { font-size: 1.15rem; }
 .stoff-name { hyphens: auto; overflow-wrap: anywhere; }
+.duell-dran { font-size: 1.4rem; display: flex; align-items: center; gap: 6px; }
+.duell-name .baustein, .duell-dran .baustein { margin-top: 0; }
+.beamer-titel { white-space: nowrap; }

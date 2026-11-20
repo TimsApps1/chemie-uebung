@@ -271,11 +271,11 @@ function rekordeZaehlen(p) {
 
 export const ABZEICHEN = [
   { id: 'runden10', zeichen: '💪', titel: '10 Runden geübt', ziel: 10, wert: (p) => p.runden.filter((r) => r.art === 'normal').length },
-  { id: 'runden25', zeichen: '🏋', titel: '25 Runden geübt', ziel: 25, wert: (p) => p.runden.filter((r) => r.art === 'normal').length },
-  { id: 'fehler5', zeichen: '🔧', titel: '5 Fehler ausgebessert', ziel: 5, wert: (p) => p.ausgebessert },
-  { id: 'fehler20', zeichen: '🛠', titel: '20 Fehler ausgebessert', ziel: 20, wert: (p) => p.ausgebessert },
+  { id: 'runden25', zeichen: '🏆', titel: '25 Runden geübt', ziel: 25, wert: (p) => p.runden.filter((r) => r.art === 'normal').length },
+  { id: 'fehler5', zeichen: '🔧', titel: '5 Fehler endgültig ausgebessert', ziel: 5, wert: (p) => p.ausgebessert },
+  { id: 'fehler20', zeichen: '⭐', titel: '20 Fehler endgültig ausgebessert', ziel: 20, wert: (p) => p.ausgebessert },
   { id: 'rekord3', zeichen: '📈', titel: '3-mal den eigenen Rekord verbessert', ziel: 3, wert: rekordeZaehlen },
-  { id: 'woche3', zeichen: '🗓', titel: '3 Wochenziele geschafft', ziel: 3, wert: (p) => p.stempel.length }
+  { id: 'woche3', zeichen: '📅', titel: '3 Wochenziele geschafft', ziel: 3, wert: (p) => p.stempel.length }
 ];
 
 export function abzeichenStand(p) {
