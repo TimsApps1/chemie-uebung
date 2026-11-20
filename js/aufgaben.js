@@ -6,7 +6,7 @@ import { el, mischen, formelKnoten, buchstabieren } from './hilfen.js';
 import { text, baustein, fenster } from './ui.js';
 import { klapptEs, richtigeZahl } from './daten.js';
 import { formelModell } from './modell3d.js';
-import { baustelle, buehnenHoehe } from './baustelle.js';
+import { baustelle } from './baustelle.js';
 import { steinArt, leeresModell, ersterStein, bauErgebnis, bauHinweis, loesungsModell } from './bausteine-logik.js';
 
 // ---------- Prüfen ----------
@@ -506,7 +506,9 @@ function bauen(a, antworten, daten) {
       const e = bauErgebnis(m, a.formel);
       // Die Formel erscheint erst, wenn alle Noppen belegt sind und die Atomzahl stimmt.
       formelZeile.replaceChildren('Formel: ', el('b', {}, e.geloest ? formelKnoten(a.formel) : '?'));
-      if (e.geloest && !fertig) { fertig = true; pruefKnopf.disabled = true; antworten(m); }
+      // Sind alle Noppen belegt, wird automatisch geprüft – auch ein falsches Modell zählt dann als Versuch.
+      // So heißt „1. Versuch richtig“ beim Bauen dasselbe wie sonst: Das erste fertige Modell war richtig.
+      if (e.voll && !fertig) { fertig = true; pruefKnopf.disabled = true; antworten(m); }
     }
   });
   // Noch freie Noppen? Dann erst nur erinnern (zählt nicht als Versuch). Erst der zweite Tipp wertet.
@@ -518,6 +520,7 @@ function bauen(a, antworten, daten) {
       bau.melden(`${e.formel ? `Noch ${e.offen === 1 ? '1 Noppe' : `${e.offen} Noppen`} frei. Fülle erst alle Noppen.` : 'Es liegt noch kein Stein. Tippe unten auf einen Stein.'} Kommst du nicht weiter? Tippe nochmal auf „Fertig – prüfen“.`, 'warnung');
       return;
     }
+    fertig = true;
     pruefKnopf.disabled = true;
     antworten(bau.modell());
   } }, 'Fertig – prüfen');
@@ -527,14 +530,18 @@ function bauen(a, antworten, daten) {
     ergebnis(wert, richtig, endgueltig) {
       if (richtig) {
         bau.sperren();
+        pruefKnopf.hidden = true;
         formelZeile.replaceChildren(el('span', { class: 'marke' }, '✓'), ' Formel: ', el('b', {}, formelKnoten(a.formel)));
         formelZeile.classList.add('ist-richtig');
         return;
       }
+      // Bis „Nochmal versuchen“ bleibt das Modell stehen (zum Ansehen, nicht zum Weiterbauen).
+      if (!endgueltig) bau.sperren();
       if (endgueltig) {
         const loesung = loesungsModell(a.formel, [...(a.start || []), ...a.steine], daten.elemente);
         if (loesung) bau.setzeModell(loesung);
         bau.sperren();
+        pruefKnopf.hidden = true;
         formelZeile.replaceChildren('So sieht ', el('b', {}, formelKnoten(a.formel)), ' aus: Alle Noppen sind belegt.');
       }
     },
@@ -546,7 +553,7 @@ function bauen(a, antworten, daten) {
 
 function modell(a, antworten, daten) {
   const m = loesungsModell(a.formel, a.steine, daten.elemente);
-  const bau = baustelle({ modell: m || leeresModell(), nurAnsehen: true, hoehe: buehnenHoehe(0.36), ohneZahl: true });
+  const bau = baustelle({ modell: m || leeresModell(), nurAnsehen: true, anteil: 0.36, ohneZahl: true });
   const wahl = auswahl({ ...a, typ: 'auswahl' }, antworten);
   return { ...wahl, wurzel: el('div', { class: 'modell-aufgabe' }, bau.wurzel, wahl.wurzel) };
 }

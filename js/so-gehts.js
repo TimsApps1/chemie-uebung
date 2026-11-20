@@ -11,12 +11,13 @@ function schritte(elemente) {
   const ho = leeresModell(); ersterStein(ho, art('O')); anstecken(ho, art('H'), 1);
   const hoh = leeresModell(); ersterStein(hoh, art('O')); anstecken(hoh, art('H'), 1); anstecken(hoh, art('H'), 1);
   const mgo = leeresModell(); ersterStein(mgo, art('Mg')); anstecken(mgo, art('O'), 1); verbinden(mgo, 1, 2);
+  const halb = leeresModell(); ersterStein(halb, art('Mg')); anstecken(halb, art('O'), 1);
   return [
     { modell: o, text: 'Das ist ein O-Stein. Er hat 2 Noppen. Das ist seine Wertigkeit: O hat die Wertigkeit 2.' },
     { modell: ho, text: 'An jede Noppe kommt genau eine Bindung. H hat nur 1 Noppe. Am O ist noch 1 Noppe frei – sie ist gelb.' },
     { modell: hoh, text: 'Jetzt sind alle Noppen belegt. Keine Noppe ist mehr gelb. Fertig: H2O.' },
-    { modell: mgo, text: 'Zwei Noppen können auch zum selben Partner gehen. Mg und O haben je 2 Noppen: zwei Stege, eine Doppelbindung. MgO.' },
-    { modell: mgo, text: 'So baust du: Tippe unten einen Stein an, dann eine gelbe Noppe. Zum Verbinden tippst du erst den einen Stein an, dann den anderen.' }
+    { modell: mgo, text: 'Zwei Noppen können auch zum selben Partner gehen. Mg und O haben je 2 Noppen: zwei Stege zwischen Mg und O. MgO.' },
+    { modell: halb, text: 'So baust du: Tippe unten einen Stein an, dann eine freie (gelbe) Noppe. Zum Verbinden tippst du erst den einen Stein an, dann den anderen. Hier: Mg, dann O.' }
   ];
 }
 
@@ -46,6 +47,9 @@ export function soGehtsZeigen(elemente, weiter) {
     bau.wurzel,
     zaehler,
     el('p', { class: 'tipp' }, 'Die Wertigkeit ist ein Hilfsmodell. Später lernst du mehr darüber.')),
-  { titel: '🧱 So geht’s', knoepfe: () => [zurueck, weiterKnopf] });
+  { titel: '🧱 So geht’s', knoepfe: (zu) => [
+    el('button', { type: 'button', class: 'knopf knopf-leise', onclick: () => { zu(); weiter?.(); } }, 'Überspringen'),
+    zurueck, weiterKnopf] });
   zeige(0);
+  weiterKnopf.focus({ preventScroll: true });
 }

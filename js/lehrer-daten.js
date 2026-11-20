@@ -223,15 +223,32 @@ export function bestenliste(d, { bereich, niveau, woche, kurs = '' }, anzahl = 5
   for (const [id, runden] of nachKind) {
     const passend = runden.filter((r) => r.bereich === bereich && r.niveau === niveau && wocheVonTag(r.tag) === woche && (!kurs || r.kurs === kurs));
     if (!passend.length) continue;
-    werte.push({ id, name: beamerName(d, id), wert: wochenwert(passend), runden: passend.length });
+    // Bei gleichem Wochenwert entscheidet, wie viele Aufgaben in den 3 besten Runden beim 1. Versuch richtig waren.
+    const beste = [...passend].sort((a, b) => b.punkte - a.punkte).slice(0, 3);
+    const erster = beste.reduce((s, r) => s + (r.erster ?? 0), 0);
+    werte.push({ id, name: beamerName(d, id), wert: wochenwert(passend), erster, runden: passend.length });
   }
-  werte.sort((a, b) => b.wert - a.wert || a.name.localeCompare(b.name));
+  werte.sort((a, b) => b.wert - a.wert || b.erster - a.erster || a.name.localeCompare(b.name));
   let platz = 0;
   let letzter = null;
-  return werte.map((w, i) => {
-    if (w.wert !== letzter) { platz = i + 1; letzter = w.wert; }
+  const mitPlatz = werte.map((w, i) => {
+    const schluessel = `${w.wert}|${w.erster}`;
+    if (schluessel !== letzter) { platz = i + 1; letzter = schluessel; }
     return { ...w, platz };
-  }).filter((w) => w.platz <= anzahl);
+  });
+  // Nie mehr als 5 Namen: Eine Gleichstand-Gruppe, die über Platz 5 hinausreicht, wird nicht mit Namen gezeigt
+  // (sonst stünden fast alle da und die wenigen Fehlenden fielen auf).
+  const liste = [];
+  for (const w of mitPlatz) {
+    const gruppe = mitPlatz.filter((x) => x.platz === w.platz);
+    if (w.platz > anzahl || w.platz - 1 + gruppe.length > anzahl) break;
+    liste.push(w);
+  }
+  const naechster = mitPlatz[liste.length];
+  if (naechster && naechster.platz <= anzahl) {
+    liste.rest = { anzahl: mitPlatz.filter((x) => x.platz === naechster.platz).length, wert: naechster.wert };
+  }
+  return liste;
 }
 
 // Bereiche in der Lehrer-Ansicht (eine Liste für Tabelle, Export und Beamer).

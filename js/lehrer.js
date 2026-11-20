@@ -205,7 +205,7 @@ export function uebersichtReiter({ neu }) {
   const meldung = el('span', { class: 'kopier-meldung', 'aria-live': 'polite' });
   return [
     karte('Übersicht pro Kind',
-      el('p', { class: 'leise' }, 'Pro Niveau: Bestwert (Ø Durchschnitt, % der Aufgaben beim 1. Versuch richtig) · Zahl der Runden. Tippe auf einen Namen für alle Runden und den Verlauf. Bei B1 (Bauen) darf man ausprobieren: „1. Versuch“ heißt dort „ohne Fehlversuch beim Prüfen“.'),
+      el('p', { class: 'leise' }, 'Pro Niveau: Bestwert (Ø Durchschnitt, % der Aufgaben beim 1. Versuch richtig) · Zahl der Runden. Tippe auf einen Namen für alle Runden und den Verlauf. Bei B1 (Bauen) zählt das erste fertig gebaute Modell (alle Noppen belegt) als 1. Versuch.'),
       zeitWahl,
       liste.length ? el('div', { class: 'tabelle-rollen' }, el('table', { class: 'tabelle uebersicht-tabelle' },
         el('thead', {}, el('tr', {}, el('th', {}, 'Name'), el('th', {}, 'Runden'), lehrerBereiche(d).map((b) => el('th', {}, BEREICH_KURZ[b])), el('th', {}, 'Zuletzt'))),
@@ -246,7 +246,8 @@ function beamerAnsicht() {
         el('span', { class: `rang-platz platz-${w.platz}` }, String(w.platz)),
         el('span', { class: 'rang-name' }, w.name),
         el('span', { class: 'rang-punkte' }, String(w.wert)))))
-        : el('p', { class: 'beamer-leer' }, 'Diese Woche gibt es hier noch keine Runden.'),
+        : liste.rest ? null : el('p', { class: 'beamer-leer' }, 'Diese Woche gibt es hier noch keine Runden.'),
+      liste.rest ? el('p', { class: 'beamer-woche' }, liste.length ? `… und ${liste.rest.anzahl} weitere mit ${liste.rest.wert} Punkten – stark!` : `${liste.rest.anzahl} Kinder gleichauf mit ${liste.rest.wert} Punkten – stark!`) : null,
       el('div', { class: 'beamer-umschalten' },
         [1, 2, 3].map((n) => el('button', { type: 'button', class: 'knopf' + (n === beamerWahl.niveau ? ' knopf-haupt' : ''),
           onclick: () => { beamerWahl.niveau = n; flaeche.remove(); beamerAnsicht(); } }, sterneText(n))))));
@@ -271,7 +272,8 @@ export function beamerReiter({ neu }) {
       el('span', { class: 'woche-text' }, wochenText(woche), woche === aktuelleWoche() ? ' (diese Woche)' : ''),
       el('button', { type: 'button', class: 'knopf', 'aria-label': 'Woche danach', disabled: woche >= aktuelleWoche(), onclick: () => { beamerWahl.woche = woche + 1; neu(); } }, '▶')),
     el('h4', {}, 'Vorschau'),
-    vorschau.length ? el('ul', { class: 'vorschau-liste' }, vorschau.map((w) => el('li', {}, `${w.platz}. ${w.name} – ${w.wert} (${w.runden} ${w.runden === 1 ? 'Runde' : 'Runden'})`)))
+    vorschau.length || vorschau.rest ? el('ul', { class: 'vorschau-liste' }, vorschau.map((w) => el('li', {}, `${w.platz}. ${w.name} – ${w.wert} (${w.runden} ${w.runden === 1 ? 'Runde' : 'Runden'})`)),
+      vorschau.rest ? el('li', { class: 'leise' }, `… und ${vorschau.rest.anzahl} weitere mit ${vorschau.rest.wert} Punkten (Gleichstand, ohne Namen)`) : null)
       : el('p', { class: 'leise' }, 'Für diese Auswahl gibt es noch keine Runden.'),
     el('button', { type: 'button', class: 'knopf knopf-haupt knopf-gross', onclick: beamerAnsicht }, '🖥 Beamer-Ansicht öffnen'))];
 }

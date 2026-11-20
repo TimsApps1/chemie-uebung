@@ -221,7 +221,7 @@ export function naechsterSchritt(m) {
     const b = offen.find((x) => x.id !== a.id && !verbindungVerboten(m, a.id, x.id));
     if (b) return `${a.beschriftung} und ${b.beschriftung} haben noch freie Noppen. Verbinden: Tippe ${a.beschriftung} an, dann ${b.beschriftung}. Oder nimm unten einen neuen Stein.`;
   }
-  return 'Nimm unten einen Stein und tippe dann auf eine gelbe Noppe.';
+  return 'Nimm unten einen Stein und tippe dann auf eine freie (gelbe) Noppe.';
 }
 
 // ---------- Automatisch bauen (für "Welche Formel ist das?" und Lösungen) ----------

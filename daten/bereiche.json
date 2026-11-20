@@ -97,7 +97,7 @@
       "bildzeichen": "baustein",
       "geschichte": {
         "titel": "Bausteine der Stoffe",
-        "text": "1852 hatte der englische Chemiker Edward Frankland eine Idee: Jedes Atom kann sich nur mit einer bestimmten Zahl anderer Atome verbinden. Diese Zahl nennen wir heute Wertigkeit. In dieser App ist sie die Zahl der Noppen auf einem Baustein.",
+        "text": "1852 hatte der englische Chemiker Edward Frankland eine Idee. Jedes Atom hat eine feste Zahl von Bindungen – wie Arme, mit denen es sich festhält. H hat immer 1, O hat 2. Diese Zahl heißt heute Wertigkeit. In dieser App ist sie die Zahl der Noppen.",
         "bild": null
       },
       "niveaus": {
@@ -114,12 +114,12 @@
         {
           "id": "bauen",
           "text": "Ich kann Formeln mit dem Noppenmodell bauen.",
-          "hilfe": "Zähle die Noppen jeder Steinsorte. Die Metall-Steine und die Nichtmetall-Steine brauchen zusammen gleich viele Noppen."
+          "hilfe": "Zähle die Noppen jeder Steinsorte. Jede Noppe braucht einen Partner: Am Ende ist keine Noppe mehr frei."
         },
         {
           "id": "ablesen",
           "text": "Ich kann die Formel an einem Modell ablesen.",
-          "hilfe": "Zähle die Steine jeder Sorte. Die Anzahl schreibst du klein hinter das Symbol."
+          "hilfe": "Zähle die Steine jeder Sorte. Die Anzahl schreibst du klein hinter das Symbol. Bei 1 schreibst du keine Zahl."
         },
         {
           "id": "zwei_wertigkeiten",

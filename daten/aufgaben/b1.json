@@ -70,7 +70,7 @@
     "Mg"
    ],
    "denkanstoss": "Mg und O haben je 2 Noppen. Zwei Noppen können zum selben Partner gehen: Tippe Mg an, dann O.",
-   "erklaerung": "Mg hat 2 Noppen, O hat 2. Zwei Stege verbinden sie (Doppelbindung): MgO."
+   "erklaerung": "Mg hat 2 Noppen, O hat 2. Zwei Stege verbinden Mg und O: MgO."
   },
   {
    "id": "b1-1-05",
@@ -235,6 +235,72 @@
    "richtig": "NaCl",
    "denkanstoss": "Zähle die Steine jeder Sorte.",
    "erklaerung": "Es sind 1 Na-Stein und 1 Cl-Stein: NaCl."
+  },
+  {
+   "id": "b1-1-14",
+   "niveau": 1,
+   "typ": "modell",
+   "symbol": "🔍",
+   "kann": "ablesen",
+   "frage": "Welche Formel hat dieses Modell?",
+   "formel": "MgCl2",
+   "steine": [
+    "Mg",
+    "Cl"
+   ],
+   "antworten": [
+    "MgCl2",
+    "MgCl",
+    "Mg2Cl",
+    "MgCl3"
+   ],
+   "richtig": "MgCl2",
+   "denkanstoss": "Zähle die Steine jeder Sorte.",
+   "erklaerung": "Es sind 1 Mg-Stein und 2 Cl-Steine: MgCl2. Bei 1 schreibst du keine Zahl."
+  },
+  {
+   "id": "b1-1-15",
+   "niveau": 1,
+   "typ": "modell",
+   "symbol": "🔍",
+   "kann": "ablesen",
+   "frage": "Welche Formel hat dieses Modell?",
+   "formel": "Na2O",
+   "steine": [
+    "Na",
+    "O"
+   ],
+   "antworten": [
+    "Na2O",
+    "NaO",
+    "NaO2",
+    "Na3O"
+   ],
+   "richtig": "Na2O",
+   "denkanstoss": "Zähle die Steine jeder Sorte.",
+   "erklaerung": "Es sind 2 Na-Steine und 1 O-Stein: Na2O."
+  },
+  {
+   "id": "b1-1-16",
+   "niveau": 1,
+   "typ": "modell",
+   "symbol": "🔍",
+   "kann": "ablesen",
+   "frage": "Welche Formel hat dieses Modell?",
+   "formel": "H2S",
+   "steine": [
+    "H",
+    "S"
+   ],
+   "antworten": [
+    "H2S",
+    "HS",
+    "HS2",
+    "H3S"
+   ],
+   "richtig": "H2S",
+   "denkanstoss": "Zähle die Steine jeder Sorte.",
+   "erklaerung": "Es sind 2 H-Steine und 1 S-Stein: H2S."
   },
   {
    "id": "b1-2-01",
@@ -618,7 +684,7 @@
    "typ": "auswahl",
    "symbol": "❓",
    "kann": "bauen",
-   "frage": "Welche Formel ist falsch?",
+   "frage": "Welche Formel passt nicht zu den Noppen?",
    "antworten": [
     "MgO2",
     "MgO",
@@ -627,12 +693,12 @@
    ],
    "richtig": "MgO2",
    "fehler": {
-    "Al2O3": "2 Al haben 6 Noppen, 3 O auch 6. Al2O3 stimmt.",
-    "Na2O": "2 Na haben 2 Noppen, O hat 2. Na2O stimmt.",
-    "MgO": "Mg und O haben je 2 Noppen. MgO stimmt."
+    "Al2O3": "2 Al-Steine haben 6 Noppen, 3 O-Steine auch 6. Al2O3 passt.",
+    "Na2O": "2 Na-Steine haben 2 Noppen, O hat 2. Na2O passt.",
+    "MgO": "Mg und O haben je 2 Noppen. MgO passt."
    },
-   "denkanstoss": "Prüfe bei jeder Formel: Haben die Metall-Steine zusammen gleich viele Noppen wie die Nichtmetall-Steine?",
-   "erklaerung": "Zähl die Noppen: Mg hat 2, O hat 2. Ein O reicht, richtig ist MgO."
+   "denkanstoss": "Prüfe bei jeder Formel: Bleibt eine Noppe frei?",
+   "erklaerung": "Bei MgO2 hätten die 2 O-Steine zusammen 4 Noppen, Mg hat nur 2. Zwei Noppen blieben frei. Richtig ist MgO."
   },
   {
    "id": "b1-3-12",
@@ -653,7 +719,7 @@
     "6": "6 ist die Zahl der Noppen, nicht der Steine."
    },
    "denkanstoss": "Suche die kleinste Zahl, die durch 3 und durch 2 teilbar ist.",
-   "erklaerung": "Beide Steinsorten haben zusammen 6 Noppen: 2 Al-Steine (2 · 3) und 3 O-Steine (3 · 2). Also 2 Al-Steine."
+   "erklaerung": "2 Al-Steine haben 6 Noppen (2 · 3), 3 O-Steine haben auch 6 Noppen (3 · 2). Also 2 Al-Steine."
   }
  ]
 }

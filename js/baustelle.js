@@ -6,7 +6,7 @@
 import * as THREE from '../lib/three.module.min.js';
 import { OrbitControls } from '../lib/OrbitControls.js';
 import { el } from './hilfen.js';
-import { baustein } from './ui.js';
+import { baustein, vorlesenKnopf } from './ui.js';
 import {
   leeresModell, kopie, stein, frei, belegt, ersterStein, anstecken, verbinden, loesen, bauErgebnis, formelVon, zaehlen,
   naechsterSchritt
@@ -72,8 +72,8 @@ function symbolTextur(text, symbol) {
 }
 
 // ---------- Lage der Steine ----------
-// Baum ab dem ersten Stein (Kinder im Fächer), danach kurz „entspannen“:
-// Bindungen ziehen auf gleiche Länge, Steine stoßen sich ab. So werden Ringe (Al2O3) rund statt lang.
+// Baum ab dem ersten Stein (Kinder im Fächer, Ketten im Zickzack). Ringe werden kurz „entspannt“:
+// Bindungen ziehen auf gleiche Länge, Steine stoßen sich ab. So werden Ringe (Fe2O3) rund statt lang.
 
 export function positionen(m) {
   const pos = new Map();
@@ -87,21 +87,23 @@ export function positionen(m) {
     const glieder = [start];
     pos.set(start, new THREE.Vector3(0, -teil * ABSTAND * 2.4, 0));
     besucht.add(start);
-    const schlange = [{ id: start, richtung: null }];
+    // Ketten laufen im Zickzack (kompakter auf schmalen Bildschirmen), Verzweigungen im Fächer.
+    const schlange = [{ id: start, richtung: null, kurs: 0, seite: 1 }];
     while (schlange.length) {
-      const { id, richtung } = schlange.shift();
+      const { id, richtung, kurs, seite } = schlange.shift();
       const kinder = nachbarn(id).filter((n) => !besucht.has(n));
       const basis = richtung === null ? 0 : Math.atan2(richtung.y, richtung.x);
       const facher = richtung === null ? Math.PI * 2 : Math.PI * 0.9;
       kinder.forEach((k, i) => {
+        const kette = richtung !== null && kinder.length === 1;
         const winkel = richtung === null
           ? (i / Math.max(kinder.length, 1)) * facher
-          : basis + (kinder.length === 1 ? 0 : (i / (kinder.length - 1) - 0.5) * facher);
+          : kette ? kurs + seite * 0.5 : basis + (i / (kinder.length - 1) - 0.5) * facher;
         const r = new THREE.Vector3(Math.cos(winkel), Math.sin(winkel), 0);
         pos.set(k, pos.get(id).clone().addScaledVector(r, ABSTAND));
         besucht.add(k);
         glieder.push(k);
-        schlange.push({ id: k, richtung: r });
+        schlange.push({ id: k, richtung: r, kurs: kette ? kurs : winkel, seite: kette ? -seite : 1 });
       });
     }
     entspannen(glieder, m, pos);
@@ -114,6 +116,8 @@ function entspannen(glieder, m, pos) {
   if (glieder.length < 3) return;
   const mitte = pos.get(glieder[0]).clone();
   const kanten = m.bindungen.filter((b) => glieder.includes(b.a) && glieder.includes(b.b));
+  // Nur Ringe entspannen (z. B. Fe2O3 als Raute); Bäume und Ketten behalten ihr ruhiges Schema.
+  if (kanten.length < glieder.length) return;
   for (let runde = 0; runde < 120; runde++) {
     const kraft = new Map(glieder.map((id) => [id, new THREE.Vector3()]));
     for (let i = 0; i < glieder.length; i++) {
@@ -217,8 +221,10 @@ const noppenWort = (n) => `${n} ${n === 1 ? 'Noppe' : 'Noppen'}`;
 // optionen: { leiste: [steinArt…], modell, nurAnsehen, beiAenderung(modell), ohneZahl }
 // ohneZahl: nur das Symbol aufdrucken (Fe statt Fe(III)) – für Aufgaben, bei denen man die Noppen zählen soll.
 
-export function baustelle({ leiste = [], modell = leeresModell(), nurAnsehen = false, beiAenderung = () => {}, hoehe = buehnenHoehe(), ohneZahl = false } = {}) {
+export function baustelle({ leiste = [], modell = leeresModell(), nurAnsehen = false, beiAenderung = () => {}, hoehe: festeHoehe = null, anteil = 0.42, ohneZahl = false } = {}) {
   let m = kopie(modell);
+  let hoehe = festeHoehe ?? buehnenHoehe(anteil);
+  let zuletztEingepasst = '';
   const verlauf = [];
   let gewaehlteArt = null;   // Stein aus der Leiste
   let wartendeNoppe = null;  // erster Stein beim Verbinden
@@ -248,7 +254,7 @@ export function baustelle({ leiste = [], modell = leeresModell(), nurAnsehen = f
       return geaendert();
     }
     gewaehlteArt = gewaehlteArt?.art === art.art ? null : art;
-    melden(gewaehlteArt ? `${art.beschriftung} gewählt (${noppenWort(art.wertigkeit)}). Tippe jetzt auf eine gelbe Noppe.` : 'Auswahl aufgehoben.');
+    melden(gewaehlteArt ? `${art.beschriftung} gewählt (${noppenWort(art.wertigkeit)}). Tippe jetzt auf eine freie (gelbe) Noppe.` : 'Auswahl aufgehoben.');
     zeichnen();
   }
 
@@ -346,8 +352,12 @@ export function baustelle({ leiste = [], modell = leeresModell(), nurAnsehen = f
         baustein(s.symbol, { metall: s.metall, klein: true }),
         el('span', { class: 'bau-liste-text' }, text),
         nurAnsehen ? null : el('span', { class: 'zeile' },
-          f > 0 ? el('button', { type: 'button', class: 'knopf knopf-klein', 'data-aktion': 'noppe', 'data-id': s.id, onclick: () => steinOderNoppe(s.id) },
-            gewaehlteArt ? `${gewaehlteArt.beschriftung} hier anstecken` : wartendeNoppe === null ? 'Verbinden …' : wartendeNoppe === s.id ? 'Abbrechen' : 'Hiermit verbinden') : null,
+          f > 0 ? (() => {
+            const sichtbar = gewaehlteArt ? `${gewaehlteArt.beschriftung} hier anstecken` : wartendeNoppe === null ? 'Verbinden …' : wartendeNoppe === s.id ? 'Abbrechen' : 'Hiermit verbinden';
+            const genau = gewaehlteArt ? `${sichtbar}: an ${s.beschriftung}` : wartendeNoppe === null ? `${sichtbar} ${s.beschriftung} mit einem anderen Stein`
+              : wartendeNoppe === s.id ? `${sichtbar}: Verbinden` : `${sichtbar}: ${stein(m, wartendeNoppe)?.beschriftung} mit ${s.beschriftung}`;
+            return el('button', { type: 'button', class: 'knopf knopf-klein', 'data-aktion': 'noppe', 'data-id': s.id, 'aria-label': genau, onclick: () => steinOderNoppe(s.id) }, sichtbar);
+          })() : null,
           s.fest ? null : el('button', { type: 'button', class: 'knopf knopf-klein', 'data-aktion': 'loesen', 'data-id': s.id, 'aria-label': `${s.beschriftung} abnehmen`, onclick: () => loesenAktion(s.id) }, 'Abnehmen')));
     }));
     if (aktiv && !liste.contains(document.activeElement)) {
@@ -468,18 +478,29 @@ export function baustelle({ leiste = [], modell = leeresModell(), nurAnsehen = f
         szene.add(steg);
       }
     });
-    // Kamera so einstellen, dass alles zu sehen ist.
-    const box = new THREE.Box3();
-    if (m.steine.length) for (const p of pos.values()) box.expandByPoint(p);
-    else box.expandByPoint(new THREE.Vector3(0, 0, 0));
-    const mitte = box.getCenter(new THREE.Vector3());
-    const groesse = box.getSize(new THREE.Vector3());
-    const noetig = Math.max(groesse.x + 3, (groesse.y + 3) * kamera.aspect, 4.6);
-    const abstand = Math.min(36, noetig / (2 * Math.tan((kamera.fov * Math.PI) / 360) * kamera.aspect) + 2);
-    steuerungOrbit.target.copy(mitte);
-    if (kamera.position.distanceTo(mitte) < abstand * 0.8 || kamera.position.distanceTo(mitte) > abstand * 1.6) {
-      // Leicht schräg von oben: so sieht man auch die Noppen an den Seiten.
-      kamera.position.copy(mitte.clone().add(new THREE.Vector3(abstand * 0.16, abstand * 0.26, abstand)));
+    // Kamera einpassen, sobald sich das Modell oder die Bühne ändert (nicht bei jedem Tipp: Drehen/Zoomen bleibt sonst erhalten).
+    const schluessel = `${JSON.stringify([m.steine.map((x) => x.id), m.bindungen])}|${kamera.aspect.toFixed(3)}`;
+    if (schluessel !== zuletztEingepasst) {
+      const schonEingepasst = zuletztEingepasst !== '';
+      zuletztEingepasst = schluessel;
+      const box = new THREE.Box3();
+      if (m.steine.length) for (const p of pos.values()) box.expandByPoint(p);
+      else box.expandByPoint(new THREE.Vector3(0, 0, 0));
+      const mitte = box.getCenter(new THREE.Vector3());
+      const groesse = box.getSize(new THREE.Vector3());
+      // Rand: halber Stein + Noppe + etwas Luft, auf allen Seiten.
+      const rand = STEIN.b / 2 + NOPPE.l + 0.45;
+      const breite = groesse.x + 2 * rand;
+      const hoch = groesse.y + 2 * rand;
+      const tan = Math.tan((kamera.fov * Math.PI) / 360);
+      const abstand = Math.min(60, Math.max(hoch / (2 * tan), breite / (2 * tan * kamera.aspect)) * 1.12 + STEIN.t);
+      // Blickrichtung behalten (falls gedreht), sonst leicht schräg von oben: so sieht man auch die Noppen an den Seiten.
+      const richtung = schonEingepasst && kamera.position.distanceTo(steuerungOrbit.target) > 0.1 && m.steine.length > 1
+        ? kamera.position.clone().sub(steuerungOrbit.target).normalize()
+        : new THREE.Vector3(0.16, 0.26, 1).normalize();
+      steuerungOrbit.target.copy(mitte);
+      kamera.position.copy(mitte.clone().addScaledVector(richtung, abstand));
+      steuerungOrbit.maxDistance = Math.max(40, abstand * 1.5);
     }
     steuerungOrbit.update();
   }
@@ -496,6 +517,11 @@ export function baustelle({ leiste = [], modell = leeresModell(), nurAnsehen = f
     listeZeichnen();
     if (!mit3d) return;
     const r = rendererHolen();
+    // Leere Bühne: klarer Startpunkt statt leerer Fläche.
+    if (!m.steine.length && !nurAnsehen) {
+      buehne.replaceChildren(el('p', { class: 'bau-leer' }, 'Hier entsteht dein Modell. ⬇'));
+      return;
+    }
     const breite = buehne.clientWidth || 600;
     r.setSize(breite, hoehe);
     kamera.aspect = breite / hoehe;
@@ -511,13 +537,32 @@ export function baustelle({ leiste = [], modell = leeresModell(), nurAnsehen = f
 
   const wurzel = el('div', { class: 'baustelle' + (nurAnsehen ? ' nur-ansehen' : '') },
     buehne,
-    status,
+    nurAnsehen ? status : el('div', { class: 'bau-status-zeile' }, status, vorlesenKnopf(() => status.textContent)),
     zaehler,
     nurAnsehen ? null : leisteKnoten,
     steuerung,
     el('details', { class: 'bau-liste-box', open: !mit3d },
-      el('summary', {}, 'Steine als Liste (ohne 3D bauen)'), liste));
+      el('summary', {}, nurAnsehen ? 'Steine als Liste' : 'Steine als Liste (ohne 3D bauen)'), liste));
   requestAnimationFrame(zeichnen);
+
+  // Drehen des iPads oder andere Fenstergröße: Bühne und Kamera neu anpassen.
+  let geplant = false;
+  const anpassen = () => {
+    if (!document.contains(buehne)) { window.removeEventListener('resize', anpassen); beobachter?.disconnect(); return; }
+    if (geplant) return;
+    geplant = true;
+    requestAnimationFrame(() => {
+      geplant = false;
+      if (festeHoehe === null) { hoehe = buehnenHoehe(anteil); buehne.style.height = `${hoehe}px`; }
+      if (mit3d && buehne.contains(renderer?.domElement)) zeichnen();
+    });
+  };
+  let letzteBreite = 0;
+  const beobachter = typeof ResizeObserver === 'function' ? new ResizeObserver(() => {
+    if (buehne.clientWidth && buehne.clientWidth !== letzteBreite) { letzteBreite = buehne.clientWidth; anpassen(); }
+  }) : null;
+  beobachter?.observe(buehne);
+  window.addEventListener('resize', anpassen);
 
   return {
     wurzel,

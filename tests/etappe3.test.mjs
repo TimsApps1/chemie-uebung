@@ -316,3 +316,52 @@ test('Lehrkraft: Bereich 1 erscheint in Übersicht, Tabelle und Beamer', async (
   assert.deepEqual(fehler, []);
   await kontext.close();
 });
+
+// ---------- Nachbesserung nach Prüfrunde 2 ----------
+
+test('Geschichte zu Bereich 1: Wertigkeit = feste Zahl von Bindungen (nicht Zahl der Partner)', async () => {
+  const b = JSON.parse(await fs.readFile(path.join(WURZEL, 'daten/bereiche.json'), 'utf8')).bereiche.find((x) => x.id === 'B1');
+  assert.match(b.geschichte.text, /feste Zahl von Bindungen/);
+  assert.doesNotMatch(b.geschichte.text, /anderer Atome/);
+});
+
+test('Bauen: Ein voll belegtes, aber falsches Modell zählt als Fehlversuch (Denkanstoß, 2. Versuch)', async () => {
+  const { kontext, seite, fehler } = await seiteMitAufgabe('b1-3-01'); // Fe2O3 mit Fe(II)/Fe(III)
+  await seite.locator('.bau-liste-box summary').click();
+  await seite.locator('.bau-stein-knopf[data-art="Fe(II)"]').click();
+  await seite.locator('.bau-stein-knopf[data-art="O"]').click();
+  await listeKnopf(seite, /O hier anstecken/).click();
+  await listeKnopf(seite, 'Verbinden …', 0).click();
+  await listeKnopf(seite, 'Hiermit verbinden', 1).click();
+  // FeO ist voll belegt -> automatisch geprüft, falsch
+  await seite.getByRole('button', { name: 'Nochmal versuchen' }).waitFor();
+  assert.match(await seite.locator('.rueckmeldung').textContent(), /römische Zahl/);
+  await seite.getByRole('button', { name: 'Nochmal versuchen' }).click();
+  assert.equal(await seite.locator('.bau-liste li').count(), 2, 'Modell bleibt zum Umbauen stehen');
+  assert.deepEqual(fehler, []);
+  await kontext.close();
+});
+
+test('Beamer: nie mehr als 5 Namen, auch bei Gleichstand', async () => {
+  const { punktecode, namensKennung } = await import('../js/codes.js');
+  const kontext = await browser.newContext({ viewport: { width: 1024, height: 768 }, serviceWorkers: 'block' });
+  const seite = await kontext.newPage();
+  await seite.goto(basis);
+  await seite.getByRole('heading', { name: 'Wer übt?' }).waitFor();
+  const namen = ['Ada Ahorn', 'Bea Birke', 'Cem Celik', 'Dana Dorn', 'Eli Eiche', 'Finn Fuchs', 'Gil Gans', 'Hanna Hahn'];
+  const { kurzname: kurz } = await import('../js/hilfen.js');
+  const codes = namen.map((n, i) => punktecode({ name: kurz(n), bereich: 'B1', niveau: 1, punkte: i < 3 ? 80 - i * 5 : 60, tag: 470, kurs: 'E', erster: i < 3 ? 8 - i : 4, kennung: namensKennung(n), geraet: 'AB', nummer: i + 1 }));
+  const r = await seite.evaluate(async ({ codes, namen }) => {
+    const L = await import('./js/lehrer-daten.js');
+    const { wocheVonTag } = await import('./js/hilfen.js');
+    L.allesLoeschen();
+    L.klasseSpeichern(L.klasseAusText(namen.join('\n')));
+    L.einlesen(codes.join('\n'));
+    const liste = L.bestenliste(L.lehrerDaten(), { bereich: 'B1', niveau: 1, woche: wocheVonTag(470) });
+    return { namen: liste.map((w) => w.name), rest: liste.rest };
+  }, { codes, namen });
+  // 3 einzelne Plätze, dann 5 Kinder gleichauf auf Platz 4 -> nur die 3 mit Namen, Rest ohne Namen
+  assert.equal(r.namen.length, 3, JSON.stringify(r));
+  assert.deepEqual(r.rest, { anzahl: 5, wert: 60 }, JSON.stringify(r));
+  await kontext.close();
+});

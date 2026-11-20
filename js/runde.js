@@ -248,7 +248,7 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
         let gutZuWissen = null;
         if (a.typ === 'bauen' && /^(Na|Mg|Al|Zn|Pb|Cu|Fe|Ag)/.test(a.formel) && !profil(name).hinweise?.verhaeltnis) {
           aendern(name, (p) => { p.hinweise = { ...(p.hinweise || {}), verhaeltnis: true }; });
-          const satz = 'Gut zu wissen: Die Formel zeigt nur das Zahlenverhältnis. In Wirklichkeit hängen sehr viele Teilchen zusammen.';
+          const satz = 'Gut zu wissen: Die Formel zeigt nur das Zahlenverhältnis. In Wirklichkeit hängen sehr viele Atome zusammen.';
           gutZuWissen = el('div', { class: 'gut-zu-wissen' }, el('p', {}, '💡 ', text(satz)), vorlesenKnopf(satz));
         }
         rueck.replaceChildren(rueckmeldung(true, lobText, null, plus, gutZuWissen));

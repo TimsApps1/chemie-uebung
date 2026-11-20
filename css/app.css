@@ -986,3 +986,6 @@ button.bereich { font: inherit; text-align: left; cursor: pointer; width: 100%; 
   .baustelle:not(.nur-ansehen) > :not(.bau-buehne) { grid-column: 2; }
 }
 .baustelle.nur-ansehen .bau-status:empty, .baustelle.gesperrt .bau-status:empty { display: none; }
+.bau-status-zeile { display: flex; align-items: center; gap: var(--a2); }
+.bau-status-zeile .bau-status { flex: 1; }
+.bau-leer { margin: 0; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center; padding: 16px; font-weight: 700; font-size: 1.15rem; color: var(--text-leise); }
