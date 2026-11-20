@@ -232,3 +232,31 @@ test('iPad hoch/quer: alle Karten in einer Reihe, Waage sichtbar, Fokus bleibt n
   assert.equal(lage.display, 'sub');
   await kontext.close();
 });
+
+test('★★★-Runde: auch eine leichtere Einstiegsaufgabe läuft mit verdeckter Waage; „Ich komme nicht weiter“ kostet keinen Versuch', async () => {
+  const { kontext, seite, fehler } = await seiteMitAufgabe('b2-1-06');
+  // Gleiche Aufgabe, aber als Teil einer ★★★-Runde
+  await seite.evaluate(async () => {
+    const { rundeSpielen } = await import('./js/runde.js');
+    const { allesLaden } = await import('./js/daten.js');
+    const d = await allesLaden();
+    const a = d.aufgaben.B2.find((x) => x.id === 'b2-2-01');
+    rundeSpielen({ ziel: document.getElementById('inhalt'), daten: d, name: 'BENTES', bereich: 'B2', niveau: 3, kurs: 'E', aufgaben: [a], art: 'normal', fertig: () => {} });
+  });
+  assert.equal(await seite.locator('.waage.verdeckt').count(), 1, 'Waage in der ★★★-Runde verdeckt');
+  assert.equal(await seite.getByRole('button', { name: /Wiegen und prüfen/ }).count(), 1);
+  // ★: „Ich komme nicht weiter“ zeigt einen Hinweis, wertet aber nicht
+  const { seite: s2, kontext: k2 } = await seiteMitAufgabe('b2-1-08');
+  await s2.getByRole('button', { name: /Ich komme nicht weiter/ }).click();
+  assert.match(await s2.locator('.bau-status').textContent(), /O-Atome: links 2, rechts 1/);
+  assert.equal(await s2.getByRole('button', { name: 'Nochmal versuchen' }).count(), 0);
+  assert.deepEqual(fehler, []);
+  await k2.close();
+  await kontext.close();
+});
+
+test('Fallentexte setzen einen geänderten Index nie mit „mehr Teilchen“ gleich', () => {
+  for (const a of reaktionen) for (const s of [...a.edukte, ...a.produkte]) {
+    if (s.falle) assert.doesNotMatch(s.falle.text, /zwei Teilchen/, `${a.id} ${s.formel}`);
+  }
+});

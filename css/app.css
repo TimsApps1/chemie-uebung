@@ -1053,3 +1053,5 @@ button.bereich { font: inherit; text-align: left; cursor: pointer; width: 100%; 
   .gleichung-plus, .gleichung-pfeil { margin-top: 0; align-self: center; }
   .gleichung-pfeil { transform: rotate(90deg); }
 }
+.fenster .waage-box { position: static; }
+.waage-schale { font-size: 0.85rem; }

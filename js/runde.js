@@ -48,10 +48,12 @@ export function aufgabenWaehlen(alle, niveau, kurs, zuletzt = []) {
   const zahl = (liste, test) => liste.filter(test).length;
   // „Ist die Gleichung ausgeglichen?“ (Ja/Nein) zählt als eigene Art: höchstens 2 pro Runde, sonst wird zu viel geraten.
   const art = (x) => (x.typ === 'ausgleichen' && x.pruefen ? 'pruefen' : x.typ);
+  // Bereich 2: Das Ausgleichen ist die Hauptsache (bis 6 pro Runde), höchstens 1 Auswahlfrage.
+  const mitAusgleichen = pool.some((x) => x.typ === 'ausgleichen' && !x.pruefen);
+  const grenze = (k) => (mitAusgleichen ? ({ ausgleichen: 6, auswahl: 1, pruefen: 2 }[k] ?? 4) : (k === 'pruefen' ? 2 : 4));
   const passt = (a, liste) => !(a.typ === 'sortieren' && zahl(liste, (x) => x.typ === 'sortieren') >= 2) &&
-    !(art(a) === 'pruefen' && zahl(liste, (x) => art(x) === 'pruefen') >= 2) &&
     !(a.generiert && zahl(liste, (x) => x.generiert) >= 3) &&
-    zahl(liste, (x) => art(x) === art(a)) < 4;
+    zahl(liste, (x) => art(x) === art(a)) < grenze(art(a));
   for (const a of rest) {
     if (auswahl.length >= RUNDE_LAENGE - einstieg.length) break;
     if (passt(a, [...einstieg, ...auswahl])) auswahl.push(a);
@@ -197,7 +199,7 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
     let beantwortetSchon = false;
     const rueck = el('div', { class: 'rueck-bereich', 'aria-live': 'polite' });
     zeigenWennNoetig(rueck);
-    const darstellung = aufgabeDarstellen(a, (wert) => beantwortet(wert), daten);
+    const darstellung = aufgabeDarstellen(a, (wert) => beantwortet(wert), daten, { rundeNiveau: art === 'normal' ? niveau : null });
 
     const erklaeren = el('button', { type: 'button', class: 'knopf knopf-leise knopf-breit', onclick: () => {
       // Vor der Antwort: nur die Regel. Nach der Antwort: die Erklärung zu dieser Aufgabe.
@@ -236,7 +238,9 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
           stand.punkte += plus;
         }
         if (!wiederholung && versuch === 1) stand.ersterVersuch += 1;
-        let lobText = lob(daten, versuch === 1 ? 'erster' : 'zweiter');
+        let lobText = a.typ === 'ausgleichen' && !a.pruefen
+          ? (versuch === 1 ? 'Die Waage steht gerade – alle Atome passen!' : 'Umgebaut und geschafft – die Waage steht gerade!')
+          : lob(daten, versuch === 1 ? 'erster' : 'zweiter');
         if (art === 'fehler') {
           const erledigt = fehlerWiederholt(name, a.id, versuch === 1);
           if (erledigt) { stand.ausgebessert += 1; lobText = lob(daten, 'ausgebessert'); }

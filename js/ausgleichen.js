@@ -6,7 +6,7 @@ import { el, formelKnoten } from './hilfen.js';
 import { baustein, fenster, vorlesenKnopf, text } from './ui.js';
 import { formelZaehlung } from './bausteine-logik.js';
 import {
-  alleStoffe, startZahlen, waage, gleichungText, falle, steineGesamt, atomeIm, MAX_ZAHL, MAX_STEINE
+  alleStoffe, startZahlen, waage, gleichungText, falle, steineGesamt, atomeIm, ausgleichHinweis, MAX_ZAHL, MAX_STEINE
 } from './ausgleichen-logik.js';
 
 const ROEMISCH = { I: 1, II: 2, III: 3, IV: 4 };
@@ -42,7 +42,10 @@ export function gleichungsBaustelle(a, elemente, { nurAnsehen = false, zahlen: a
   const falleFormel = new Map(); // Stoff-Index -> gezeigte Fallen-Formel (nur kurz)
 
   const kartenBox = el('div', { class: 'gleichung-bau' });
-  const waageBox = el('div', { class: 'waage-box' });
+  const waageBild = el('div');
+  // Ein einziges, festes Live-Element für den Waagensatz: VoiceOver sagt jede Änderung an.
+  const waageSatz = el('p', { class: 'waage-satz', 'aria-live': 'polite' });
+  const waageBox = el('div', { class: 'waage-box' }, waageBild);
   const status = el('p', { class: 'bau-status', 'aria-live': 'polite' });
 
   function karte(stoff, i) {
@@ -56,9 +59,9 @@ export function gleichungsBaustelle(a, elemente, { nurAnsehen = false, zahlen: a
           : [el('span', { class: 'stoff-zahl' }, zahlText(n)), formelKnoten(stoff.formel)]),
       el('p', { class: 'stoff-name' }, stoff.name),
       gesperrt ? null : el('div', { class: 'stoff-steuerung' },
-        el('button', { type: 'button', class: 'knopf knopf-rund', 'data-stoff': i, 'data-aktion': 'minus', disabled: n <= 1, 'aria-label': `Ein Teilchen ${stoff.name} weniger`, onclick: () => aendern(i, -1) }, '−'),
+        el('button', { type: 'button', class: 'knopf knopf-rund', 'data-stoff': i, 'data-aktion': 'minus', disabled: n <= 1, 'aria-label': `Minus: Ein Teilchen ${stoff.name} weniger`, onclick: () => aendern(i, -1) }, '−'),
         el('span', { class: 'stoff-anzahl', 'aria-hidden': 'true' }, String(n)),
-        el('button', { type: 'button', class: 'knopf knopf-rund', 'data-stoff': i, 'data-aktion': 'plus', disabled: !plusMoeglich, 'aria-label': `Ein Teilchen ${stoff.name} mehr (jetzt ${n})`, onclick: () => aendern(i, +1) }, '+')),
+        el('button', { type: 'button', class: 'knopf knopf-rund', 'data-stoff': i, 'data-aktion': 'plus', disabled: !plusMoeglich, 'aria-label': `Plus: Ein Teilchen ${stoff.name} mehr (jetzt ${n})`, onclick: () => aendern(i, +1) }, '+')),
       el('div', { class: 'teilchen-box' + (n >= 3 ? ' viele' : ''), 'aria-hidden': 'true' }, Array.from({ length: n }, () => teilchenKnoten(stoff, elemente, n >= 4))),
       gesperrt ? null : el('button', { type: 'button', class: 'knopf knopf-klein knopf-leise falle-knopf', 'data-stoff': i, 'data-aktion': 'falle', 'aria-label': `Bei ${stoff.name} ein Atom anhängen`, onclick: () => falleZeigen(i) }, '➕ Atom anhängen'));
   }
@@ -106,14 +109,14 @@ export function gleichungsBaustelle(a, elemente, { nurAnsehen = false, zahlen: a
 
   function waageZeichnen() {
     if (!waageOffen) {
-      waageBox.replaceChildren(el('div', { class: 'waage verdeckt' }, el('p', {}, '⚖ Die Waage ist verdeckt. Zähl die Atome selbst.')));
+      waageBild.replaceChildren(el('div', { class: 'waage verdeckt' }, el('p', {}, '⚖ Die Waage ist verdeckt. Zähl die Atome selbst.')));
       return;
     }
     const w = waage(a, zahlen);
     // Gleich viele Atome insgesamt, aber nicht pro Element: Die Waage wackelt (steht nicht gerade).
     const neigung = w.ausgeglichen ? 0 : w.kipp === 0 ? 4 : -w.kipp * 8;
     const lage = w.ausgeglichen ? '✓ Die Waage steht gerade.' : w.kipp > 0 ? 'Die Waage kippt nach links.' : w.kipp < 0 ? 'Die Waage kippt nach rechts.' : 'Die Waage wackelt: Die Elemente passen noch nicht.';
-    waageBox.replaceChildren(el('div', { class: 'waage' + (w.ausgeglichen ? ' gerade' : '') },
+    waageBild.replaceChildren(el('div', { class: 'waage' + (w.ausgeglichen ? ' gerade' : '') },
       el('div', { class: 'waage-bild', 'aria-hidden': 'true' },
         el('div', { class: 'waage-balken', style: `transform: rotate(${neigung}deg)` },
           el('span', { class: 'waage-schale' }, 'links'), el('span', { class: 'waage-schale' }, 'rechts')),
@@ -122,8 +125,10 @@ export function gleichungsBaustelle(a, elemente, { nurAnsehen = false, zahlen: a
         baustein(z.symbol, { klein: true, metall: elemente.find((e) => e.symbol === z.symbol)?.metall }),
         el('span', { class: 'waage-zahlen' }, el('span', { class: 'nur-vorlesen' }, `${z.symbol}: links `), String(z.links),
           el('span', { 'aria-hidden': 'true' }, ' | '), el('span', { class: 'nur-vorlesen' }, ', rechts '), String(z.rechts)),
-        el('b', { class: 'marke-zelle', 'aria-label': z.gleich ? 'gleich' : 'ungleich' }, z.gleich ? '✓' : '✗')))),
-      el('p', { class: 'waage-satz', 'aria-live': 'polite' }, lage, w.ausgeglichen && !w.kleinste ? ' Aber es geht mit kleineren Zahlen davor.' : '')));
+        el('b', { class: 'marke-zelle' }, el('span', { 'aria-hidden': 'true' }, z.gleich ? '✓' : '✗'), el('span', { class: 'nur-vorlesen' }, z.gleich ? ' gleich' : ' ungleich'))))),
+      waageSatz));
+    const satz = `${lage}${w.ausgeglichen && !w.kleinste ? ' Aber es geht mit kleineren Zahlen davor.' : ''}`;
+    if (waageSatz.textContent !== satz) waageSatz.textContent = satz;
   }
 
   function zeichnen() {
@@ -171,10 +176,11 @@ export function gleichungsBaustelle(a, elemente, { nurAnsehen = false, zahlen: a
 
 // ---------- Aufgabentyp „ausgleichen“ ----------
 
-export function ausgleichenAufgabe(a, antworten, daten) {
+export function ausgleichenAufgabe(a, antworten, daten, { rundeNiveau = null } = {}) {
   const elemente = daten.elemente;
-  // ★★★: Waage verdeckt, bis man auf „Wiegen“ tippt. Bei „prüfen“-Aufgaben verdeckt bis zur Antwort.
-  const verdeckt = Boolean(a.pruefen) || a.niveau === 3;
+  // ★★★-Runde: Waage verdeckt, bis man auf „Wiegen“ tippt – auch bei den leichteren Einstiegsaufgaben.
+  // Bei „prüfen“-Aufgaben verdeckt bis zur Antwort.
+  const verdeckt = Boolean(a.pruefen) || (rundeNiveau ?? a.niveau) === 3;
   let fertig = false;
   const gleichungZeile = el('p', { class: 'bau-formel', 'aria-live': 'polite' });
   const bau = gleichungsBaustelle(a, elemente, {
@@ -206,12 +212,23 @@ export function ausgleichenAufgabe(a, antworten, daten) {
     };
   }
 
+  // ★/★★: Die Waage löst selbst, sobald sie gerade steht. Der Knopf hilft erst (ohne Versuch zu verbrauchen),
+  // erst der zweite Tipp wertet. ★★★: „Wiegen und prüfen“ wertet sofort.
+  let hilfeGezeigt = false;
+  const pruefText = verdeckt ? '⚖ Wiegen und prüfen' : '💡 Ich komme nicht weiter';
   const pruefKnopf = el('button', { type: 'button', class: 'knopf knopf-haupt knopf-breit', onclick: () => {
+    if (!verdeckt && !hilfeGezeigt) {
+      hilfeGezeigt = true;
+      const h = ausgleichHinweis(a, bau.zahlen());
+      bau.melden(`💡 ${h || a.denkanstoss}`, 'tipp');
+      pruefKnopf.textContent = 'Lösung zeigen (zählt als Versuch)';
+      return;
+    }
     fertig = true;
     pruefKnopf.disabled = true;
     bau.waageZeigen();
     antworten(bau.zahlen());
-  } }, verdeckt ? '⚖ Wiegen und prüfen' : 'Fertig – prüfen');
+  } }, pruefText);
   return {
     wurzel: el('div', { class: 'ausgleichen-aufgabe' }, bau.wurzel, gleichungZeile, pruefKnopf),
     reihenfolge: () => bau.zahlen(),
@@ -233,6 +250,8 @@ export function ausgleichenAufgabe(a, antworten, daten) {
     },
     nochmal(hinweis) {
       fertig = false;
+      hilfeGezeigt = true;
+      pruefKnopf.textContent = verdeckt ? '⚖ Wiegen und prüfen' : 'Lösung zeigen (zählt als Versuch)';
       pruefKnopf.disabled = false;
       bau.entsperren();
       if (hinweis) bau.melden(`💡 ${hinweis}`, 'tipp');
