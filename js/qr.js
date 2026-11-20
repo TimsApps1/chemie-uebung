@@ -102,7 +102,10 @@ export async function qrScannen(gefunden) {
     await video.play().catch(() => {});
     status.textContent = 'Halte die Kamera auf den QR-Code des Kindes.';
   } catch (e) {
-    status.textContent = `Die Kamera geht nicht: ${e.message || e.name}. Erlaube die Kamera in den Einstellungen oder nutze „Text einfügen“.`;
+    const grund = e?.name === 'NotAllowedError' ? 'Die Kamera ist nicht erlaubt.'
+      : e?.name === 'NotFoundError' ? 'Es wurde keine Kamera gefunden.'
+        : e?.name === 'NotReadableError' ? 'Die Kamera wird gerade von einer anderen App benutzt.' : 'Die Kamera geht gerade nicht.';
+    status.textContent = `${grund} Erlaube die Kamera in den iPad-Einstellungen (Safari → Kamera) oder nutze „Text einfügen“.`;
     status.className = 'meldung';
     return zu;
   }

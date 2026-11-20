@@ -302,3 +302,46 @@ test('Beamer-Vorschau zeigt jede Platznummer nur einmal; Kurs-Filter wirkt', asy
   assert.match(await erste.textContent(), /^1\. Lena S\./);
   await kontext.close();
 });
+
+test('Lernverlauf misst Können je Bereich/Niveau, nicht die Menge', async () => {
+  const { kontext, seite } = await neueSeite();
+  const v = await seite.evaluate(async () => {
+    const L = await import('./js/lehrer-daten.js');
+    const { tagNummer } = await import('./js/hilfen.js');
+    const t = tagNummer();
+    const runden = [
+      { bereich: 'B4', niveau: 1, punkte: 40, erster: 4, tag: t - 7 }, { bereich: 'B4', niveau: 1, punkte: 40, erster: 4, tag: t - 7 },
+      { bereich: 'B4', niveau: 1, punkte: 40, erster: 4, tag: t - 7 }, { bereich: 'B4', niveau: 1, punkte: 70, erster: 7, tag: t },
+      { bereich: 'B3', niveau: 2, punkte: 80, erster: 8, tag: t }];
+    return L.verlauf(runden, { bereich: 'B4', niveau: 1, wochen: 2 });
+  });
+  assert.equal(v[0].best, 40);
+  assert.equal(v[0].runden, 3);
+  assert.equal(v[1].best, 70, 'eine bessere Runde zählt mehr als drei schwache');
+  assert.equal(v[1].ersterQuote, 88);
+  await kontext.close();
+});
+
+test('Nicht zugeordnete Gruppe verwerfen; Zuordnung aufheben', async () => {
+  const { kontext, seite } = await neueSeite();
+  const r = await seite.evaluate(async ([klasse, quatsch, variante]) => {
+    const L = await import('./js/lehrer-daten.js');
+    L.allesLoeschen();
+    L.klasseSpeichern(L.klasseAusText(klasse));
+    L.einlesen(`${quatsch}\n${variante}`);
+    const offen = L.nichtZugeordnet();
+    const q = offen.find((o) => o.schluessel.startsWith('POPO'));
+    const v = offen.find((o) => o.schluessel.startsWith('LENASCH'));
+    L.gruppeVerwerfen(q.schluessel);
+    L.aliasSetzen(v.schluessel, L.lehrerDaten().klasse[0].id);
+    const nachZuordnung = L.nichtZugeordnet().length;
+    const z = L.zuordnungen();
+    L.aliasSetzen(z[0].schluessel, null);
+    const wieder = L.einlesen(quatsch);
+    return { nachZuordnung, zuordnungen: z.length, offenNachAufheben: L.nichtZugeordnet().length, quatschWieder: wieder.neu.length };
+  }, [KLASSE,
+    punktecode({ name: 'POPO', bereich: 'B4', niveau: 1, punkte: 10, tag: 470, erster: 1, kennung: 'ZZ', geraet: 'X4', nummer: 1 }),
+    punktecode({ name: 'LENASCH', bereich: 'B4', niveau: 1, punkte: 50, tag: 470, erster: 5, kennung: namensKennung('Lena Schmitt'), geraet: 'X4', nummer: 2 })]);
+  assert.deepEqual(r, { nachZuordnung: 0, zuordnungen: 1, offenNachAufheben: 1, quatschWieder: 0 });
+  await kontext.close();
+});

@@ -20,7 +20,11 @@ export function adminSperren() {
 
 // Während die Beamer-Ansicht läuft, sperrt sich nichts automatisch (sie zeigt nur die besten 5).
 let sperrePausiert = false;
-export function sperreAussetzen(ja) { sperrePausiert = ja; }
+export function sperreAussetzen(ja) {
+  sperrePausiert = ja;
+  if (ja) clearTimeout(sperrUhr);
+  else if (entsperrt && aktuelleUmgebung) sperrUhrNeu(aktuelleUmgebung);
+}
 
 function sperrUhrNeu(umgebung) {
   clearTimeout(sperrUhr);
@@ -163,13 +167,13 @@ function adminSeite(umgebungRoh) {
     el('input', { type: 'checkbox', checked: !g.zeitlimitAus, onchange: (e) => { geraetAendern((x) => { x.zeitlimitAus = !e.target.checked; }); } }),
     el('span', {}, 'Zeitbalken bei ★★★ (auf diesem iPad)'));
 
-  const pinFeld = el('input', { type: 'text', inputmode: 'numeric', class: 'eingabe', maxlength: 8, placeholder: 'neue PIN (4–8 Ziffern)', 'aria-label': 'Neue PIN' });
+  const pinFeld = el('input', { type: 'text', inputmode: 'numeric', class: 'eingabe', maxlength: 8, placeholder: 'neue PIN (6–8 Ziffern)', 'aria-label': 'Neue PIN' });
   const pinAusgabe = el('div', { 'aria-live': 'polite' });
   const pinTeil = el('div', {},
     el('p', { class: 'leise' }, 'Die PIN gilt für alle iPads. So änderst du sie:'),
     el('div', { class: 'zeile' }, pinFeld, el('button', { type: 'button', class: 'knopf', onclick: () => {
       const pin = pinFeld.value.trim();
-      if (!/^\d{4,8}$/.test(pin)) { pinAusgabe.replaceChildren(el('p', { class: 'meldung' }, 'Bitte 4 bis 8 Ziffern.')); return; }
+      if (!/^\d{6,8}$/.test(pin)) { pinAusgabe.replaceChildren(el('p', { class: 'meldung' }, 'Bitte 6 bis 8 Ziffern.')); return; }
       const zeile = `"admin_pin_pruefsumme": "${pinPruefsumme(pin)}",`;
       pinAusgabe.replaceChildren(
         el('p', {}, 'Öffne auf github.com die Datei ', el('b', {}, 'daten/app.json'), ', tippe auf den Stift und ersetze die Zeile mit admin_pin_pruefsumme durch:'),

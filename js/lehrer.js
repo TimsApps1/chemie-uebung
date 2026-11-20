@@ -3,7 +3,7 @@ import { el, sterneText, datumVonTag } from './hilfen.js';
 import { fenster, fragen } from './ui.js';
 import {
   lehrerDaten, einlesen, klasseAusText, klasseSpeichern, aliasSetzen, nichtZugeordnet, vorschlaege, kindName,
-  rundenNachKind, uebersicht, verlauf, bestenliste, aktuelleWoche, wochenText, csvRunden, csvUebersicht,
+  rundenNachKind, uebersicht, verlauf, gespielteNiveaus, gruppeVerwerfen, zuordnungen, bestenliste, aktuelleWoche, wochenText, csvRunden, csvUebersicht,
   sicherungErstellen, sicherungGespeichert, sicherungEinlesen, sicherungFaellig, allesLoeschen, rundeLoeschen, ERINNERUNG_TAGE,
   halbjahresBeginn
 } from './lehrer-daten.js';
@@ -81,6 +81,8 @@ export function ergebnisseReiter({ neu }) {
   } }, 'Codes einlesen');
 
   const scanKnopf = el('button', { type: 'button', class: 'knopf knopf-haupt knopf-gross', onclick: () => {
+    // Beim Scannen hält die Lehrkraft das iPad nur hin – solange sperrt sich nichts.
+    sperreAussetzen(true);
     qrScannen((text) => {
       const bericht = einlesen(text, 'qr');
       const name = bericht.neu[0] ? bericht.neu[0].name : bericht.doppelt[0]?.split('-')[0] || '';
@@ -90,7 +92,7 @@ export function ergebnisseReiter({ neu }) {
         (bericht.doppelt.length ? `, ${bericht.doppelt.length} schon da` : '') + (bericht.ungueltig.length ? `, ${bericht.ungueltig.length} ungültig` : '');
     }).then(() => {
       // Nach dem Schließen die Ansicht auffrischen.
-      const warte = setInterval(() => { if (!document.querySelector('.scan-box')) { clearInterval(warte); neu(); } }, 500);
+      const warte = setInterval(() => { if (!document.querySelector('.scan-box')) { clearInterval(warte); sperreAussetzen(false); neu(); } }, 500);
     });
   } }, '📷 QR-Codes scannen');
 
@@ -102,12 +104,22 @@ export function ergebnisseReiter({ neu }) {
       const auswahl = el('select', { class: 'eingabe auswahl-klein', 'aria-label': `Kind für ${kurz} wählen` },
         el('option', { value: '' }, 'Anderes Kind …'),
         d.klasse.map((k) => el('option', { value: k.id }, k.anzeige)));
-      auswahl.addEventListener('change', () => { if (auswahl.value) { aliasSetzen(schluessel, auswahl.value); neu(); } });
+      const zuordnen = async (kindId) => {
+        const kind = d.klasse.find((k) => k.id === kindId);
+        const details = runden.map((r) => `${datumVonTag(r.tag)} ${r.bereich} ${sterneText(r.niveau)} ${r.punkte} P.`).slice(0, 6).join(', ');
+        if (await fragen(`${runden.length} ${runden.length === 1 ? 'Runde' : 'Runden'} von „${kurz}“ (${details}${runden.length > 6 ? ' …' : ''}) dem Kind „${kind.anzeige}“ zuordnen? Im Reiter 👥 Klasse kannst du das wieder aufheben.`,
+          'Ja, zuordnen', 'Abbrechen', { hauptIstNein: true })) { aliasSetzen(schluessel, kindId); neu(); }
+      };
+      auswahl.addEventListener('change', () => { if (auswahl.value) zuordnen(auswahl.value); });
       return el('li', {},
         el('p', {}, el('b', {}, kurz), kennung ? el('span', { class: 'leise' }, ` (Kennung ${kennung})`) : null, ` · ${runden.length} ${runden.length === 1 ? 'Runde' : 'Runden'}, zuletzt ${datumVonTag(runden[runden.length - 1].tag)}`),
         el('div', { class: 'zeile' },
-          vorschlaege(d, schluessel).slice(0, 3).map((k) => el('button', { type: 'button', class: 'knopf knopf-klein', onclick: () => { aliasSetzen(schluessel, k.id); neu(); } }, `→ ${k.anzeige}`)),
-          auswahl));
+          vorschlaege(d, schluessel).slice(0, 3).map((k) => el('button', { type: 'button', class: 'knopf knopf-klein', onclick: () => zuordnen(k.id) }, `→ ${k.anzeige}`)),
+          auswahl,
+          el('button', { type: 'button', class: 'knopf knopf-klein', onclick: async () => {
+            if (await fragen(`Alle ${runden.length} ${runden.length === 1 ? 'Runde' : 'Runden'} von „${kurz}“ verwerfen (z. B. Testname oder Kind nicht mehr in der Klasse)? Sie kommen auch beim nächsten Einlesen nicht zurück.`,
+              'Ja, verwerfen', 'Abbrechen', { hauptIstNein: true })) { gruppeVerwerfen(schluessel); neu(); }
+          } }, '🗑 Verwerfen')));
     }))) : null;
 
   const letzte = [...d.runden].sort((a, b) => b.eingelesen - a.eingelesen).slice(0, 8);
@@ -132,8 +144,26 @@ export function ergebnisseReiter({ neu }) {
 function kindDetail(id, neu) {
   const d = lehrerDaten();
   const runden = rundenNachKind(d).get(id) || [];
-  const v = verlauf(runden, 8);
-  const max = Math.max(1, ...v.map((w) => w.punkte));
+  const kombis = gespielteNiveaus(runden);
+  let wahl = kombis[0] || null;
+  const verlaufBox = el('div', { class: 'verlauf-box' });
+  const zeigeVerlauf = () => {
+    if (!wahl) { verlaufBox.replaceChildren(el('p', { class: 'leise' }, 'Noch keine Runden.')); return; }
+    const v = verlauf(runden, { ...wahl, wochen: 8 });
+    const max = wahl.niveau === 3 && wahl.bereich === 'B3' ? 100 : 80;
+    verlaufBox.replaceChildren(
+      el('div', { class: 'zeile', role: 'radiogroup', 'aria-label': 'Bereich und Niveau' }, kombis.map((k) =>
+        el('button', { type: 'button', class: 'knopf knopf-klein' + (k === wahl ? ' knopf-haupt' : ''), role: 'radio', 'aria-checked': String(k === wahl),
+          onclick: () => { wahl = k; zeigeVerlauf(); } }, `${k.bereich} ${sterneText(k.niveau)}`))),
+      el('ol', { class: 'saeulen wochen-saeulen', 'aria-label': 'Bestwert pro Woche: ' + v.map((w) => w.best ?? 'keine Runde').join(', ') },
+        v.map((w) => el('li', { style: `--h:${w.best === null ? 0 : Math.max(3, (w.best / max) * 100)}%`, class: w.best === null ? 'leer' : '' },
+          el('span', { class: 'saeule' }),
+          el('small', {}, w.best === null ? '–' : String(w.best)),
+          el('small', { class: 'saeule-niveau' }, w.runden ? `${w.runden}× · ${w.ersterQuote ?? '–'} %` : ''),
+          el('small', { class: 'saeule-niveau' }, datumVonTag(w.woche * 7 - 4).slice(0, 6))))),
+      el('p', { class: 'tipp' }, `Säule = Bestwert der Woche (von ${max}). Darunter: Zahl der Runden · % beim 1. Versuch richtig.`));
+  };
+  zeigeVerlauf();
   const tabelle = el('div', { class: 'tabelle-rollen' }, el('table', { class: 'tabelle' },
     el('thead', {}, el('tr', {}, ['Datum', 'Bereich', 'Niveau', 'Kurs', 'Punkte', '1. Versuch', 'Begr.', ''].map((t) => el('th', {}, t)))),
     el('tbody', {}, [...runden].reverse().map((r) => el('tr', {},
@@ -147,11 +177,8 @@ function kindDetail(id, neu) {
         }
       } }, '🗑')))))));
   const zuDetail = fenster(el('div', { class: 'kind-detail' },
-    el('h4', {}, 'Punkte pro Woche (letzte 8 Wochen)'),
-    el('ol', { class: 'saeulen wochen-saeulen', 'aria-label': 'Punkte pro Woche: ' + v.map((w) => w.punkte).join(', ') },
-      v.map((w) => el('li', { style: `--h:${Math.max(3, (w.punkte / max) * 100)}%` },
-        el('span', { class: 'saeule' }), el('small', {}, String(w.punkte)), el('small', { class: 'saeule-niveau' }, datumVonTag(w.woche * 7 - 4).slice(0, 6))))),
-    el('p', { class: 'tipp' }, 'Summe der Punkte aller Runden in der Woche.'),
+    el('h4', {}, 'Lernverlauf (letzte 8 Wochen)'),
+    verlaufBox,
     el('h4', {}, `Alle Runden (${runden.length})`),
     runden.length ? tabelle : el('p', { class: 'leise' }, 'Noch keine Runden.')), { titel: kindName(d, id) });
 }
@@ -277,7 +304,18 @@ export function klasseReiter({ neu }) {
     } }, 'Klassenliste speichern'), meldung),
     el('h4', {}, 'So heißen die Kinder im Punktecode'),
     vorschau,
-    el('p', { class: 'tipp' }, 'Hat ein Kind seinen Namen anders getippt, erscheint es im Reiter „📥 Ergebnisse“ unter „Nicht zugeordnet“. Ein Tipp genügt zum Zuordnen.'))];
+    el('p', { class: 'tipp' }, 'Hat ein Kind seinen Namen anders getippt, erscheint es im Reiter „📥 Ergebnisse“ unter „Nicht zugeordnet“. Ein Tipp genügt zum Zuordnen.')),
+  zuordnungen(d).length ? karte('Zuordnungen',
+    el('p', { class: 'leise' }, 'Diese anders geschriebenen Namen hast du einem Kind zugeordnet.'),
+    el('ul', { class: 'zuordnen-liste' }, zuordnungen(d).map((z) => el('li', {},
+      el('p', {}, el('b', {}, z.schluessel.split('|')[0]), el('span', { class: 'leise' }, ` (Kennung ${z.schluessel.split('|')[1] || '–'})`),
+        ` → ${z.gueltig ? z.name : '⚠ Kind nicht mehr in der Liste'} · ${z.runden} ${z.runden === 1 ? 'Runde' : 'Runden'}`),
+      el('button', { type: 'button', class: 'knopf knopf-klein', onclick: async () => {
+        if (await fragen('Diese Zuordnung aufheben? Die Runden erscheinen dann wieder unter „Nicht zugeordnet“.', 'Ja, aufheben', 'Abbrechen', { hauptIstNein: true })) {
+          aliasSetzen(z.schluessel, null);
+          neu();
+        }
+      } }, 'Aufheben'))))) : null].filter(Boolean);
 }
 
 // ---------- Reiter: Sicherung ----------
