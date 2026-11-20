@@ -126,7 +126,7 @@ function stimmeSuchen() {
       stimmen.find((s) => s.lang && s.lang.startsWith('de')) || null;
   } catch { deutscheStimme = null; }
 }
-if ('speechSynthesis' in window) {
+if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
   stimmeSuchen();
   window.speechSynthesis.addEventListener?.('voiceschanged', stimmeSuchen);
 }
@@ -162,7 +162,7 @@ export function vorlesenKnopf(textOderFunktion) {
 const fensterStapel = [];
 let fensterNr = 0;
 
-document.addEventListener('keydown', (e) => {
+if (typeof document !== 'undefined') document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && fensterStapel.length) fensterStapel[fensterStapel.length - 1].schliessen();
 });
 

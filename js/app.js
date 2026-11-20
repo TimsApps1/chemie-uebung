@@ -185,7 +185,7 @@ function neuerName() {
   zeigen(el('section', { class: 'karte' },
     el('h2', { class: 'titel' }, 'Neuer Name'),
     el('label', { for: 'name-feld', class: 'beschriftung' }, '✏️ Dein Vorname und Nachname'),
-    feld, vorschau, meldung,
+    feld, el('p', { class: 'tipp' }, 'Schreib deinen Namen genau wie auf der Klassenliste – auf jedem iPad gleich.'), vorschau, meldung,
     el('p', { class: 'beschriftung' }, '✋ Wähle dein Lieblingselement. Daran erkennst du deinen Namen.'),
     steine,
     los));
@@ -420,6 +420,7 @@ function fehlerRundeEnde(name, ergebnis, kannVorher) {
   const vorher = rundenInWoche(profil(name));
   const p = rundeSpeichern(name, { art: 'fehler', bereich: ergebnis.bereich, niveau: 0, punkte: 0, ersterVersuch: ergebnis.ersterVersuch, anzahl: ergebnis.anzahl, falsch: ergebnis.falsch });
   const neuKann = neueIchKann(name, kannVorher);
+  const weiterPlan = heuteUebenPlan(name, profil(name));
   kopfMitName(name);
   zeigen(el('section', { class: 'karte ergebnis' },
     el('h2', { class: 'titel' }, 'Fehler-Runde geschafft!'),
@@ -431,7 +432,10 @@ function fehlerRundeEnde(name, ergebnis, kannVorher) {
       ...neuKann.map((k) => neuZeile('⭐', ['Neu: ', el('b', {}, text(k.text))], 'stark')),
       wochenzielZeile(p, vorher)),
     el('p', { class: 'leise' }, 'Aufgaben, die noch nicht sitzen, kommen in ein paar Tagen wieder.'),
-    el('button', { type: 'button', class: 'knopf knopf-haupt knopf-gross knopf-breit', onclick: () => startseite(name) }, icon('i-haus'), 'Startseite')));
+    ergebnis.anzahl < 4 ? el('p', { class: 'tipp' }, 'Kurze Fehler-Runden zählen nicht fürs Wochenziel. Mach jetzt noch eine Runde, dann zählt es.') : null,
+    weiterPlan ? el('button', { type: 'button', class: 'knopf knopf-haupt knopf-gross knopf-breit', onclick: () => planStarten(name, weiterPlan) },
+      `▶ Weiter mit: ${weiterPlan.text}`) : null,
+    el('button', { type: 'button', class: 'knopf knopf-gross knopf-breit', onclick: () => startseite(name) }, icon('i-haus'), 'Startseite')));
 }
 
 const MEDAILLE = ['', 'Bronze', 'Silber', 'Gold'];
@@ -450,6 +454,7 @@ function rundenende(name, ergebnis, kannVorher) {
   const p = rundeSpeichern(name, { art: 'normal', bereich: ergebnis.bereich, niveau: ergebnis.niveau, kurs: ergebnis.kurs,
     punkte: ergebnis.punkte, ersterVersuch: ergebnis.ersterVersuch, anzahl: ergebnis.anzahl,
     warumRichtig: ergebnis.warumRichtig, falsch: ergebnis.falsch, nummer, code }, tag);
+  const gespeichert = (profil(name).runden.length === vorher.runden.length + 1);
   const rekord = fruehere.length > 0 && ergebnis.punkte > alterBest;
   const medailleAlt = sterneFuer(alterBest);
   const medailleNeu = sterneFuer(Math.max(alterBest, ergebnis.punkte));
@@ -513,6 +518,7 @@ function rundenende(name, ergebnis, kannVorher) {
         el('button', { type: 'button', class: 'knopf knopf-gross', style: 'flex:1', onclick: () => rundeStarten(name, ergebnis.bereich, ergebnis.niveau) }, '↻ Nochmal'),
         el('button', { type: 'button', class: 'knopf knopf-gross', style: 'flex:1', onclick: () => startseite(name) }, icon('i-haus'), 'Startseite'))),
     el('section', { class: 'karte code-karte' },
+      !gespeichert ? el('p', { class: 'fehler-kasten' }, '⚠ Der Speicher auf diesem iPad ist voll. Kopiere den Code jetzt und sag deiner Lehrkraft Bescheid.') : null,
       el('h3', {}, 'Für deine Lehrkraft'),
       el('p', { class: 'leise' }, 'Kopiere den Punktecode und schick ihn deiner Lehrkraft. Du findest ihn später auch unter „Mein Fortschritt“.'),
       el('div', { class: 'code-feld' }, codeText, kopieren),

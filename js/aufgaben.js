@@ -45,7 +45,7 @@ export function fehlerHinweis(a, wert) {
     const faktor = Number((String(a.formel).match(/^\s*(\d+)\s/) || [])[1] || 1);
     const gesamt = richtigeZahl(a);
     if (faktor > 1 && Number(wert) === gesamt / faktor) {
-      return `Die große ${faktor} gilt für die ganze Formel: ${faktor} · ${gesamt / faktor} = ${gesamt}.`;
+      return `Du hast eine Formel gezählt. Die große ${faktor} sagt: Diese Formel gibt es ${faktor}-mal.`;
     }
   }
   return null;
@@ -79,7 +79,9 @@ export function vorleseText(a, reihenfolge = null) {
   if (a.gleichung) teile.push(a.gleichung);
   if (a.antworten && a.typ === 'auswahl') {
     const liste = reihenfolge || a.antworten;
-    teile.push(liste.map((t, i) => `Antwort ${i + 1}: ${/^[A-Za-z]{1,3}$/.test(t) && /^[A-Z]/.test(t) && !/^[A-Z][a-z]{2}$/.test(t) ? buchstabieren(t) : t}`).join('. '));
+    // Kurze Antworten (Symbole und ihre Fehlschreibungen) genau buchstabieren: "groß H", "klein h".
+    const genau = (t) => t.split('').map((z) => (/[A-ZÄÖÜ]/.test(z) ? `groß ${z}` : /[a-zäöü]/.test(z) ? `klein ${z}` : z)).join(' ');
+    teile.push(liste.map((t, i) => `Antwort ${i + 1}: ${/^[A-Za-z]{1,3}$/.test(t) && !/^[A-Z][a-z]{2}$/.test(t) ? genau(t) : t}`).join('. '));
   }
   if (a.typ === 'klappt') teile.push('Klappt, oder klappt nicht');
   return teile.join('. ');

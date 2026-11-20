@@ -7,6 +7,8 @@ import { anzeigeName, kindLoeschen, kinder, kindUmbenennen, kinderZusammenfuehre
 // Die Lehrer-Ansicht sperrt sich wieder: beim Verlassen (jeder Weg), wenn das iPad in den
 // Hintergrund geht und nach 5 Minuten ohne Tippen.
 let entsperrt = false;
+let fehlversuche = 0;
+let gesperrtBis = 0;
 let sperrUhr = null;
 const SPERRE_NACH = 5 * 60 * 1000;
 
@@ -37,11 +39,20 @@ function pinAbfrage(umgebung) {
   const meldung = el('p', { class: 'meldung', 'aria-live': 'assertive' });
   const zeichnen = () => { punkte.textContent = '●'.repeat(eingabe.length) || ' '; };
   const pruefen = () => {
+    if (Date.now() < gesperrtBis) {
+      meldung.textContent = '✗ Zu viele Versuche. Bitte eine Minute warten.';
+      eingabe = '';
+      zeichnen();
+      return;
+    }
     if (pinPruefen(eingabe, umgebung.daten.app.admin_pin_pruefsumme)) {
+      fehlversuche = 0;
       entsperrt = true;
       sperrUhrNeu(umgebung);
       adminSeite(umgebung);
     } else {
+      fehlversuche += 1;
+      if (fehlversuche >= 5) { gesperrtBis = Date.now() + 60000; fehlversuche = 0; }
       meldung.textContent = '✗ Die PIN stimmt nicht.';
       eingabe = '';
       zeichnen();
@@ -161,7 +172,10 @@ function adminSeite(umgebungRoh) {
     } }, 'Zeile erzeugen')),
     pinAusgabe);
 
-  const einstellungen = abschnitt('Einstellungen', zeitlimit, el('h4', {}, 'PIN ändern'), pinTeil);
+  const standardPin = daten.app.admin_pin_pruefsumme === 'FCSD2HJVTP'; // Prüfsumme der Start-PIN
+  const einstellungen = abschnitt('Einstellungen', zeitlimit,
+    standardPin ? el('p', { class: 'fehler-kasten' }, '⚠ Es gilt noch die Start-PIN aus der Anleitung. Bitte ändere sie (siehe unten).') : null,
+    el('h4', {}, 'PIN ändern'), pinTeil);
 
   const spaeter = abschnitt('Ergebnisse und Rangliste',
     el('p', { class: 'leise' }, 'Kommt in Etappe 2: Punktecodes einlesen, Übersicht pro Kind, Rangliste für den Beamer, Sicherung.'));

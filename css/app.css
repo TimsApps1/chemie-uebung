@@ -872,3 +872,5 @@ button.bereich { font: inherit; text-align: left; cursor: pointer; width: 100%; 
 .code-details summary h3 { margin: 0; }
 .code-details summary::before { content: '▸'; margin-right: 8px; font-weight: 800; }
 .code-details[open] summary::before { content: '▾'; }
+:root { --el-Au: #e9b821; --el-Au-text: #2b2100; --el-Au-kante: #8a6a00; }
+.el-Au { --e: var(--el-Au); --e-text: var(--el-Au-text); --e-kante: var(--el-Au-kante); }

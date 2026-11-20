@@ -62,14 +62,20 @@ export function aufgabenWaehlen(alle, niveau, kurs, zuletzt = []) {
 }
 
 // Reihenfolge so mischen, dass höchstens 2 gleiche Aufgabentypen direkt hintereinander kommen.
+// Immer den erlaubten Typ nehmen, von dem noch am meisten übrig ist – so bleiben keine Dreierketten am Ende.
 function abwechselnd(liste, davor = []) {
   const rest = mischen(liste);
   const aus = [];
   const zweiGleiche = (folge, typ) => folge.length >= 2 && folge[folge.length - 1].typ === typ && folge[folge.length - 2].typ === typ;
   while (rest.length) {
     const bisher = [...davor, ...aus];
-    const i = rest.findIndex((a) => !zweiGleiche(bisher, a.typ));
-    aus.push(rest.splice(i >= 0 ? i : 0, 1)[0]);
+    const anzahl = {};
+    rest.forEach((a) => { anzahl[a.typ] = (anzahl[a.typ] || 0) + 1; });
+    const erlaubt = rest.filter((a) => !zweiGleiche(bisher, a.typ));
+    const kandidaten = erlaubt.length ? erlaubt : rest;
+    const meiste = Math.max(...kandidaten.map((a) => anzahl[a.typ]));
+    const wahl = kandidaten.find((a) => anzahl[a.typ] === meiste);
+    aus.push(rest.splice(rest.indexOf(wahl), 1)[0]);
   }
   return aus;
 }
@@ -234,7 +240,8 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
           if (versuch === 1) stand.ausgebessert += 1;
           lobText = lob(daten, 'ausgebessert');
         }
-        if (versuch === 1) kannZaehlen(name, a.kann);
+        // Ich-kann zählt nur echte Erstversuche (nicht die Wiederholung kurz nach der gezeigten Lösung).
+        if (versuch === 1 && !wiederholung && art === 'normal') kannZaehlen(name, a.kann);
         rueck.replaceChildren(rueckmeldung(true, lobText, null, plus));
         weiterKnopf(a);
         return;
@@ -245,6 +252,8 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
         const nochmal = el('button', { type: 'button', class: 'knopf knopf-haupt knopf-breit', onclick: () => {
           rueck.replaceChildren();
           darstellung.nochmal();
+          // Fokus auf das erste wieder bedienbare Element (VoiceOver, Tastatur, Schaltersteuerung).
+          darstellung.wurzel.querySelector('button:not([disabled]), [role="button"]')?.focus();
         } }, 'Nochmal versuchen');
         rueck.replaceChildren(rueckmeldung(false, 'Noch nicht.', hinweis, 0, null, hinweis), nochmal);
         nochmal.focus({ preventScroll: true });
@@ -290,13 +299,15 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
       tonSpielen(richtig);
       if (richtig) { stand.punkte += PUNKTE.warum; stand.warumRichtig += 1; }
       rueck.replaceChildren(
-        rueckmeldung(richtig, richtig ? 'Gute Begründung!' : 'Diese Begründung passt nicht.', null, richtig ? PUNKTE.warum : 0),
+        rueckmeldung(richtig, richtig ? 'Gute Begründung!' : 'Diese Begründung passt nicht.', null, richtig ? PUNKTE.warum : 0,
+          richtig ? null : el('div', { class: 'loesung' }, el('p', {}, el('b', {}, '💡 Richtig ist: '), text(w.richtig)), el('p', {}, text(aufgabe.erklaerung)))),
         el('button', { type: 'button', class: 'knopf knopf-haupt knopf-gross knopf-breit', onclick: naechste }, 'Weiter ➜'));
     }, daten);
     const bezug = aufgabe.typ === 'klappt' ? `${aufgabe.oxid} + ${aufgabe.stoff}`
       : aufgabe.typ === 'wortgleichung' ? loesungsText(aufgabe, daten)
         : aufgabe.links ? `${aufgabe.links.join(' + ')} → ${aufgabe.rechts.join(' + ')}` : aufgabe.frage;
-    ziel.replaceChildren(el('section', { class: 'karte aufgabe warum' },
+    ziel.replaceChildren(el('div', { class: 'fortschritt' }, el('span', { class: 'fortschritt-text' }, `Extrafrage nach Aufgabe ${index} von ${aufgaben.length}`)),
+      el('section', { class: 'karte aufgabe warum' },
       el('p', { class: 'warum-bezug' }, 'Zur Aufgabe: ', el('b', {}, text(bezug))),
       el('div', { class: 'anweisung-zeile' },
         el('p', { class: 'anweisung' }, el('span', { class: 'anweisung-zeichen', 'aria-hidden': 'true' }, '💡'),

@@ -407,7 +407,7 @@ test('Vorlesen nennt die Antworten in der angezeigten Reihenfolge', async () => 
   for (const v of ergebnis) {
     v.sichtbar.forEach((w, i) => assert.ok(v.text.includes(`Antwort ${i + 1}: ${w.length <= 3 ? '' : w}`)));
     const ersteNa = v.sichtbar.indexOf('Na') + 1;
-    assert.ok(v.text.includes(`Antwort ${ersteNa}: N klein a`), v.text);
+    assert.ok(v.text.includes(`Antwort ${ersteNa}: groß N klein a`), v.text);
   }
   assert.ok(new Set(ergebnis.map((v) => v.sichtbar.join())).size > 1, 'Antworten werden gemischt');
   assert.deepEqual(fehler, []);
@@ -625,24 +625,52 @@ test('Sortier-Denkanstöße nennen nur Stoffe, die auch auf den Karten stehen', 
   }
 });
 
-test('Rundenauswahl: nie mehr als 2 gleiche Typen hintereinander (wenn möglich)', async () => {
+test('Rundenauswahl: nie mehr als 2 gleiche Typen hintereinander', async () => {
   const { kontext, seite } = await neueSeite();
-  const max = await seite.evaluate(async () => {
+  const funde = await seite.evaluate(async () => {
     const { aufgabenWaehlen } = await import('./js/runde.js');
     const { allesLaden } = await import('./js/daten.js');
     const d = await allesLaden();
-    let schlimmste = 0;
-    for (let i = 0; i < 100; i++) {
-      for (const [b, n] of [['B4', 1], ['B4', 3], ['B3', 1], ['B3', 2]]) {
-        const r = aufgabenWaehlen(d.aufgaben[b], n, 'G');
-        let lauf = 1;
-        for (let j = 1; j < r.length; j++) { lauf = r[j].typ === r[j - 1].typ ? lauf + 1 : 1; schlimmste = Math.max(schlimmste, lauf); }
+    const schlecht = [];
+    for (const b of ['B3', 'B4']) for (const n of [1, 2, 3]) for (const kurs of ['G', 'E']) {
+      for (let i = 0; i < 500; i++) {
+        const r = aufgabenWaehlen(d.aufgaben[b], n, kurs);
+        for (let j = 2; j < r.length; j++) {
+          if (r[j].typ === r[j - 1].typ && r[j].typ === r[j - 2].typ) { schlecht.push(`${b} ★${n} ${kurs}: ${r.map((x) => x.typ[0]).join('')}`); break; }
+        }
       }
     }
-    return schlimmste;
+    return schlecht;
   });
-  assert.ok(max <= 3, `Längste Folge gleicher Typen: ${max}`);
+  assert.deepEqual(funde.slice(0, 5), [], `${funde.length} Runden mit 3 gleichen Typen in Folge`);
   await kontext.close();
+});
+
+test('Vorlesen: verschiedene Antworten klingen verschieden (z. B. H und h)', async () => {
+  const { d } = await datenLaden();
+  const { vorleseText } = await import('../js/aufgaben.js');
+  for (const a of [...d.aufgaben.B3, ...d.aufgaben.B4].filter((x) => x.typ === 'auswahl')) {
+    const text = vorleseText(a, a.antworten);
+    const teile = text.split(/Antwort \d+: /).slice(1).map((t) => t.replace(/[.\s]+$/, '').toLowerCase());
+    assert.equal(new Set(teile).size, teile.length, `${a.id}: ${teile.join(' | ')}`);
+  }
+});
+
+test('Denkanstoß und Fehlerhinweis beim Zählen verraten nie die Lösung', async () => {
+  const { d } = await datenLaden();
+  const { fehlerHinweis } = await import('../js/aufgaben.js');
+  for (const a of d.aufgaben.B4.filter((x) => x.typ === 'zahl')) {
+    const loesung = atomeZaehlen(a.formel, a.zaehle).gesamt;
+    const ohneFaktor = atomeZaehlen(a.formel, a.zaehle).ohneFaktor;
+    const re = new RegExp(`(^|[^\\d])${loesung}([^\\d]|$)`);
+    assert.ok(!re.test(a.denkanstoss), `${a.id}: Denkanstoß nennt ${loesung}`);
+    for (const falsch of [ohneFaktor, loesung + 1, loesung - 1]) {
+      const h = fehlerHinweis(a, falsch);
+      // Die große Zahl steht sichtbar in der Formel; nur wenn sie zufällig gleich der Lösung ist, darf sie vorkommen.
+      const faktor = atomeZaehlen(a.formel, a.zaehle).faktor;
+      if (h && loesung !== falsch && loesung !== faktor) assert.ok(!re.test(h), `${a.id}: Hinweis bei ${falsch} nennt ${loesung}`);
+    }
+  }
 });
 
 test('G-Kind sieht Bereiche nur für den E-Kurs nicht als gesperrt', async () => {
