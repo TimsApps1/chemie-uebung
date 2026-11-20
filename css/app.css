@@ -1094,3 +1094,4 @@ button.bereich { font: inherit; text-align: left; cursor: pointer; width: 100%; 
 .duell-dran { font-size: 1.4rem; display: flex; align-items: center; gap: 6px; }
 .duell-name .baustein, .duell-dran .baustein { margin-top: 0; }
 .beamer-titel { white-space: nowrap; }
+.kopf-name-wechsel { font-weight: 800; margin-left: 2px; opacity: .85; }

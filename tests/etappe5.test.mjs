@@ -249,3 +249,23 @@ test('Teams: mehrdeutige Vornamen werden nicht geraten', async () => {
   assert.equal(r.mehrdeutig.length, 1);
   await kontext.close();
 });
+
+test('Von der Startseite zurück zu „Wer übt?“: Knopf oben links und „Anderer Name“', async () => {
+  const { kontext, seite, fehler } = await neueSeite();
+  await seite.evaluate(async () => {
+    const P = await import('./js/profil.js');
+    P.kindAnlegen('ADAAHO', 'C', 'Ada Ahorn');
+    P.kindAnlegen('BEABIR', 'O', 'Bea Birke');
+    location.reload();
+  });
+  await seite.getByRole('heading', { name: 'Wer übt?' }).waitFor();
+  await seite.getByRole('button', { name: 'Ada Ahorn' }).click();
+  await seite.getByRole('heading', { name: /Hallo Ada/ }).waitFor();
+  await seite.getByRole('button', { name: /zurück zu „Wer übt\?“/ }).click();
+  await seite.getByRole('heading', { name: 'Wer übt?' }).waitFor();
+  await seite.getByRole('button', { name: 'Bea Birke' }).click();
+  await seite.getByRole('button', { name: '👋 Anderer Name' }).click();
+  await seite.getByRole('heading', { name: 'Wer übt?' }).waitFor();
+  assert.deepEqual(fehler, []);
+  await kontext.close();
+});

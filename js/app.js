@@ -200,8 +200,11 @@ function neuerName() {
 
 function kopfMitName(name, extra = {}) {
   kopfSetzen({
-    rechts: [el('button', { type: 'button', class: 'kopf-name', onclick: werUebt, 'aria-label': `${vorname(name)}. Tippen zum Wechseln.` },
-      baustein(kindEintrag(name)?.element || 'H', { klein: true }), el('span', { class: 'kopf-name-text' }, vorname(name)))],
+    // Ohne eigenen Zurück-Knopf (Startseite): links deutlich „zurück zu Wer übt?“.
+    links: iconKnopf('i-zurueck', 'Anderer Name – zurück zu „Wer übt?“', werUebt, 'knopf-rund kopf-knopf'),
+    rechts: [el('button', { type: 'button', class: 'kopf-name', onclick: werUebt, 'aria-label': `${vorname(name)}. Tippen, um den Namen zu wechseln.` },
+      baustein(kindEintrag(name)?.element || 'H', { klein: true }), el('span', { class: 'kopf-name-text' }, vorname(name)),
+      el('span', { class: 'kopf-name-wechsel', 'aria-hidden': 'true' }, '⇄'))],
     ...extra
   });
 }
@@ -251,7 +254,8 @@ function startseite(name) {
     el('div', { class: 'start-knoepfe' },
       el('button', { type: 'button', class: 'knopf', onclick: () => meinFortschritt(name) }, '📈 Mein Fortschritt'),
       abgabeCodes(name).length ? el('button', { type: 'button', class: 'knopf', onclick: () => qrZeigen(abgabeCodes(name), vorname(name)) }, '📷 Ergebnisse zeigen') : null,
-      nochGesperrt ? el('button', { type: 'button', class: 'knopf', onclick: () => codeEingeben(name) }, icon('i-schluessel'), 'Code eingeben') : null),
+      nochGesperrt ? el('button', { type: 'button', class: 'knopf', onclick: () => codeEingeben(name) }, icon('i-schluessel'), 'Code eingeben') : null,
+      el('button', { type: 'button', class: 'knopf', onclick: werUebt }, '👋 Anderer Name')),
     installTipp());
 }
 
@@ -429,7 +433,7 @@ function fehlerRundeEnde(name, ergebnis, kannVorher) {
   const p = rundeSpeichern(name, { art: 'fehler', bereich: ergebnis.bereich, niveau: 0, punkte: 0, ersterVersuch: ergebnis.ersterVersuch, anzahl: ergebnis.anzahl, falsch: ergebnis.falsch });
   const neuKann = neueIchKann(name, kannVorher);
   const weiterPlan = heuteUebenPlan(name, profil(name));
-  kopfMitName(name);
+  kopfMitName(name, { links: iconKnopf('i-haus', 'Startseite', () => startseite(name), 'knopf-rund kopf-knopf') });
   zeigen(el('section', { class: 'karte ergebnis' },
     el('div', { class: 'anweisung-zeile' }, el('h2', { class: 'titel' }, 'Fehler-Runde geschafft!'),
       vorlesenKnopf(() => document.querySelector('.ergebnis')?.innerText || 'Fehler-Runde geschafft!')),
@@ -512,7 +516,7 @@ function rundenende(name, ergebnis, kannVorher) {
     kopierMeldung.textContent = geklappt ? '✓ Kopiert! Füge ihn in Classroom ein.' : 'Bitte den Code lange drücken und „Kopieren“ wählen.';
   } }, icon('i-kopie'), 'Kopieren');
 
-  kopfMitName(name, { titel: b.titel, farbe: ergebnis.bereich.toLowerCase() });
+  kopfMitName(name, { links: iconKnopf('i-haus', 'Startseite', () => startseite(name), 'knopf-rund kopf-knopf'), titel: b.titel, farbe: ergebnis.bereich.toLowerCase() });
   zeigen(
     el('section', { class: 'karte ergebnis' },
       el('div', { class: 'anweisung-zeile' }, el('h2', { class: 'titel' }, 'Runde geschafft!'),
