@@ -225,7 +225,7 @@ function zahlAufgabenEinfach(vorhanden) {
         frage: zaehle === 'alle' ? 'Wie viele Atome sind es insgesamt?' : `Wie viele ${zaehle}-Atome sind es?`,
         formel: f, zaehle,
         denkanstoss: 'Die kleine Zahl gehört zum Symbol direkt davor. Steht keine kleine Zahl da, zählt das Symbol einmal.',
-        erklaerung: zaehle === 'alle' ? `In ${f} stecken zusammen ${gesamt} Atome.` : `In ${f} stecken ${gesamt} ${zaehle}-${gesamt === 1 ? 'Atom' : 'Atome'}.`
+        erklaerung: zaehle === 'alle' ? `In ${f} stecken zusammen ${gesamt} Atome.` : `In ${f} ${gesamt === 1 ? 'steckt' : 'stecken'} ${gesamt} ${zaehle}-${gesamt === 1 ? 'Atom' : 'Atome'}.`
       });
     });
   }

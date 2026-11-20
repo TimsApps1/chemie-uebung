@@ -106,7 +106,7 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
   });
 
   async function abbrechen() {
-    const ja = await fragen('Runde abbrechen? Die Punkte dieser Runde zählen dann nicht.', 'Ja, abbrechen', 'Weiter üben');
+    const ja = await fragen('⚠ Runde abbrechen? Dann zählen die Punkte nicht.', 'Ja, abbrechen', 'Weiter üben', { hauptIstNein: true });
     if (!ja) return;
     stand.abgebrochen = true;
     aufraeumen();

@@ -199,13 +199,15 @@ export function fenster(inhalt, { knoepfe = null, titel = null } = {}) {
   return schliessen;
 }
 
-export function fragen(text, jaText, neinText) {
+// hauptIstNein: der sichere Weg (z. B. "Weiter üben") ist der Hauptknopf.
+export function fragen(text, jaText, neinText, { hauptIstNein = false } = {}) {
   return new Promise((ok) => {
-    fenster(el('p', { class: 'fenster-text' }, text), {
-      knoepfe: (zu) => [
-        el('button', { type: 'button', class: 'knopf', onclick: () => { zu(); ok(false); } }, neinText),
-        el('button', { type: 'button', class: 'knopf knopf-haupt', onclick: () => { zu(); ok(true); } }, jaText)
-      ]
+    fenster(el('div', {}, el('p', { class: 'fenster-text' }, text), el('div', { class: 'zeile-rechts' }, vorlesenKnopf(text))), {
+      knoepfe: (zu) => {
+        const nein = el('button', { type: 'button', class: `knopf${hauptIstNein ? ' knopf-haupt' : ''}`, onclick: () => { zu(); ok(false); } }, neinText);
+        const ja = el('button', { type: 'button', class: `knopf${hauptIstNein ? '' : ' knopf-haupt'}`, onclick: () => { zu(); ok(true); } }, jaText);
+        return hauptIstNein ? [ja, nein] : [nein, ja];
+      }
     });
   });
 }

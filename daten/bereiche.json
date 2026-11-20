@@ -68,7 +68,7 @@
         {
           "id": "klappt",
           "text": "Ich kann vorhersagen, ob ein Stoff einem Oxid den Sauerstoff wegnimmt.",
-          "hilfe": "Such beide Stoffe in der Reihe. Der unedlere Stoff hält Sauerstoff stärker fest. Er nimmt dem Oxid den Sauerstoff weg."
+          "hilfe": "Vergleiche das Metall im Oxid mit dem anderen Stoff. Ist der andere Stoff unedler, hält er Sauerstoff stärker fest. Dann nimmt er dem Oxid den Sauerstoff weg. Ist er edler, klappt es nicht."
         },
         {
           "id": "wortgleichung",

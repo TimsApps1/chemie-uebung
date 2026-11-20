@@ -3,7 +3,7 @@
 //   ergebnis(wert, richtig, endgueltig)  – Markierungen setzen
 //   nochmal()                            – für den zweiten Versuch freigeben
 import { el, mischen, formelKnoten, buchstabieren } from './hilfen.js';
-import { text, baustein } from './ui.js';
+import { text, baustein, fenster } from './ui.js';
 import { klapptEs, richtigeZahl } from './daten.js';
 import { formelModell } from './modell3d.js';
 
@@ -206,11 +206,11 @@ function sortieren(a, antworten, daten) {
     const s = info[name] || { name, symbol: '' };
     const k = el('li', { class: 'sortierkarte', 'data-name': name, tabindex: '0', role: 'button', 'aria-pressed': 'false',
       'aria-label': `${name}. Antippen, dann eine zweite Karte antippen zum Tauschen.` },
-    el('span', { class: 'griff', 'aria-hidden': 'true' }, '⠿'),
+    el('span', { class: 'griff', 'aria-hidden': 'true', title: 'Zum Ziehen hier festhalten' }, '⠿'),
     s.symbol ? baustein(s.symbol, { metall: s.name !== 'Kohlenstoff', klein: true }) : null,
     el('span', { class: 'sortierkarte-text' },
       el('b', {}, name),
-      s.hinweis ? el('small', {}, s.hinweis) : null));
+      s.hinweis && a.niveau !== 3 ? el('small', {}, s.hinweis) : null));
     ziehenEinrichten(k);
     return k;
   };
@@ -232,27 +232,32 @@ function sortieren(a, antworten, daten) {
     liste.querySelector(`[data-name="${name}"]`)?.focus({ preventScroll: true });
   };
 
+  // Antippen der Karte = auswählen/tauschen (Wischen auf der Karte scrollt die Seite).
+  // Ziehen nur am Griff ⠿, damit Scrollen und Ziehen sich nicht in die Quere kommen.
   function ziehenEinrichten(k) {
+    const griff = k.querySelector('.griff');
     let start = null;
     let gezogen = false;
-    let perZeiger = false;
-    // Hilfsmittel (Schaltersteuerung, Sprachsteuerung) lösen oft nur "click" aus.
-    k.addEventListener('click', () => { if (perZeiger) { perZeiger = false; return; } antippen(k); });
+    k.addEventListener('click', (e) => { if (e.target.closest('.griff') && gezogen) return; antippen(k); });
     k.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); antippen(k); } });
-    k.addEventListener('pointerdown', (e) => {
+    griff.addEventListener('pointerdown', (e) => {
       if (gesperrt) return;
-      start = { y: e.clientY, id: e.pointerId };
+      e.preventDefault();
+      start = { y: e.clientY + window.scrollY, id: e.pointerId };
       gezogen = false;
-      k.setPointerCapture?.(e.pointerId);
+      griff.setPointerCapture?.(e.pointerId);
     });
-    k.addEventListener('pointermove', (e) => {
+    griff.addEventListener('pointermove', (e) => {
       if (!start || e.pointerId !== start.id) return;
-      const dy = e.clientY - start.y;
-      if (!gezogen && Math.abs(dy) < 10) return;
+      // Am Bildschirmrand mitscrollen.
+      if (e.clientY < 70) window.scrollBy(0, -14);
+      else if (e.clientY > window.innerHeight - 70) window.scrollBy(0, 14);
+      const dy = e.clientY + window.scrollY - start.y;
+      if (!gezogen && Math.abs(dy) < 8) return;
       if (!gezogen) {
         gezogen = true;
         k.classList.add('zieht');
-        if (gewaehlt) { gewaehlt.classList.remove('gewaehlt'); gewaehlt = null; }
+        if (gewaehlt) { gewaehlt.classList.remove('gewaehlt'); gewaehlt.setAttribute('aria-pressed', 'false'); gewaehlt = null; }
       }
       k.style.transform = `translateY(${dy}px)`;
       // Mit Nachbarn tauschen, sobald die Mitte überschritten ist.
@@ -263,16 +268,13 @@ function sortieren(a, antworten, daten) {
       const nach = karten[i + 1];
       const vor = karten[i - 1];
       if (nach && mitte > nach.getBoundingClientRect().top + nach.offsetHeight / 2) {
-        const h = nach.offsetHeight + 8;
+        start.y += nach.offsetHeight + 8;
         liste.insertBefore(nach, k);
-        start.y += h;
-        k.style.transform = `translateY(${e.clientY - start.y}px)`;
       } else if (vor && mitte < vor.getBoundingClientRect().top + vor.offsetHeight / 2) {
-        const h = vor.offsetHeight + 8;
+        start.y -= vor.offsetHeight + 8;
         liste.insertBefore(k, vor);
-        start.y -= h;
-        k.style.transform = `translateY(${e.clientY - start.y}px)`;
       }
+      k.style.transform = `translateY(${e.clientY + window.scrollY - start.y}px)`;
     });
     const ende = (e) => {
       if (!start || e.pointerId !== start.id) return;
@@ -280,10 +282,10 @@ function sortieren(a, antworten, daten) {
       k.style.transform = '';
       k.classList.remove('zieht');
       if (gezogen) reihenfolge = [...liste.children].map((x) => x.dataset.name);
-      else if (e.type === 'pointerup') { perZeiger = true; antippen(k); }
+      setTimeout(() => { gezogen = false; }, 0);
     };
-    k.addEventListener('pointerup', ende);
-    k.addEventListener('pointercancel', ende);
+    griff.addEventListener('pointerup', ende);
+    griff.addEventListener('pointercancel', ende);
   }
 
   zeichnen();
@@ -297,7 +299,7 @@ function sortieren(a, antworten, daten) {
     el('p', { class: 'sortier-rand' }, el('b', {}, 'edel'), ' – ', daten.reihe.oben),
     liste,
     el('p', { class: 'sortier-rand' }, el('b', {}, 'unedel'), ' – ', daten.reihe.unten),
-    el('p', { class: 'tipp' }, 'Ziehen oder zwei Karten nacheinander antippen, dann tauschen sie.'),
+    el('p', { class: 'tipp' }, '↕ Zwei Karten nacheinander antippen, dann tauschen sie. Oder am Griff ⠿ ziehen.'),
     pruefKnopf);
   return {
     wurzel,
@@ -332,8 +334,12 @@ function klappt(a, antworten, daten) {
     el('button', { type: 'button', class: 'knopf antwort antwort-lang', 'data-wert': 'ja',
       onclick: () => waehlen(true) }, el('span', {}, '🔥 Klappt')),
     el('button', { type: 'button', class: 'knopf antwort antwort-lang', 'data-wert': 'nein',
-      onclick: () => waehlen(false) }, el('span', {}, 'Klappt nicht'))
+      onclick: () => waehlen(false) }, el('span', {}, '⛔ Klappt nicht'))
   ];
+  // Auf ★ und ★★ darf man die Reihe vor der Antwort ansehen (die Hilfe verweist darauf).
+  const reiheKnopf = (a.niveau || 1) < 3 ? el('button', { type: 'button', class: 'knopf knopf-leise', onclick: () => {
+    fenster(el('div', {}, el('p', { class: 'fenster-text' }, 'Die Reaktivitätsreihe:'), reiheMitMarken(daten, [])), { titel: '📋 Reihe' });
+  } }, '📋 Reihe ansehen') : null;
   const reiheBox = el('div', { class: 'reihe-box', hidden: true });
   function waehlen(ja) {
     knoepfe.forEach((k) => { k.disabled = true; });
@@ -344,6 +350,7 @@ function klappt(a, antworten, daten) {
   const wurzel = el('div', {},
     el('p', { class: 'gleichung gleichung-gross' }, text(a.oxid), el('span', { class: 'plus' }, ' + '), text(a.stoff), el('span', { class: 'pfeil' }, ' → ?')),
     el('div', { class: 'antworten' }, knoepfe),
+    reiheKnopf,
     reiheBox);
   return {
     wurzel,

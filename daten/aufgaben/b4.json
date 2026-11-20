@@ -66,7 +66,7 @@
       "denkanstoss": "Cu kommt von einem lateinischen Wort. Denk an das rote Metall in Kabeln.",
       "erklaerung": "Cu ist das Symbol für Kupfer." },
 
-    { "id": "b4-1-12", "niveau": 1, "typ": "auswahl", "symbol": "❓", "kann": "symbole",
+    { "id": "b4-1-12", "hilfe_vorher": false, "niveau": 1, "typ": "auswahl", "symbol": "❓", "kann": "symbole",
       "frage": "Wie schreibt man das Symbol für Zink richtig?",
       "antworten": ["Zn", "ZN", "zn", "zN"], "richtig": "Zn",
       "denkanstoss": "Der erste Buchstabe ist groß, der zweite klein.",
@@ -201,7 +201,7 @@
       "denkanstoss": "Ein O2 hat 2 Atome, und die große Zahl sagt, wie viele Teilchen es sind.",
       "erklaerung": "3 O2 haben 3 mal 2 = 6 O-Atome." },
 
-    { "id": "b4-3-10", "niveau": 3, "typ": "auswahl", "symbol": "❓", "leicht": true, "kann": "zahl_davor",
+    { "id": "b4-3-10", "hilfe_vorher": false, "niveau": 3, "typ": "auswahl", "symbol": "❓", "leicht": true, "kann": "zahl_davor",
       "frage": "Was bedeutet die große 2 in 2 H2O?",
       "antworten": ["Es sind zwei Wasser-Teilchen.", "Es sind zwei H-Atome.", "Es sind zwei O-Atome."], "richtig": "Es sind zwei Wasser-Teilchen.",
       "fehler": { "Es sind zwei H-Atome.": "Die kleine 2 gehört zu H, die große 2 gilt für die ganze Formel.", "Es sind zwei O-Atome.": "Die große 2 gilt für die ganze Formel, nicht nur für O." },

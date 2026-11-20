@@ -874,3 +874,10 @@ button.bereich { font: inherit; text-align: left; cursor: pointer; width: 100%; 
 .code-details[open] summary::before { content: '▾'; }
 :root { --el-Au: #e9b821; --el-Au-text: #2b2100; --el-Au-kante: #8a6a00; }
 .el-Au { --e: var(--el-Au); --e-text: var(--el-Au-text); --e-kante: var(--el-Au-kante); }
+
+/* ---------- Prüfrunde 7 ---------- */
+.sortierkarte { touch-action: pan-y; cursor: pointer; min-height: 52px; padding: 4px 12px 4px 4px; }
+.griff { touch-action: none; display: grid; place-items: center; min-width: 44px; min-height: 44px; border-radius: var(--r-klein); background: var(--haupt-zart); cursor: grab; font-size: 1.5rem; }
+.griff:active { cursor: grabbing; background: var(--haupt-hell); }
+@media (orientation: landscape) and (max-height: 820px) { .sortierliste { gap: 6px; } .sortierkarte { min-height: 48px; } .sortierkarte-text small { display: none; } }
+.element-wahl.klein { margin: var(--a3) 0 0; }

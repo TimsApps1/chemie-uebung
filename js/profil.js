@@ -3,7 +3,7 @@
 import { lesen, schreiben, entfernen } from './speicher.js';
 import { tagNummer, wocheVonTag } from './hilfen.js';
 
-export const LIEBLINGSELEMENTE = ['H', 'O', 'C', 'N', 'Cl', 'S', 'Na', 'Mg', 'Al', 'Zn', 'Cu', 'Fe'];
+export const LIEBLINGSELEMENTE = ['H', 'O', 'C', 'N', 'Cl', 'S', 'Na', 'Mg', 'Al', 'Zn', 'Cu', 'Fe', 'Ag', 'Au'];
 const ABSTAENDE = [1, 3, 7]; // Meine Fehler: nach 1 Tag, 3 Tagen, 1 Woche
 
 // ---------- Liste der Kinder ----------
@@ -36,6 +36,10 @@ export function vorname(name) {
 export function anzeigeName(name) {
   const k = kindEintrag(name);
   return k?.anzeige && k.anzeige.toUpperCase() !== name ? `${k.anzeige} (${name})` : name;
+}
+
+export function elementAendern(name, element) {
+  kinderSpeichern(kinder().map((k) => (k.name === name ? { ...k, element } : k)));
 }
 
 export function kindLoeschen(name) {
@@ -130,6 +134,13 @@ export function rundeSpeichern(name, runde, tag = tagNummer()) {
 
 export function ersteWoche(p) {
   return p.runden.length ? Math.min(...p.runden.map((r) => wocheVonTag(r.tag))) : wocheVonTag(tagNummer());
+}
+
+// Rundennummer pro iPad (zählt alle Runden aller Kinder auf diesem Gerät): mit der iPad-Kennung eindeutig.
+export function geraetRundenNummer() {
+  let n = 0;
+  geraetAendern((g) => { g.runden = (g.runden || 0) + 1; n = g.runden; });
+  return n;
 }
 
 export function naechsteRundenNummer(p) {
@@ -228,7 +239,14 @@ export function kannZaehlen(name, kannId) {
 // ---------- Einstellungen dieses iPads ----------
 
 export function geraet() {
-  return { ton: false, zeitlimitAus: false, serie: 1, ...(lesen('geraet', {}) || {}) };
+  const g = { ton: false, zeitlimitAus: false, serie: 1, ...(lesen('geraet', {}) || {}) };
+  if (!g.kennung) {
+    // Zwei Zeichen, die dieses iPad im Punktecode kennzeichnen (zufällig beim ersten Start).
+    const z = '23456789ABCDEFGHJKMNPQRSTUVWXYZ';
+    g.kennung = z[Math.floor(Math.random() * z.length)] + z[Math.floor(Math.random() * z.length)];
+    schreiben('geraet', g);
+  }
+  return g;
 }
 export function geraetAendern(fn) {
   const g = geraet();

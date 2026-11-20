@@ -10,7 +10,7 @@ import {
 import {
   anzeigeName, vorname, ersteWoche, naechsteRundenNummer, stempelPruefen,
   kinder, kindEintrag, kindAnlegen, profil, aendern, freischalten, rundeSpeichern, rundenInWoche,
-  normaleRunden, bestwert, sterneFuer, niveauVorschlag, faelligeFehler, KANN_SCHWELLE, LIEBLINGSELEMENTE, geraet
+  geraetRundenNummer, elementAendern, normaleRunden, bestwert, sterneFuer, niveauVorschlag, faelligeFehler, KANN_SCHWELLE, LIEBLINGSELEMENTE, geraet
 } from './profil.js';
 import { freischaltcodePruefen, codeTippfehlerHinweis, punktecode, namensKennung } from './codes.js';
 import { rundeSpielen, aufgabenWaehlen, RUNDE_LAENGE } from './runde.js';
@@ -449,7 +449,8 @@ function rundenende(name, ergebnis, kannVorher) {
   const tag = tagNummer();
   const nummer = naechsteRundenNummer(vorher);
   const code = punktecode({ name, bereich: ergebnis.bereich, niveau: ergebnis.niveau, punkte: ergebnis.punkte, tag,
-    kurs: ergebnis.kurs, erster: ergebnis.ersterVersuch, warum: ergebnis.warumRichtig, kennung: namensKennung(kindEintrag(name)?.anzeige || name), nummer });
+    kurs: ergebnis.kurs, erster: ergebnis.ersterVersuch, warum: ergebnis.warumRichtig, kennung: namensKennung(kindEintrag(name)?.anzeige || name),
+    geraet: geraet().kennung, nummer: geraetRundenNummer() });
   aendern(name, (x) => { x.zuletzt = [...(ergebnis.gesehen || []), ...(x.zuletzt || [])].slice(0, 30); });
   const p = rundeSpeichern(name, { art: 'normal', bereich: ergebnis.bereich, niveau: ergebnis.niveau, kurs: ergebnis.kurs,
     punkte: ergebnis.punkte, ersterVersuch: ergebnis.ersterVersuch, anzahl: ergebnis.anzahl,
@@ -547,7 +548,7 @@ async function inZwischenablage(textInhalt, knoten) {
 function codeVonRunde(name, p, r, i) {
   return r.code || punktecode({ name, bereich: r.bereich, niveau: r.niveau, punkte: r.punkte, tag: r.tag,
     kurs: r.kurs || p.freigeschaltet[r.bereich] || 'G', erster: r.ersterVersuch || 0, warum: r.warumRichtig || 0,
-    kennung: namensKennung(kindEintrag(name)?.anzeige || name), nummer: r.nummer ?? i + 1 });
+    kennung: namensKennung(kindEintrag(name)?.anzeige || name), geraet: geraet().kennung, nummer: r.nummer ?? i + 1 });
 }
 
 // ---------- Mein Fortschritt ----------
@@ -562,14 +563,18 @@ function meinFortschritt(name) {
     el('button', { type: 'button', class: 'knopf' + (p.wochenziel === n ? ' knopf-haupt' : ''), role: 'radio', 'aria-checked': String(p.wochenziel === n),
       onclick: () => { aendern(name, (x) => { x.wochenziel = n; }); stempelPruefen(name); meinFortschritt(name); } }, `${n} ${n === 1 ? 'Runde' : 'Runden'}`)));
 
-  // Stempelkarte wächst: von der ersten Übungswoche bis heute (höchstens 8 Wochen sichtbar).
-  const start = Math.max(ersteWoche(p), heute - 7);
-  const wochen = el('ol', { class: 'stempelkarte', 'aria-label': 'Meine Stempel' },
-    Array.from({ length: heute - start + 1 }, (_, i) => {
-      const w = start + i;
-      const voll = p.stempel.includes(w);
-      return el('li', { class: voll ? 'voll' : '' }, el('span', { class: 'stempel-zeichen' }, voll ? '✓' : ''),
-        el('small', {}, w === heute ? 'diese Woche' : `ab ${datumVonTag(w * 7 - 4).slice(0, 6)}`));
+  // Stempel als wachsende Sammlung: nur gesammelte Stempel und ein Feld für diese Woche.
+  const gesammelt = [...p.stempel].filter((w) => w !== heute).sort((x, y) => x - y).slice(-11);
+  const wochen = el('ol', { class: 'stempelkarte', 'aria-label': `${p.stempel.length} Stempel gesammelt` },
+    gesammelt.map((w) => el('li', { class: 'voll' }, el('span', { class: 'stempel-zeichen' }, '✓'), el('small', {}, `ab ${datumVonTag(w * 7 - 4).slice(0, 6)}`))),
+    el('li', { class: p.stempel.includes(heute) ? 'voll' : '' }, el('span', { class: 'stempel-zeichen' }, p.stempel.includes(heute) ? '✓' : ''), el('small', {}, 'diese Woche')));
+
+  const elementWahl = el('div', { class: 'element-wahl klein', role: 'radiogroup', 'aria-label': 'Lieblingselement ändern' },
+    LIEBLINGSELEMENTE.map((sym) => {
+      const info = daten.elemente.find((e) => e.symbol === sym);
+      const an = (kindEintrag(name)?.element || 'H') === sym;
+      return el('button', { type: 'button', class: 'element-knopf' + (an ? ' gewaehlt' : ''), role: 'radio', 'aria-checked': String(an), 'aria-label': info?.name || sym,
+        onclick: () => { elementAendern(name, sym); meinFortschritt(name); } }, baustein(sym, { metall: info?.metall, klein: true }), el('small', {}, info?.name || sym));
     }));
 
   const bereichsBlock = (b) => {
@@ -636,13 +641,14 @@ function meinFortschritt(name) {
       el('h3', {}, 'Mein Wochenziel'),
       el('p', { class: 'leise' }, 'Wie viele Runden willst du pro Woche schaffen?'),
       zielWahl,
-      el('h4', {}, 'Meine Stempel'),
+      el('h4', {}, `Meine Stempel (${p.stempel.length})`),
       wochen,
       el('p', { class: 'leise' }, `Insgesamt ${normale.length} ${normale.length === 1 ? 'Runde' : 'Runden'} geübt` +
         (p.ausgebessert ? ` · ${p.ausgebessert} Fehler endgültig ausgebessert` : '')),
       el('p', { class: 'tipp' }, 'Medaillen pro Niveau: Bronze ab 40 Punkten, Silber ab 60, Gold ab 75 in einer Runde.')),
     ...frei.map(bereichsBlock),
     !frei.length ? el('p', { class: 'leise' }, 'Noch keine Bereiche frei.') : null,
+    el('details', { class: 'karte code-details' }, el('summary', {}, el('h3', {}, 'Mein Lieblingselement ändern')), elementWahl),
     codeListe);
 }
 

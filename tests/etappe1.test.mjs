@@ -43,12 +43,12 @@ test('Punktecode: Kurs, Erstversuche, Begründungen, Namens-Kennung, Rundennumme
   const k = namensKennung('Lena Schmidt');
   assert.notEqual(k, namensKennung('Lena Schneider'), 'gleicher Kurzname, verschiedene Kennung');
   assert.equal(k, namensKennung('  lena   schmidt '), 'gleiche Kennung bei anderer Schreibweise');
-  const code = punktecode({ name: 'LENASCH', bereich: 'B3', niveau: 3, punkte: 80, tag: 127, kurs: 'E', erster: 6, warum: 2, kennung: k, nummer: 7 });
-  assert.match(code, new RegExp(`^LENASCH-B3-3-0080-0127-E62-${k}-007-[23456789ABCDEFGHJKMNPQRSTUVWXYZ]{3}$`));
+  const code = punktecode({ name: 'LENASCH', bereich: 'B3', niveau: 3, punkte: 80, tag: 127, kurs: 'E', erster: 6, warum: 2, kennung: k, geraet: 'P7', nummer: 7 });
+  assert.match(code, new RegExp(`^LENASCH-B3-3-0080-0127-E62-${k}-P7-007-[23456789ABCDEFGHJKMNPQRSTUVWXYZ]{3}$`));
   const gelesen = punktecodeLesen(code.toLowerCase().replace(/-/g, ' - '));
   assert.equal(gelesen.ok, true);
-  assert.deepEqual([gelesen.punkte, gelesen.kurs, gelesen.erster, gelesen.warum, gelesen.kennung, gelesen.nummer], [80, 'E', 6, 2, k, 7]);
-  for (const [alt, neu] of [['0080', '0090'], ['LENASCH', 'LENASCK'], ['E62', 'G62'], ['E62', 'E72'], ['-007-', '-008-']]) {
+  assert.deepEqual([gelesen.punkte, gelesen.kurs, gelesen.erster, gelesen.warum, gelesen.kennung, gelesen.geraet, gelesen.nummer], [80, 'E', 6, 2, k, 'P7', 7]);
+  for (const [alt, neu] of [['0080', '0090'], ['LENASCH', 'LENASCK'], ['E62', 'G62'], ['E62', 'E72'], ['-P7-', '-P8-'], ['-007-', '-008-']]) {
     assert.equal(punktecodeLesen(code.replace(alt, neu)).ok, false, `${alt} -> ${neu}`);
   }
   assert.equal(punktecodeLesen('LENA-B3-2-0080-0127-DQS').ok, true, 'älteres Format');
@@ -61,6 +61,7 @@ test('Punktecode: Kurs, Erstversuche, Begründungen, Namens-Kennung, Rundennumme
   assert.equal(c({ punkte: 60, erster: 5, warum: 2 }), false, 'Begründungen nur auf ★★★');
   assert.equal(c({ niveau: 3, punkte: 60, erster: 5, warum: 2 }), true);
   assert.equal(c({ bereich: 'B1', kurs: 'G' }), false, 'B1 gibt es nur im E-Kurs');
+  assert.equal(c({ bereich: 'B4', niveau: 3, punkte: 60, erster: 5, warum: 2 }), false, 'Begründungen nur in B3');
   assert.match(punktecode({ name: 'TOM', bereich: 'B4', niveau: 1, punkte: 60, tag: 10, nummer: 1000 }), /-001-/);
 });
 
@@ -294,11 +295,11 @@ test('Sortieren geht mit Antippen und mit Ziehen', async () => {
   assert.deepEqual(getauscht, [vorher[2], vorher[1], vorher[0], vorher[3], vorher[4]]);
   // Ziehen: letzte Karte nach oben
   const k = seite.locator('.sortierkarte');
-  const letzte = await k.nth(4).boundingBox();
+  const letzte = await k.nth(4).locator('.griff').boundingBox();
   const erste = await k.nth(0).boundingBox();
-  await seite.mouse.move(letzte.x + 40, letzte.y + letzte.height / 2);
+  await seite.mouse.move(letzte.x + letzte.width / 2, letzte.y + letzte.height / 2);
   await seite.mouse.down();
-  for (let y = letzte.y + letzte.height / 2; y > erste.y; y -= 12) await seite.mouse.move(letzte.x + 40, y);
+  for (let y = letzte.y + letzte.height / 2; y > erste.y; y -= 12) await seite.mouse.move(letzte.x + letzte.width / 2, y);
   await seite.mouse.up();
   const gezogen = await namen();
   assert.equal(gezogen[0], getauscht[4]);
@@ -748,5 +749,45 @@ test('★★★: Warum-Frage nur nach richtig gelöster Aufgabe – alle Codes b
       `Code wäre ungültig: ${JSON.stringify(e)}`);
   }
   assert.deepEqual(fehler, []);
+  await kontext.close();
+});
+
+test('Sortieren: Wischen auf der Karte scrollt, Ziehen nur am Griff', async () => {
+  const { kontext, seite } = await neueSeite({ width: 1024, height: 700 });
+  const werte = await seite.evaluate(async () => {
+    const { aufgabeDarstellen } = await import('./js/aufgaben.js');
+    const { allesLaden } = await import('./js/daten.js');
+    const d = await allesLaden();
+    const a = { typ: 'sortieren', niveau: 3, karten: d.reihe.stoffe.map((x) => x.name) };
+    const darst = aufgabeDarstellen(a, () => {}, d);
+    document.getElementById('inhalt').replaceChildren(darst.wurzel);
+    const karte = document.querySelector('.sortierkarte');
+    return [getComputedStyle(karte).touchAction, getComputedStyle(karte.querySelector('.griff')).touchAction,
+      karte.querySelector('.griff').getBoundingClientRect().width, karte.querySelector('.griff').getBoundingClientRect().height,
+      Boolean(karte.querySelector('small'))];
+  });
+  assert.equal(werte[0], 'pan-y');
+  assert.equal(werte[1], 'none');
+  assert.ok(werte[2] >= 44 && werte[3] >= 44, 'Griff mindestens 44 × 44');
+  assert.equal(werte[4], false, 'Auf ★★★ verrät die Kohlenstoff-Karte nichts');
+  await kontext.close();
+});
+
+test('Klappt es?: Reihe vorher ansehbar auf ★/★★, nicht auf ★★★', async () => {
+  const { kontext, seite } = await neueSeite();
+  const anzahl = await seite.evaluate(async () => {
+    const { aufgabeDarstellen } = await import('./js/aufgaben.js');
+    const { allesLaden } = await import('./js/daten.js');
+    const d = await allesLaden();
+    const z = [];
+    for (const n of [1, 2, 3]) {
+      const a = d.aufgaben.B3.find((x) => x.typ === 'klappt' && x.niveau === n);
+      const darst = aufgabeDarstellen(a, () => {}, d);
+      document.getElementById('inhalt').replaceChildren(darst.wurzel);
+      z.push([...document.querySelectorAll('button')].filter((b) => b.textContent.includes('Reihe ansehen')).length);
+    }
+    return z;
+  });
+  assert.deepEqual(anzahl, [1, 1, 0]);
   await kontext.close();
 });
