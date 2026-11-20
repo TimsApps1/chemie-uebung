@@ -1,6 +1,6 @@
 # Format der Aufgaben-Dateien
 
-Die Aufgaben stehen in `daten/aufgaben/b1.json`, `b3.json` und `b4.json` (später auch `b2.json`). Jede Datei sieht so aus:
+Die Aufgaben stehen in `daten/aufgaben/b1.json`, `b2.json`, `b3.json` und `b4.json`. Jede Datei sieht so aus:
 
 ```json
 {

@@ -41,7 +41,9 @@ test('Waage, Hinweise und kleinste Zahlen', () => {
   let w = A.waage(a, [1, 1, 1]);
   assert.equal(w.ausgeglichen, false);
   assert.equal(w.kipp, 1, 'links mehr Atome');
-  assert.match(A.ausgleichHinweis(a, [1, 1, 1]), /O-Atome: links 2, rechts 1/);
+  assert.match(A.ausgleichHinweis(a, [1, 1, 1]), /Links 2 O, rechts 1 O\. Tippe rechts auf \+/);
+  assert.doesNotMatch(A.ausgleichHinweis(a, [1, 1, 1]), /−/, 'Minus geht am Anfang nicht');
+  assert.match(A.ausgleichHinweis(a, [1, 2, 1]), /Oder links auf −/);
   w = A.waage(a, [4, 2, 4]);
   assert.equal(w.ausgeglichen, true);
   assert.equal(w.geloest, false, 'doppelte Zahlen sind nicht die kleinsten');
@@ -248,7 +250,7 @@ test('★★★-Runde: auch eine leichtere Einstiegsaufgabe läuft mit verdeckte
   // ★: „Ich komme nicht weiter“ zeigt einen Hinweis, wertet aber nicht
   const { seite: s2, kontext: k2 } = await seiteMitAufgabe('b2-1-08');
   await s2.getByRole('button', { name: /Ich komme nicht weiter/ }).click();
-  assert.match(await s2.locator('.bau-status').textContent(), /O-Atome: links 2, rechts 1/);
+  assert.match(await s2.locator('.bau-status').textContent(), /Links 2 O, rechts 1 O/);
   assert.equal(await s2.getByRole('button', { name: 'Nochmal versuchen' }).count(), 0);
   assert.deepEqual(fehler, []);
   await k2.close();
@@ -259,4 +261,19 @@ test('Fallentexte setzen einen geänderten Index nie mit „mehr Teilchen“ gle
   for (const a of reaktionen) for (const s of [...a.edukte, ...a.produkte]) {
     if (s.falle) assert.doesNotMatch(s.falle.text, /zwei Teilchen/, `${a.id} ${s.formel}`);
   }
+});
+
+test('★★★: verdeckte Waage verrät auch Vielfache nicht; So geht’s begründet mit „anderer Stoff“', async () => {
+  const { kontext, seite, fehler } = await seiteMitAufgabe('b2-3-01'); // Fe2O3 + 2 Al → 2 Fe + Al2O3
+  for (const [name, n] of [['Eisen\\(III\\)-oxid', 1], ['Aluminium', 3], ['Eisen ', 3], ['Aluminiumoxid', 1]]) {
+    for (let i = 0; i < n; i++) await seite.getByRole('button', { name: new RegExp(`Plus: Ein Teilchen ${name}`) }).first().click();
+  }
+  // jetzt 2 Fe2O3 + 4 Al → 4 Fe + 2 Al2O3 (ausgeglichen, aber nicht die kleinsten Zahlen)
+  assert.equal(await seite.locator('.bau-status-zeile:not([hidden])').count(), 0, 'kein verräterischer Hinweis');
+  assert.equal(await seite.locator('.waage.verdeckt').count(), 1);
+  const { SCHRITTE } = await seite.evaluate(async () => ({ SCHRITTE: (await (await fetch('js/so-gehts.js')).text()) }));
+  const b2Teil = SCHRITTE.slice(SCHRITTE.indexOf('SCHRITTE_B2'));
+  assert.doesNotMatch(b2Teil.slice(0, b2Teil.indexOf('];')), /Noppen/);
+  assert.deepEqual(fehler, []);
+  await kontext.close();
 });

@@ -11,7 +11,8 @@ const PUNKTE = { erster: 10, zweiter: 5, warum: 5 };
 const LOB_STANDARD = {
   erster: ['Richtig!', 'Stimmt genau!', 'Gut gemacht!', 'Sehr gut!'],
   zweiter: ['Beim 2. Versuch richtig – gut nachgedacht!', 'Richtig! Der Denkanstoß hat geholfen.', 'Gut, dass du drangeblieben bist!'],
-  ausgebessert: ['Ausgebessert! Diesmal hat es geklappt.', 'Super, jetzt sitzt es!']
+  ausgebessert: ['Ausgebessert! Diesmal hat es geklappt.', 'Super, jetzt sitzt es!'],
+  ausgleichen: ['Die Waage steht gerade – alle Atome passen!', 'Links und rechts gleich viele Atome. Stark!', 'Sauber ausgeglichen!', 'Alle Atome sind wieder da – genau so!']
 };
 
 function lob(daten, art) {
@@ -239,7 +240,7 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
         }
         if (!wiederholung && versuch === 1) stand.ersterVersuch += 1;
         let lobText = a.typ === 'ausgleichen' && !a.pruefen
-          ? (versuch === 1 ? 'Die Waage steht gerade – alle Atome passen!' : 'Umgebaut und geschafft – die Waage steht gerade!')
+          ? (versuch === 1 ? lob(daten, 'ausgleichen') : 'Umgebaut und geschafft – die Waage steht gerade!')
           : lob(daten, versuch === 1 ? 'erster' : 'zweiter');
         if (art === 'fehler') {
           const erledigt = fehlerWiederholt(name, a.id, versuch === 1);
