@@ -231,7 +231,6 @@ function startseite(name) {
   const kursKind = Object.values(p.freigeschaltet).includes('E') ? 'E' : Object.keys(p.freigeschaltet).length ? 'G' : null;
   const sichtbar = daten.bereiche.filter((b) => p.freigeschaltet[b.id] || !kursKind || (b.kurse || ['G', 'E']).includes(kursKind));
   const kacheln = sichtbar.map((b) => bereichKachel(name, p, b));
-  const nochGesperrt = sichtbar.some((b) => !p.freigeschaltet[b.id]);
 
   zeigen(
     datenFehlerKasten(alleFehler()),
@@ -254,7 +253,8 @@ function startseite(name) {
     el('div', { class: 'start-knoepfe' },
       el('button', { type: 'button', class: 'knopf', onclick: () => meinFortschritt(name) }, '📈 Mein Fortschritt'),
       abgabeCodes(name).length ? el('button', { type: 'button', class: 'knopf', onclick: () => qrZeigen(abgabeCodes(name), vorname(name)) }, '📷 Ergebnisse zeigen') : null,
-      nochGesperrt ? el('button', { type: 'button', class: 'knopf', onclick: () => codeEingeben(name) }, icon('i-schluessel'), 'Code eingeben') : null,
+      // Immer da: auch wer alles Sichtbare frei hat, braucht evtl. noch einen E-Code (Bereich 1/2 oder Wechsel G → E).
+      el('button', { type: 'button', class: 'knopf', onclick: () => codeEingeben(name) }, icon('i-schluessel'), 'Code eingeben'),
       el('button', { type: 'button', class: 'knopf', onclick: werUebt }, '👋 Anderer Name')),
     installTipp());
 }

@@ -308,3 +308,25 @@ test('iPad-Sicherung: Kinder sichern, iPad leeren, zurückholen – ohne doppelt
   assert.deepEqual(fehler, []);
   await kontext.close();
 });
+
+test('„Code eingeben“ gibt es immer – auch wenn B3 und B4 schon mit G-Code frei sind (z. B. später E-Code für B1)', async () => {
+  const { freischaltcode } = await import('../js/codes.js');
+  const { kontext, seite, fehler } = await neueSeite();
+  await seite.evaluate(async () => {
+    const P = await import('./js/profil.js');
+    P.kindAnlegen('ADAAHO', 'C', 'Ada Ahorn');
+    P.freischalten('ADAAHO', 'B3', 'G');
+    P.freischalten('ADAAHO', 'B4', 'G');
+    location.reload();
+  });
+  await seite.getByRole('heading', { name: 'Wer übt?' }).waitFor();
+  await seite.getByRole('button', { name: 'Ada Ahorn' }).click();
+  await seite.getByRole('button', { name: 'Code eingeben' }).click();
+  await seite.locator('#code-feld').fill(freischaltcode('B1', 'E', 1));
+  await seite.getByRole('button', { name: 'Freischalten' }).click();
+  await seite.getByText(/ist frei!/).waitFor();
+  await seite.getByRole('button', { name: /Weiter/ }).click();
+  await seite.getByText('Formeln bauen').first().waitFor();
+  assert.deepEqual(fehler, []);
+  await kontext.close();
+});

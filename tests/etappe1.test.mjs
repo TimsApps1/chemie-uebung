@@ -693,7 +693,7 @@ test('G-Kind sieht Bereiche nur für den E-Kurs nicht als gesperrt', async () =>
   await seite.getByRole('button', { name: /Mehmet/ }).click();
   await seite.getByRole('heading', { name: 'Hallo Mehmet!' }).waitFor();
   assert.equal(await seite.locator('.bereich.b1, .bereich.b2').count(), 0);
-  assert.equal(await seite.getByRole('button', { name: 'Code eingeben' }).count(), 0);
+  assert.equal(await seite.getByRole('button', { name: 'Code eingeben' }).count(), 1, 'Code eingeben bleibt da (z. B. für einen späteren E-Code)');
   await kontext.close();
 });
 
