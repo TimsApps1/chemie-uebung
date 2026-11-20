@@ -27,7 +27,7 @@ Die Ansicht sperrt sich wieder, sobald du sie verlässt, das iPad weglegst oder 
 |---|---|
 | 📥 Ergebnisse | QR-Codes der Kinder scannen oder Text aus Classroom einfügen |
 | 📊 Übersicht | Alle Kinder mit Bestwert, Durchschnitt und „beim 1. Versuch richtig“; Tabellen für Numbers/Excel |
-| 🏆 Beamer | Die besten 5 pro Bereich und Niveau für eine Woche |
+| 🏆 Beamer | Die besten 5, Am meisten verbessert, Teams und Klassenziel |
 | 👥 Klasse | Klassenliste (Vor- und Nachname, optional G/E) |
 | 💾 Sicherung | Ergebnisse als Datei sichern und wiederherstellen |
 | 🔑 Codes | Freischaltcodes für Bereiche (getrennt nach G- und E-Kurs) |
@@ -113,6 +113,24 @@ Es werden immer die Runden der letzten 6 Wochen abgegeben, du kannst also ruhig 
   Das erste fertig gebaute Modell war richtig.
 
 ---
+
+### Am meisten verbessert, Teams, Klassenziel (Reiter 🏆 Beamer, „Was zeigen?“)
+- **📈 Am meisten verbessert:** Bestwert dieser Woche gegen den eigenen Bestwert der 6 Wochen davor
+  (gleicher Bereich und gleiches Niveau). Es zählen nur Kinder mit mindestens 2 Runden in dieser Woche.
+  Höchstens 5 Namen.
+- **👥 Teams:** Unter „Teams anlegen“ ein Team pro Zeile eintragen, z. B. `Team Rot: Lena Schmidt, Jonas Becker`.
+  „🔀 Gemischte Teams vorschlagen“ verteilt starke und schwächere Kinder gleichmäßig.
+  Teamwert = **Durchschnitt** der Mitglieder (pro Kind die 3 besten Runden der Woche), nicht die Summe.
+- **🎯 Klassenziel:** Alle Punkte der Klasse in dieser Woche zusammen als Balken. Das Ziel stellst du dort ein
+  (Vorschlag: 150 Punkte pro Kind und Woche).
+
+### Für die Kinder
+- **⚔ Duell zu zweit** (auf „Wer übt?“): Zwei Kinder spielen abwechselnd am selben iPad, jedes auf seinem Niveau
+  (★ = 1, ★★ = 2, ★★★ = 3 Punkte pro richtiger Antwort). Wer zuerst 10 Punkte hat, ist zuerst am Ziel.
+  Am Ende steht „Gut gespielt, beide!“. Duelle erzeugen keinen Punktecode und werden nicht gespeichert.
+- **Abzeichen** (in „Mein Fortschritt“): nur für Fleiß und Verbesserung – 10 und 25 Runden geübt, 5 und 20 Fehler
+  ausgebessert, 3-mal den eigenen Rekord verbessert, 3 Wochenziele geschafft.
+- **Meine Fehler:** Falsche Aufgaben kommen nach 1 Tag, 3 Tagen und 1 Woche wieder (Knopf „Heute üben“).
 
 ## 7. Sicherung – bitte regelmäßig!
 

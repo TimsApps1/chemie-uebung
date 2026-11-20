@@ -17,7 +17,7 @@ const SCHLUESSEL = 'lehrer';
 export const ERINNERUNG_TAGE = 7;
 
 function leer() {
-  return { version: 1, runden: [], klasse: [], alias: {}, geloescht: [], letzteSicherung: null, ersteDaten: null };
+  return { version: 1, runden: [], klasse: [], alias: {}, geloescht: [], letzteSicherung: null, ersteDaten: null, teams: [], klassenziel: null };
 }
 
 export function lehrerDaten() {
@@ -411,6 +411,8 @@ export function sicherungEinlesen(text) {
   if (!d.klasse.length && Array.isArray(inhalt.daten.klasse)) d.klasse = inhalt.daten.klasse;
   d.alias = { ...(inhalt.daten.alias || {}), ...d.alias };
   d.ersteDaten = d.ersteDaten || inhalt.daten.ersteDaten || Date.now();
+  if (!(d.teams || []).length && Array.isArray(inhalt.daten.teams)) d.teams = inhalt.daten.teams;
+  if (!d.klassenziel && inhalt.daten.klassenziel) d.klassenziel = inhalt.daten.klassenziel;
   if (!speichern(d)) return { ok: false, grund: 'Der Speicher auf diesem iPad ist voll.' };
   return { ok: true, neu };
 }
@@ -423,4 +425,106 @@ export function sicherungFaellig(d = lehrerDaten()) {
 
 export function allesLoeschen() {
   speichern(leer());
+}
+
+// ---------- Etappe 5: Am meisten verbessert, Teams, Klassenziel ----------
+
+// Am meisten verbessert: Bestwert dieser Woche gegen den eigenen Bestwert der Wochen davor
+// (gleicher Bereich und gleiches Niveau, die letzten 6 Wochen). Erst ab 2 Runden in dieser Woche.
+export function amMeistenVerbessert(d, { bereich, niveau, woche, kurs = '' }, anzahl = 5) {
+  const werte = [];
+  for (const [id, runden] of rundenNachKind(d)) {
+    const passend = runden.filter((r) => r.bereich === bereich && r.niveau === niveau && (!kurs || r.kurs === kurs));
+    const jetzt = passend.filter((r) => wocheVonTag(r.tag) === woche);
+    const vorher = passend.filter((r) => wocheVonTag(r.tag) < woche && wocheVonTag(r.tag) >= woche - 6);
+    if (jetzt.length < 2 || !vorher.length) continue;
+    const besterJetzt = Math.max(...jetzt.map((r) => r.punkte));
+    const besterVorher = Math.max(...vorher.map((r) => r.punkte));
+    if (besterJetzt > besterVorher) werte.push({ id, name: beamerName(d, id), plus: besterJetzt - besterVorher, vorher: besterVorher, jetzt: besterJetzt });
+  }
+  werte.sort((a, b) => b.plus - a.plus || a.name.localeCompare(b.name));
+  let platz = 0;
+  let letzter = null;
+  const mitPlatz = werte.map((w, i) => { if (w.plus !== letzter) { platz = i + 1; letzter = w.plus; } return { ...w, platz }; });
+  // Wie bei den Besten: nie mehr als 5 Namen, eine Gleichstand-Gruppe über Platz 5 hinaus ohne Namen.
+  const liste = [];
+  for (const w of mitPlatz) {
+    const gruppe = mitPlatz.filter((x) => x.platz === w.platz);
+    if (w.platz > anzahl || w.platz - 1 + gruppe.length > anzahl) break;
+    liste.push(w);
+  }
+  const naechster = mitPlatz[liste.length];
+  if (naechster && naechster.platz <= anzahl) liste.rest = { anzahl: mitPlatz.filter((x) => x.platz === naechster.platz).length, plus: naechster.plus };
+  return liste;
+}
+
+// Teams: { name, mitglieder: [Kind-ID] }. Teamwert = Durchschnitt (nicht Summe) der Wochenwerte aller Mitglieder.
+// Wochenwert eines Kindes hier: die 3 besten Runden der Woche über alle Bereiche.
+export function teamsSetzen(teams) {
+  const d = lehrerDaten();
+  d.teams = teams;
+  return speichern(d);
+}
+
+export function teamsAusText(text, klasse) {
+  const finde = (n) => {
+    const t = n.trim().toLowerCase().replace(/\s+/g, ' ');
+    return klasse.find((k) => k.anzeige.toLowerCase() === t) || klasse.find((k) => k.kurz.toLowerCase() === t) ||
+      klasse.find((k) => k.anzeige.toLowerCase().startsWith(t + ' ') || k.anzeige.toLowerCase().split(' ')[0] === t && klasse.filter((x) => x.anzeige.toLowerCase().split(' ')[0] === t).length === 1);
+  };
+  const teams = [];
+  const unbekannt = [];
+  for (const zeile of String(text || '').split(/\r?\n/).map((z) => z.trim()).filter(Boolean)) {
+    const [kopf, rest] = zeile.includes(':') ? zeile.split(/:(.*)/s) : [`Team ${teams.length + 1}`, zeile];
+    const mitglieder = [];
+    for (const n of (rest || '').split(/[,;]/).map((x) => x.trim()).filter(Boolean)) {
+      const k = finde(n);
+      if (k) { if (!mitglieder.includes(k.id)) mitglieder.push(k.id); } else unbekannt.push(n);
+    }
+    teams.push({ name: kopf.trim() || `Team ${teams.length + 1}`, mitglieder });
+  }
+  return { teams, unbekannt };
+}
+
+export function teamsAlsText(d = lehrerDaten()) {
+  return (d.teams || []).map((t) => `${t.name}: ${t.mitglieder.map((id) => kindName(d, id)).join(', ')}`).join('\n');
+}
+
+// Vorschlag für gemischte Teams: Kinder nach ihrem Durchschnitt sortieren und „im Zickzack“ verteilen.
+export function teamVorschlag(d, anzahlTeams) {
+  const nachKind = rundenNachKind(d);
+  const kinder = d.klasse.map((k) => {
+    const r = nachKind.get(k.id) || [];
+    return { id: k.id, schnitt: r.length ? r.reduce((s, x) => s + x.punkte, 0) / r.length : 0 };
+  }).sort((a, b) => b.schnitt - a.schnitt);
+  const n = Math.max(2, Math.min(anzahlTeams, kinder.length || 2));
+  const teams = Array.from({ length: n }, (_, i) => ({ name: `Team ${i + 1}`, mitglieder: [] }));
+  kinder.forEach((k, i) => {
+    const runde = Math.floor(i / n);
+    const nr = runde % 2 === 0 ? i % n : n - 1 - (i % n);
+    teams[nr].mitglieder.push(k.id);
+  });
+  return teams;
+}
+
+export function teamWerte(d, { woche }) {
+  const nachKind = rundenNachKind(d);
+  return (d.teams || []).filter((t) => t.mitglieder.length).map((t) => {
+    const werte = t.mitglieder.map((id) => wochenwert((nachKind.get(id) || []).filter((r) => wocheVonTag(r.tag) === woche)));
+    const summe = werte.reduce((s, w) => s + w, 0);
+    return { name: t.name, wert: Math.round(summe / t.mitglieder.length), mitglieder: t.mitglieder.length, aktiv: werte.filter((w) => w > 0).length };
+  }).sort((a, b) => b.wert - a.wert || a.name.localeCompare(b.name));
+}
+
+// Klassenziel: alle Punkte der Klasse in dieser Woche zusammen.
+export function klassenzielSetzen(ziel) {
+  const d = lehrerDaten();
+  d.klassenziel = ziel > 0 ? Math.round(ziel) : null;
+  return speichern(d);
+}
+
+export function klassenStand(d, { woche }) {
+  const summe = d.runden.filter((r) => wocheVonTag(r.tag) === woche).reduce((s, r) => s + r.punkte, 0);
+  const ziel = d.klassenziel || Math.max(500, d.klasse.length * 150);
+  return { summe, ziel, eingestellt: Boolean(d.klassenziel), anteil: Math.min(1, summe / ziel) };
 }

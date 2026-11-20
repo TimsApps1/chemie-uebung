@@ -1053,3 +1053,34 @@ button.bereich { font: inherit; text-align: left; cursor: pointer; width: 100%; 
   .gleichung-plus, .gleichung-pfeil { margin-top: 0; align-self: center; }
   .gleichung-pfeil { transform: rotate(90deg); }
 }
+
+/* ---------- Etappe 5: Beamer-Ansichten, Abzeichen, Duell ---------- */
+.beamer-umschalten { flex-wrap: wrap; }
+.rang-info { font-size: 0.45em; font-weight: 600; color: var(--text-leise); }
+.klassenziel { display: grid; gap: 0.4em; align-content: center; padding: 0.5em 0; }
+.klassenziel-balken { height: 1.2em; border-radius: 999px; background: #fff; border: 3px solid var(--haupt); overflow: hidden; }
+.klassenziel-balken span { display: block; height: 100%; background: var(--haupt); border-radius: 999px; }
+.klassenziel-zahl { margin: 0; font-size: 0.9em; font-weight: 800; text-align: center; }
+.beamer-vorschau { font-size: 1.6rem; padding: 12px; border-radius: var(--r-mittel); background: var(--haupt-zart); }
+.beamer-vorschau .rangliste { font-size: 1rem; }
+.auswahl-feld { width: auto; min-width: 8em; }
+.abzeichen-liste { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+.abzeichen-liste li { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 4px 10px; padding: 8px 10px; border-radius: var(--r-mittel); border: 2px solid var(--rand); background: #fff; }
+.abzeichen-liste li.erreicht { border-color: var(--gut); background: var(--gut-flaeche); }
+.abzeichen-liste li:not(.erreicht) .abzeichen-zeichen { filter: grayscale(1); opacity: .55; }
+.abzeichen-zeichen { font-size: 1.8rem; grid-row: span 2; }
+.abzeichen-text { display: grid; }
+.abzeichen-text small { color: var(--text-leise); font-weight: 600; }
+.abzeichen-balken { grid-column: 2; height: 8px; border-radius: 999px; background: var(--haupt-zart); border: 1px solid var(--rand-kraeftig); overflow: hidden; }
+.abzeichen-balken span { display: block; height: 100%; background: var(--haupt); }
+.duell-knopf { margin-top: var(--a3); }
+.knopf-name.gewaehlt { border: 3px solid var(--haupt); background: var(--haupt-zart); }
+.duell-niveau { display: grid; gap: 6px; margin-bottom: var(--a3); }
+.duell-stand { display: grid; gap: 6px; margin-bottom: var(--a3); }
+.duell-spieler { display: grid; grid-template-columns: minmax(6em, auto) 1fr auto; align-items: center; gap: 10px; padding: 6px 10px; border-radius: var(--r-mittel); border: 2px solid var(--rand); }
+.duell-spieler.dran { border-color: var(--haupt); background: var(--haupt-zart); }
+.duell-name { font-weight: 800; }
+.duell-balken { height: 14px; border-radius: 999px; background: #fff; border: 2px solid var(--rand-kraeftig); overflow: hidden; }
+.duell-balken span { display: block; height: 100%; background: var(--haupt); }
+.duell-punkte { font-size: 1.1rem; }
+.duell-dran { margin: 0 0 var(--a2); font-size: 1.2rem; }

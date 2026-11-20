@@ -8,7 +8,7 @@ import {
   fachwoerterSetzen, datenFehlerKasten
 } from './ui.js';
 import {
-  anzeigeName, vorname, ersteWoche, naechsteRundenNummer, stempelPruefen,
+  anzeigeName, vorname, ersteWoche, naechsteRundenNummer, stempelPruefen, abzeichenStand, neueAbzeichen,
   kinder, kindEintrag, kindAnlegen, profil, aendern, freischalten, rundeSpeichern, rundenInWoche,
   geraetRundenNummer, elementAendern, normaleRunden, bestwert, sterneFuer, niveauVorschlag, faelligeFehler, KANN_SCHWELLE, LIEBLINGSELEMENTE, geraet
 } from './profil.js';
@@ -17,6 +17,7 @@ import { rundeSpielen, aufgabenWaehlen, RUNDE_LAENGE } from './runde.js';
 import { qrZeigen } from './qr.js';
 import { adminStart } from './admin.js';
 import { soGehtsZeigen, soGehtsAusgleichen } from './so-gehts.js';
+import { duellStarten } from './duell.js';
 
 const inhalt = document.getElementById('inhalt');
 let daten = null;
@@ -103,7 +104,8 @@ function werUebt() {
     el('section', { class: 'karte' },
       el('div', { class: 'anweisung-zeile' }, el('h2', { class: 'titel' }, 'Wer übt?'), vorlesenKnopf('Wer übt? Tippe auf deinen Namen.')),
       el('p', { class: 'leise' }, '✋ Tippe auf deinen Namen.'),
-      namen),
+      namen,
+      liste.length >= 2 ? el('button', { type: 'button', class: 'knopf knopf-leise knopf-breit duell-knopf', onclick: () => duellStarten({ ziel: inhalt, daten, zurueck: werUebt }) }, '⚔ Duell zu zweit') : null),
     installTipp(),
     lehrkraftLink());
 }
@@ -436,7 +438,8 @@ function fehlerRundeEnde(name, ergebnis, kannVorher) {
       ergebnis.ausgebessert ? neuZeile('🏆', el('b', {}, `${ergebnis.ausgebessert} ${ergebnis.ausgebessert === 1 ? 'Fehler sitzt' : 'Fehler sitzen'} jetzt sicher!`), 'stark') : null,
       ergebnis.ersterVersuch ? neuZeile('✓', `${ergebnis.ersterVersuch} gleich beim ersten Versuch richtig.`) : neuZeile('💪', 'Dranbleiben lohnt sich – diese Aufgaben kommen bald wieder.'),
       ...neuKann.map((k) => neuZeile('⭐', ['Neu: ', el('b', {}, text(k.text))], 'stark')),
-      ergebnis.anzahl >= 4 ? wochenzielZeile(p, vorher) : null),
+      ergebnis.anzahl >= 4 ? wochenzielZeile(p, vorher) : null,
+      ...neueAbzeichen(name).map((a) => neuZeile(a.zeichen, ['Neues Abzeichen: ', el('b', {}, a.titel)], 'stark'))),
     el('p', { class: 'leise' }, 'Aufgaben, die noch nicht sitzen, kommen in ein paar Tagen wieder.'),
     ergebnis.anzahl < 4 && rundenInWoche(p) < p.wochenziel
       ? el('p', { class: 'tipp' }, `Fehler ausbessern ist super! Für deinen Wochenstempel ${p.wochenziel - rundenInWoche(p) === 1 ? 'fehlt noch 1 normale Runde' : `fehlen noch ${p.wochenziel - rundenInWoche(p)} normale Runden`}.`) : null,
@@ -499,6 +502,7 @@ function rundenende(name, ergebnis, kannVorher) {
         : 'Du bleibst dran – jede Runde macht dich sicherer.'));
   }
   neu.push(wochenzielZeile(p, wocheVorher));
+  for (const a of neueAbzeichen(name)) neu.push(neuZeile(a.zeichen, ['Neues Abzeichen: ', el('b', {}, a.titel)], 'stark'));
 
   const codeText = el('span', { class: 'code', id: 'punktecode' }, code);
   const kopierMeldung = el('span', { class: 'kopier-meldung', 'aria-live': 'polite' });
@@ -681,6 +685,13 @@ function meinFortschritt(name) {
       el('p', { class: 'leise' }, `Insgesamt ${normale.length} ${normale.length === 1 ? 'Runde' : 'Runden'} geübt` +
         (p.ausgebessert ? ` · ${p.ausgebessert} Fehler endgültig ausgebessert` : '')),
       el('p', { class: 'tipp' }, 'Medaillen pro Niveau: Bronze ab 40 Punkten, Silber ab 60, Gold ab 75 in einer Runde.')),
+    el('section', { class: 'karte' },
+      el('h3', {}, 'Meine Abzeichen'),
+      el('ul', { class: 'abzeichen-liste' }, abzeichenStand(p).map((a) => el('li', { class: a.erreicht ? 'erreicht' : '' },
+        el('span', { class: 'abzeichen-zeichen', 'aria-hidden': 'true' }, a.zeichen),
+        el('span', { class: 'abzeichen-text' }, el('b', {}, a.titel),
+          el('small', {}, a.erreicht ? '✓ geschafft' : `${a.wert} von ${a.ziel}`)),
+        a.erreicht ? null : el('span', { class: 'abzeichen-balken', 'aria-hidden': 'true' }, el('span', { style: `width:${Math.round((a.wert / a.ziel) * 100)}%` })))))),
     ...frei.map(bereichsBlock),
     !frei.length ? el('p', { class: 'leise' }, 'Noch keine Bereiche frei.') : null,
     el('details', { class: 'karte code-details' }, el('summary', {}, el('h3', {}, 'Mein Lieblingselement ändern')), elementWahl),

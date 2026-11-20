@@ -5,7 +5,8 @@ import {
   lehrerDaten, einlesen, klasseAusText, klasseSpeichern, aliasSetzen, nichtZugeordnet, vorschlaege, kindName,
   rundenNachKind, uebersicht, verlauf, gespielteNiveaus, gruppeVerwerfen, zuordnungen, bestenliste, aktuelleWoche, wochenText, csvRunden, csvUebersicht,
   sicherungErstellen, sicherungGespeichert, sicherungEinlesen, sicherungFaellig, allesLoeschen, rundeLoeschen, ERINNERUNG_TAGE,
-  halbjahresBeginn, lehrerBereiche, BEREICH_KURZ, NUR_E
+  halbjahresBeginn, lehrerBereiche, BEREICH_KURZ, NUR_E,
+  amMeistenVerbessert, teamWerte, teamsSetzen, teamsAusText, teamsAlsText, teamVorschlag, klassenzielSetzen, klassenStand
 } from './lehrer-daten.js';
 import { qrScannen } from './qr.js';
 import { sperreAussetzen } from './admin.js';
@@ -226,56 +227,169 @@ export function uebersichtReiter({ neu }) {
 
 // ---------- Reiter: Beamer ----------
 
-let beamerWahl = { bereich: 'B3', niveau: 1, woche: null, kurs: '' };
+let beamerWahl = { ansicht: 'beste', bereich: 'B3', niveau: 1, woche: null, kurs: '' };
+
+const ANSICHTEN = [['beste', '🏆 Die besten 5'], ['verbessert', '📈 Am meisten verbessert'], ['teams', '👥 Teams'], ['ziel', '🎯 Klassenziel']];
+
+// Inhalt der Beamer-Ansicht (auch als Vorschau im Reiter genutzt).
+function beamerInhalt(d, woche) {
+  const w = beamerWahl;
+  if (w.ansicht === 'verbessert') {
+    const liste = amMeistenVerbessert(d, { ...w, woche });
+    return {
+      titel: '📈 Am meisten verbessert',
+      untertitel: `${bereichTitel(w.bereich)} · ${sterneText(w.niveau)}${w.kurs ? ` · ${w.kurs}-Kurs` : ''}`,
+      satz: `Woche ${wochenText(woche)} · Bestwert dieser Woche gegen den eigenen Bestwert der Wochen davor (ab 2 Runden)`,
+      knoten: liste.length ? el('ol', { class: 'rangliste' }, liste.map((x) => el('li', { class: 'rang' },
+        el('span', { class: `rang-platz platz-${x.platz}` }, String(x.platz)),
+        el('span', { class: 'rang-name' }, x.name),
+        el('span', { class: 'rang-punkte' }, `+${x.plus}`))))
+        : liste.rest ? null : el('p', { class: 'beamer-leer' }, 'Diese Woche hat sich hier noch niemand verbessert. Das kommt noch!'),
+      rest: liste.rest ? `${liste.length ? '… und' : ''} ${liste.rest.anzahl} ${liste.length ? 'weitere' : 'Kinder'} mit +${liste.rest.plus} – stark!` : null
+    };
+  }
+  if (w.ansicht === 'teams') {
+    const teams = teamWerte(d, { woche });
+    return {
+      titel: '👥 Teams',
+      untertitel: 'Teamwert = Durchschnitt aller Mitglieder',
+      satz: `Woche ${wochenText(woche)} · pro Kind die 3 besten Runden der Woche (alle Bereiche)`,
+      knoten: teams.length ? el('ol', { class: 'rangliste' }, teams.map((t, i) => el('li', { class: 'rang' },
+        el('span', { class: `rang-platz platz-${i + 1}` }, String(i + 1)),
+        el('span', { class: 'rang-name' }, t.name, el('small', { class: 'rang-info' }, ` ${t.aktiv} von ${t.mitglieder} haben geübt`)),
+        el('span', { class: 'rang-punkte' }, String(t.wert)))))
+        : el('p', { class: 'beamer-leer' }, 'Noch keine Teams angelegt.'),
+      rest: null
+    };
+  }
+  if (w.ansicht === 'ziel') {
+    const k = klassenStand(d, { woche });
+    return {
+      titel: '🎯 Klassenziel',
+      untertitel: 'Alle Punkte der Klasse zusammen',
+      satz: `Woche ${wochenText(woche)}`,
+      knoten: el('div', { class: 'klassenziel' },
+        el('div', { class: 'klassenziel-balken', role: 'img', 'aria-label': `${k.summe} von ${k.ziel} Punkten` },
+          el('span', { style: `width:${Math.round(k.anteil * 100)}%` })),
+        el('p', { class: 'klassenziel-zahl' }, `${k.summe} von ${k.ziel} Punkten`, k.summe >= k.ziel ? ' – geschafft! 🎉' : '')),
+      rest: null
+    };
+  }
+  const liste = bestenliste(d, { ...w, woche });
+  return {
+    titel: '🏆 Die besten 5',
+    untertitel: `${bereichTitel(w.bereich)} · ${sterneText(w.niveau)}${w.kurs ? ` · ${w.kurs}-Kurs` : ''}`,
+    satz: `Woche ${wochenText(woche)} · Wochenwert = die 3 besten Runden`,
+    knoten: liste.length ? el('ol', { class: 'rangliste' }, liste.map((x) => el('li', { class: 'rang' },
+      el('span', { class: `rang-platz platz-${x.platz}` }, String(x.platz)),
+      el('span', { class: 'rang-name' }, x.name),
+      el('span', { class: 'rang-punkte' }, String(x.wert)))))
+      : liste.rest ? null : el('p', { class: 'beamer-leer' }, 'Diese Woche gibt es hier noch keine Runden.'),
+    rest: liste.rest ? (liste.length ? `… und ${liste.rest.anzahl} weitere mit ${liste.rest.wert} Punkten – stark!` : `${liste.rest.anzahl} Kinder gleichauf mit ${liste.rest.wert} Punkten – stark!`) : null
+  };
+}
 
 function beamerAnsicht() {
   const d = lehrerDaten();
   const woche = beamerWahl.woche ?? aktuelleWoche();
-  const liste = bestenliste(d, { ...beamerWahl, woche });
+  const inhalt = beamerInhalt(d, woche);
   sperreAussetzen(true);
   const schliessen = () => { sperreAussetzen(false); flaeche.remove(); };
+  const mitNiveau = beamerWahl.ansicht === 'beste' || beamerWahl.ansicht === 'verbessert';
   const flaeche = el('div', { class: 'beamer-flaeche', role: 'dialog', 'aria-label': 'Beamer-Ansicht' },
     el('div', { class: 'beamer' },
       el('div', { class: 'beamer-kopf' },
-        el('span', { class: 'beamer-titel' }, '🏆 Die besten 5'),
-        el('span', { class: 'beamer-bereich' }, `${bereichTitel(beamerWahl.bereich)} · `, el('span', { class: 'sterne' }, sterneText(beamerWahl.niveau)),
-          beamerWahl.kurs ? ` · ${beamerWahl.kurs}-Kurs` : ''),
+        el('span', { class: 'beamer-titel' }, inhalt.titel),
+        el('span', { class: 'beamer-bereich' }, inhalt.untertitel),
         el('button', { type: 'button', class: 'knopf beamer-zu', onclick: schliessen, 'aria-label': 'Beamer-Ansicht schließen' }, '✕')),
-      el('p', { class: 'beamer-woche' }, `Woche ${wochenText(woche)} · Wochenwert = die 3 besten Runden`),
-      liste.length ? el('ol', { class: 'rangliste' }, liste.map((w) => el('li', { class: 'rang' },
-        el('span', { class: `rang-platz platz-${w.platz}` }, String(w.platz)),
-        el('span', { class: 'rang-name' }, w.name),
-        el('span', { class: 'rang-punkte' }, String(w.wert)))))
-        : liste.rest ? null : el('p', { class: 'beamer-leer' }, 'Diese Woche gibt es hier noch keine Runden.'),
-      liste.rest ? el('p', { class: 'beamer-woche' }, liste.length ? `… und ${liste.rest.anzahl} weitere mit ${liste.rest.wert} Punkten – stark!` : `${liste.rest.anzahl} Kinder gleichauf mit ${liste.rest.wert} Punkten – stark!`) : null,
+      el('p', { class: 'beamer-woche' }, inhalt.satz),
+      inhalt.knoten,
+      inhalt.rest ? el('p', { class: 'beamer-woche' }, inhalt.rest) : null,
       el('div', { class: 'beamer-umschalten' },
-        [1, 2, 3].map((n) => el('button', { type: 'button', class: 'knopf' + (n === beamerWahl.niveau ? ' knopf-haupt' : ''),
-          onclick: () => { beamerWahl.niveau = n; flaeche.remove(); beamerAnsicht(); } }, sterneText(n))))));
+        ANSICHTEN.map(([a, t]) => el('button', { type: 'button', class: 'knopf' + (a === beamerWahl.ansicht ? ' knopf-haupt' : ''),
+          onclick: () => { beamerWahl.ansicht = a; flaeche.remove(); beamerAnsicht(); } }, t)),
+        mitNiveau ? [1, 2, 3].map((n) => el('button', { type: 'button', class: 'knopf' + (n === beamerWahl.niveau ? ' knopf-haupt' : ''),
+          onclick: () => { beamerWahl.niveau = n; flaeche.remove(); beamerAnsicht(); } }, sterneText(n))) : null)));
   document.body.append(flaeche);
+}
+
+function teamsKarte(neu) {
+  const d = lehrerDaten();
+  const feld = el('textarea', { class: 'eingabe textfeld', rows: 6, 'aria-label': 'Teams',
+    placeholder: 'Ein Team pro Zeile, z. B.\nTeam Rot: Lena Schmidt, Jonas Becker\nTeam Blau: Elif Yilmaz, Tom Berg' });
+  feld.value = teamsAlsText(d);
+  const vorschau = el('div', { 'aria-live': 'polite' });
+  const anzahl = el('select', { class: 'eingabe auswahl-feld', 'aria-label': 'Zahl der Teams' },
+    [2, 3, 4, 5, 6, 7, 8].map((n) => el('option', { value: n, selected: n === 4 }, `${n} Teams`)));
+  const zeigeVorschau = () => {
+    const { teams, unbekannt } = teamsAusText(feld.value, d.klasse);
+    vorschau.replaceChildren(
+      teams.length ? el('ul', { class: 'vorschau-liste' }, teams.map((t) => el('li', {}, `${t.name}: ${t.mitglieder.length} ${t.mitglieder.length === 1 ? 'Kind' : 'Kinder'}`))) : null,
+      unbekannt.length ? el('p', { class: 'meldung' }, `⚠ Nicht in der Klassenliste: ${unbekannt.join(', ')}`) : null);
+  };
+  feld.addEventListener('input', zeigeVorschau);
+  zeigeVorschau();
+  const meldung = el('span', { class: 'kopier-meldung', 'aria-live': 'polite' });
+  return karte('Teams anlegen',
+    el('p', { class: 'leise' }, 'Ein Team pro Zeile: Teamname, Doppelpunkt, Namen mit Komma. Teamwert = Durchschnitt, nicht Summe – große Teams sind nicht im Vorteil.'),
+    d.klasse.length ? el('div', { class: 'zeile' }, anzahl,
+      el('button', { type: 'button', class: 'knopf', onclick: () => {
+        feld.value = teamsAlsText({ ...d, teams: teamVorschlag(d, Number(anzahl.value)) });
+        zeigeVorschau();
+      } }, '🔀 Gemischte Teams vorschlagen')) : el('p', { class: 'meldung' }, 'Lege zuerst im Reiter „👥 Klasse“ die Klassenliste an.'),
+    feld, vorschau,
+    el('div', { class: 'zeile' }, el('button', { type: 'button', class: 'knopf knopf-haupt', onclick: () => {
+      teamsSetzen(teamsAusText(feld.value, d.klasse).teams);
+      meldung.textContent = '✓ Gespeichert';
+      setTimeout(neu, 700);
+    } }, 'Teams speichern'), meldung));
+}
+
+function zielKarte(neu) {
+  const d = lehrerDaten();
+  const k = klassenStand(d, { woche: aktuelleWoche() });
+  const feld = el('input', { type: 'number', class: 'eingabe', min: 100, step: 100, value: k.ziel, inputmode: 'numeric', 'aria-label': 'Klassenziel in Punkten pro Woche' });
+  const meldung = el('span', { class: 'kopier-meldung', 'aria-live': 'polite' });
+  return karte('Klassenziel einstellen',
+    el('p', { class: 'leise' }, k.eingestellt ? 'Punkte, die die ganze Klasse in einer Woche zusammen schaffen soll.'
+      : `Noch nicht eingestellt. Vorschlag: ${k.ziel} Punkte pro Woche (150 pro Kind).`),
+    el('div', { class: 'zeile' }, feld, el('button', { type: 'button', class: 'knopf knopf-haupt', onclick: () => {
+      klassenzielSetzen(Number(feld.value));
+      meldung.textContent = '✓ Gespeichert';
+      setTimeout(neu, 700);
+    } }, 'Ziel speichern'), meldung));
 }
 
 export function beamerReiter({ neu }) {
   const woche = beamerWahl.woche ?? aktuelleWoche();
   const wahl = (feld, wert, text) => el('button', { type: 'button', class: 'knopf' + (beamerWahl[feld] === wert ? ' knopf-haupt' : ''),
     onclick: () => { beamerWahl[feld] = wert; if (feld === 'bereich' && NUR_E.includes(wert)) beamerWahl.kurs = ''; neu(); } }, text);
-  const vorschau = bestenliste(lehrerDaten(), { ...beamerWahl, woche });
+  const d = lehrerDaten();
+  const inhalt = beamerInhalt(d, woche);
+  const mitNiveau = beamerWahl.ansicht === 'beste' || beamerWahl.ansicht === 'verbessert';
   return [karte('Rangliste für den Beamer',
-    el('p', { class: 'leise' }, 'Gezeigt werden nur die besten 5 – getrennt nach Bereich und Niveau. Wochenwert = Summe der 3 besten Runden der Woche. Niemand wird vorgeführt.'),
-    el('h4', {}, 'Bereich'), el('div', { class: 'zeile' }, lehrerBereiche().map((b) => wahl('bereich', b, BEREICH_KURZ[b]))),
-    el('h4', {}, 'Niveau'), el('div', { class: 'zeile' }, [1, 2, 3].map((n) => wahl('niveau', n, sterneText(n)))),
-    // Bereich 1 und 2 gibt es nur im E-Kurs: Kurswahl wäre dort sinnlos.
-    NUR_E.includes(beamerWahl.bereich) ? el('p', { class: 'leise' }, 'Diesen Bereich übt nur der E-Kurs.')
-      : [el('h4', {}, 'Kurs'), el('div', { class: 'zeile' }, wahl('kurs', '', 'Alle'), wahl('kurs', 'G', 'G-Kurs'), wahl('kurs', 'E', 'E-Kurs'))],
+    el('p', { class: 'leise' }, 'Gezeigt werden nur die Besten, die am meisten Verbesserten (höchstens 5), Teams oder das Klassenziel. Niemand wird vorgeführt.'),
+    el('h4', {}, 'Was zeigen?'), el('div', { class: 'zeile' }, ANSICHTEN.map(([a, t]) => wahl('ansicht', a, t))),
+    mitNiveau ? [
+      el('h4', {}, 'Bereich'), el('div', { class: 'zeile' }, lehrerBereiche().map((b) => wahl('bereich', b, BEREICH_KURZ[b]))),
+      el('h4', {}, 'Niveau'), el('div', { class: 'zeile' }, [1, 2, 3].map((n) => wahl('niveau', n, sterneText(n)))),
+      NUR_E.includes(beamerWahl.bereich) ? el('p', { class: 'leise' }, 'Diesen Bereich übt nur der E-Kurs.')
+        : [el('h4', {}, 'Kurs'), el('div', { class: 'zeile' }, wahl('kurs', '', 'Alle'), wahl('kurs', 'G', 'G-Kurs'), wahl('kurs', 'E', 'E-Kurs'))]].flat() : null,
     el('h4', {}, 'Woche'),
     el('div', { class: 'zeile' },
       el('button', { type: 'button', class: 'knopf', 'aria-label': 'Woche davor', onclick: () => { beamerWahl.woche = woche - 1; neu(); } }, '◀'),
       el('span', { class: 'woche-text' }, wochenText(woche), woche === aktuelleWoche() ? ' (diese Woche)' : ''),
       el('button', { type: 'button', class: 'knopf', 'aria-label': 'Woche danach', disabled: woche >= aktuelleWoche(), onclick: () => { beamerWahl.woche = woche + 1; neu(); } }, '▶')),
     el('h4', {}, 'Vorschau'),
-    vorschau.length || vorschau.rest ? el('ul', { class: 'vorschau-liste' }, vorschau.map((w) => el('li', {}, `${w.platz}. ${w.name} – ${w.wert} (${w.runden} ${w.runden === 1 ? 'Runde' : 'Runden'})`)),
-      vorschau.rest ? el('li', { class: 'leise' }, `… und ${vorschau.rest.anzahl} weitere mit ${vorschau.rest.wert} Punkten (Gleichstand, ohne Namen)`) : null)
-      : el('p', { class: 'leise' }, 'Für diese Auswahl gibt es noch keine Runden.'),
-    el('button', { type: 'button', class: 'knopf knopf-haupt knopf-gross', onclick: beamerAnsicht }, '🖥 Beamer-Ansicht öffnen'))];
+    beamerWahl.ansicht === 'beste' ? (() => {
+      const vorschau = bestenliste(d, { ...beamerWahl, woche });
+      return vorschau.length || vorschau.rest ? el('ul', { class: 'vorschau-liste' }, vorschau.map((w) => el('li', {}, `${w.platz}. ${w.name} – ${w.wert} (${w.runden} ${w.runden === 1 ? 'Runde' : 'Runden'})`)),
+        vorschau.rest ? el('li', { class: 'leise' }, `… und ${vorschau.rest.anzahl} weitere mit ${vorschau.rest.wert} Punkten (Gleichstand, ohne Namen)`) : null)
+        : el('p', { class: 'leise' }, 'Für diese Auswahl gibt es noch keine Runden.');
+    })() : el('div', { class: 'beamer-vorschau' }, el('p', { class: 'leise' }, inhalt.satz), inhalt.knoten, inhalt.rest ? el('p', { class: 'leise' }, inhalt.rest) : null),
+    el('button', { type: 'button', class: 'knopf knopf-haupt knopf-gross', onclick: beamerAnsicht }, '🖥 Beamer-Ansicht öffnen')),
+  beamerWahl.ansicht === 'teams' ? teamsKarte(neu) : null,
+  beamerWahl.ansicht === 'ziel' ? zielKarte(neu) : null].filter(Boolean);
 }
 
 // ---------- Reiter: Klassenliste ----------

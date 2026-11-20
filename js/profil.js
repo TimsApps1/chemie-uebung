@@ -94,7 +94,8 @@ function leeresProfil() {
     stempel: [],             // Wochen, in denen das Wochenziel geschafft wurde
     geschichteGesehen: {},
     letzte: null,            // { bereich, niveau }
-    niveauVorschlagAbgelehnt: {}
+    niveauVorschlagAbgelehnt: {},
+    abzeichen: []            // schon erreichte Abzeichen (IDs)
   };
 }
 
@@ -253,4 +254,44 @@ export function geraetAendern(fn) {
   fn(g);
   schreiben('geraet', g);
   return g;
+}
+
+// ---------- Abzeichen (wenige, nur für Fleiß und Verbesserung) ----------
+
+function rekordeZaehlen(p) {
+  const best = {};
+  let n = 0;
+  for (const r of p.runden.filter((x) => x.art === 'normal')) {
+    const k = `${r.bereich}|${r.niveau}`;
+    if (k in best && r.punkte > best[k]) n++;
+    best[k] = Math.max(best[k] ?? 0, r.punkte);
+  }
+  return n;
+}
+
+export const ABZEICHEN = [
+  { id: 'runden10', zeichen: '💪', titel: '10 Runden geübt', ziel: 10, wert: (p) => p.runden.filter((r) => r.art === 'normal').length },
+  { id: 'runden25', zeichen: '🏋', titel: '25 Runden geübt', ziel: 25, wert: (p) => p.runden.filter((r) => r.art === 'normal').length },
+  { id: 'fehler5', zeichen: '🔧', titel: '5 Fehler ausgebessert', ziel: 5, wert: (p) => p.ausgebessert },
+  { id: 'fehler20', zeichen: '🛠', titel: '20 Fehler ausgebessert', ziel: 20, wert: (p) => p.ausgebessert },
+  { id: 'rekord3', zeichen: '📈', titel: '3-mal den eigenen Rekord verbessert', ziel: 3, wert: rekordeZaehlen },
+  { id: 'woche3', zeichen: '🗓', titel: '3 Wochenziele geschafft', ziel: 3, wert: (p) => p.stempel.length }
+];
+
+export function abzeichenStand(p) {
+  return ABZEICHEN.map((a) => {
+    const wert = a.wert(p);
+    return { ...a, wert: Math.min(wert, a.ziel), erreicht: wert >= a.ziel };
+  });
+}
+
+// Liefert die seit dem letzten Aufruf neu erreichten Abzeichen und merkt sie sich.
+export function neueAbzeichen(name) {
+  let neu = [];
+  aendern(name, (p) => {
+    const schon = new Set(p.abzeichen || []);
+    neu = abzeichenStand(p).filter((a) => a.erreicht && !schon.has(a.id));
+    p.abzeichen = [...schon, ...neu.map((a) => a.id)];
+  });
+  return neu;
 }
