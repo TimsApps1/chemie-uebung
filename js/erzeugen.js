@@ -159,7 +159,10 @@ function symbolAufgaben(elemente, vorhanden) {
     liste.push({
       id: `gen-n-${sym}-${niveau}`.toLowerCase(), niveau, typ: 'auswahl', symbol: '❓', kann: 'symbole', generiert: true,
       frage: `Für welches Element steht das Symbol ${sym}?`, antworten: [e.name, ...falscheNamen], richtig: e.name,
-      denkanstoss: e.name[0] === sym[0] ? 'Denk an den Anfang des Namens.' : 'Manche Symbole kommen aus dem Lateinischen.',
+      // Zu jedem Ablenker ein gezielter Hinweis mit dessen Symbol.
+      fehler: Object.fromEntries(falscheNamen.map((n) => [n, `${n} hat das Symbol ${elemente.find((x) => x.name === n)?.symbol}.`])),
+      denkanstoss: latein ? 'Manche Symbole kommen aus dem Lateinischen.'
+        : sym.length === 2 ? 'Schau auf beide Buchstaben des Symbols.' : 'Schau genau auf das Symbol.',
       erklaerung: `${sym} ist das Symbol für ${e.name}.${latein}`
     });
   });

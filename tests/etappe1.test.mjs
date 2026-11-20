@@ -791,3 +791,21 @@ test('Klappt es?: Reihe vorher ansehbar auf ★/★★, nicht auf ★★★', as
   assert.deepEqual(anzahl, [1, 1, 0]);
   await kontext.close();
 });
+
+test('Abbrechen-Rückfrage: Fokus liegt auf „Weiter üben“', async () => {
+  const { kontext, seite } = await neueSeite();
+  await seite.evaluate(async () => {
+    const { fragen } = await import('./js/ui.js');
+    fragen('Runde abbrechen?', 'Ja, abbrechen', 'Weiter üben', { hauptIstNein: true });
+  });
+  assert.equal(await seite.evaluate(() => document.activeElement?.textContent), 'Weiter üben');
+  await kontext.close();
+});
+
+test('Erzeugte Symbol→Name-Aufgaben haben zu jedem Ablenker einen Hinweis', async () => {
+  const { d } = await datenLaden();
+  for (const a of d.aufgaben.B4.filter((x) => x.id.startsWith('gen-n-'))) {
+    for (const f of a.antworten.filter((x) => x !== a.richtig)) assert.ok(a.fehler?.[f], `${a.id}: kein Hinweis für ${f}`);
+    if (a.antworten.every((x) => x[0] === a.richtig[0])) assert.notEqual(a.denkanstoss, 'Denk an den Anfang des Namens.', a.id);
+  }
+});

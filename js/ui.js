@@ -209,6 +209,9 @@ export function fragen(text, jaText, neinText, { hauptIstNein = false } = {}) {
         return hauptIstNein ? [ja, nein] : [nein, ja];
       }
     });
+    // Fokus auf den Hauptknopf (den sicheren Weg), nicht auf den ersten Knopf.
+    const offen = document.querySelectorAll('.fenster');
+    offen[offen.length - 1]?.querySelector('.fenster-knoepfe .knopf-haupt')?.focus({ preventScroll: true });
   });
 }
 

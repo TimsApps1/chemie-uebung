@@ -430,9 +430,10 @@ function fehlerRundeEnde(name, ergebnis, kannVorher) {
       ergebnis.ausgebessert ? neuZeile('🏆', el('b', {}, `${ergebnis.ausgebessert} ${ergebnis.ausgebessert === 1 ? 'Fehler sitzt' : 'Fehler sitzen'} jetzt sicher!`), 'stark') : null,
       ergebnis.ersterVersuch ? neuZeile('✓', `${ergebnis.ersterVersuch} gleich beim ersten Versuch richtig.`) : neuZeile('💪', 'Dranbleiben lohnt sich – diese Aufgaben kommen bald wieder.'),
       ...neuKann.map((k) => neuZeile('⭐', ['Neu: ', el('b', {}, text(k.text))], 'stark')),
-      wochenzielZeile(p, vorher)),
+      ergebnis.anzahl >= 4 ? wochenzielZeile(p, vorher) : null),
     el('p', { class: 'leise' }, 'Aufgaben, die noch nicht sitzen, kommen in ein paar Tagen wieder.'),
-    ergebnis.anzahl < 4 ? el('p', { class: 'tipp' }, 'Kurze Fehler-Runden zählen nicht fürs Wochenziel. Mach jetzt noch eine Runde, dann zählt es.') : null,
+    ergebnis.anzahl < 4 && rundenInWoche(p) < p.wochenziel
+      ? el('p', { class: 'tipp' }, `Fehler ausbessern ist super! Für deinen Wochenstempel ${p.wochenziel - rundenInWoche(p) === 1 ? 'fehlt noch 1 normale Runde' : `fehlen noch ${p.wochenziel - rundenInWoche(p)} normale Runden`}.`) : null,
     weiterPlan ? el('button', { type: 'button', class: 'knopf knopf-haupt knopf-gross knopf-breit', onclick: () => planStarten(name, weiterPlan) },
       `▶ Weiter mit: ${weiterPlan.text}`) : null,
     el('button', { type: 'button', class: 'knopf knopf-gross knopf-breit', onclick: () => startseite(name) }, icon('i-haus'), 'Startseite')));
@@ -454,7 +455,7 @@ function rundenende(name, ergebnis, kannVorher) {
   aendern(name, (x) => { x.zuletzt = [...(ergebnis.gesehen || []), ...(x.zuletzt || [])].slice(0, 30); });
   const p = rundeSpeichern(name, { art: 'normal', bereich: ergebnis.bereich, niveau: ergebnis.niveau, kurs: ergebnis.kurs,
     punkte: ergebnis.punkte, ersterVersuch: ergebnis.ersterVersuch, anzahl: ergebnis.anzahl,
-    warumRichtig: ergebnis.warumRichtig, falsch: ergebnis.falsch, nummer, code }, tag);
+    warumRichtig: ergebnis.warumRichtig, falsch: ergebnis.falsch, ergebnisse: ergebnis.ergebnisse, nummer, code }, tag);
   const gespeichert = (profil(name).runden.length === vorher.runden.length + 1);
   const rekord = fruehere.length > 0 && ergebnis.punkte > alterBest;
   const medailleAlt = sterneFuer(alterBest);
@@ -502,7 +503,8 @@ function rundenende(name, ergebnis, kannVorher) {
   kopfMitName(name, { titel: b.titel, farbe: ergebnis.bereich.toLowerCase() });
   zeigen(
     el('section', { class: 'karte ergebnis' },
-      el('h2', { class: 'titel' }, 'Runde geschafft!'),
+      el('div', { class: 'anweisung-zeile' }, el('h2', { class: 'titel' }, 'Runde geschafft!'),
+        vorlesenKnopf(() => `Runde geschafft! ${ergebnis.punkte} Punkte. ${[...document.querySelectorAll('.neu-zeile')].map((z) => z.textContent).join('. ')}`)),
       el('p', { class: 'ergebnis-punkte' }, String(ergebnis.punkte)),
       el('p', { class: 'ergebnis-einheit' }, 'Punkte'),
       ergebnis.warumRichtig ? el('p', { class: 'leise' }, `davon ${ergebnis.warumRichtig * 5} Extrapunkte für gute Begründungen`) : null,

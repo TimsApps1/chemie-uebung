@@ -91,7 +91,8 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
   const farbe = bereich.toLowerCase();
   const stand = {
     punkte: 0, ersterVersuch: 0, beantwortet: 0, warumRichtig: 0,
-    nochmal: [], falsch: [], ausgebessert: 0, abgebrochen: false
+    nochmal: [], falsch: [], ausgebessert: 0, abgebrochen: false,
+    ergebnisse: [] // Rohdaten je Aufgabe: { id, kann, versuch: 1 | 2 | 0 } (0 = nicht gelöst)
   };
   let liste = [...aufgaben];
   let index = 0;
@@ -221,6 +222,7 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
       const richtig = pruefen(a, wert, daten);
       const endgueltig = richtig || versuch >= 2 || nurZweiAntworten(a);
       if (endgueltig) beantwortetSchon = true;
+      if (endgueltig && !wiederholung) stand.ergebnisse.push({ id: a.id, kann: a.kann || null, versuch: richtig ? versuch : 0 });
       darstellung.ergebnis(wert, richtig, endgueltig);
       tonSpielen(richtig);
       if (richtig) {
@@ -330,6 +332,7 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
       gesehen: [...aufgaben.map((x) => x.id)],
       ausgebessert: stand.ausgebessert,
       falsch: stand.falsch,
+      ergebnisse: stand.ergebnisse,
       kurs
     });
   }

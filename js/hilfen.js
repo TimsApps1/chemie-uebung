@@ -166,7 +166,8 @@ export function vorlesbar(text) {
     })
     .replace(/→/g, ' reagieren zu ')
     .replace(/\s\+\s/g, ' und ')
-    .replace(/[★✋↕🔢✏️❓🔥✓✗💡⏳]/gu, ' ')
+    .replace(/[★✋↕✓✗·]/gu, ' ')
+    .replace(/\p{Extended_Pictographic}|\uFE0F/gu, ' ')
     .replace(/\s+/g, ' ')
     .trim();
 }
