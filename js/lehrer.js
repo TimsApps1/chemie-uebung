@@ -19,7 +19,7 @@ function karte(titel, ...inhalt) {
 }
 
 // Datei speichern: auf dem iPad über "Teilen" (Dateien, AirDrop, Mail), sonst als Download.
-async function dateiSpeichern(name, inhalt, typ) {
+export async function dateiSpeichern(name, inhalt, typ) {
   const blob = new Blob([inhalt], { type: typ });
   try {
     const datei = new File([blob], name, { type: typ });

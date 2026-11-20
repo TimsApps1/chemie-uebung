@@ -2,8 +2,9 @@
 import { el, kurzname, datumVonTag } from './hilfen.js';
 import { kopfSetzen, iconKnopf, fenster, fragen, baustein } from './ui.js';
 import { pinPruefen, pinPruefsumme, freischaltcode, KURSE_PRO_BEREICH } from './codes.js';
-import { ergebnisseReiter, uebersichtReiter, beamerReiter, klasseReiter, sicherungReiter, sicherungsHinweis } from './lehrer.js';
-import { anzeigeName, kindLoeschen, kinder, kindUmbenennen, kinderZusammenfuehren, kindSperren, profil, geraet, geraetAendern } from './profil.js';
+import { ergebnisseReiter, uebersichtReiter, beamerReiter, klasseReiter, sicherungReiter, sicherungsHinweis, dateiSpeichern } from './lehrer.js';
+import { anzeigeName, kindLoeschen, kinder, kindUmbenennen, kinderZusammenfuehren, kindSperren, profil, geraet, geraetAendern,
+  ipadSicherungErstellen, ipadSicherungGespeichert, ipadSicherungEinlesen } from './profil.js';
 
 // Die Lehrer-Ansicht sperrt sich wieder: beim Verlassen (jeder Weg), wenn das iPad in den
 // Hintergrund geht und nach 5 Minuten ohne Tippen.
@@ -162,6 +163,36 @@ function adminSeite(umgebungRoh) {
       : el('p', { class: 'leise' }, 'Auf diesem iPad gibt es noch keine Namen.'),
     alleLoeschen);
 
+  // ----- Sicherung der Kinder auf diesem iPad -----
+  const ipadAusgabe = el('div', { 'aria-live': 'polite' });
+  const ipadDatei = el('input', { type: 'file', accept: '.json,application/json', class: 'datei-feld', 'aria-label': 'iPad-Sicherung wählen' });
+  ipadDatei.addEventListener('change', async () => {
+    const datei = ipadDatei.files?.[0];
+    if (!datei) return;
+    const r = ipadSicherungEinlesen(await datei.text());
+    ipadAusgabe.replaceChildren(el('p', { class: r.ok ? 'vergleich' : 'meldung' },
+      r.ok ? `✓ Sicherung geladen: ${r.alle} ${r.alle === 1 ? 'Name' : 'Namen'}, davon ${r.neueKinder} neu, ${r.neueRunden} Runden dazu.` : `✗ ${r.grund}`));
+    if (r.ok) setTimeout(neu, 1800);
+  });
+  const tageSeit = g.letzteSicherung ? Math.floor((Date.now() - g.letzteSicherung) / 86400000) : null;
+  const ipadSicherung = abschnitt('Sicherung der Kinder auf diesem iPad',
+    el('p', { class: 'leise' }, 'Fortschritt, Meine Fehler, Abzeichen, Stempel und Freischaltungen der Kinder liegen nur auf diesem iPad. ' +
+      'Wird das iPad zurückgesetzt oder getauscht, holst du mit dieser Datei alles zurück – auch auf ein anderes iPad.'),
+    el('p', { class: tageSeit === null || tageSeit > 30 ? 'meldung' : '' },
+      tageSeit === null ? '⚠ Dieses iPad wurde noch nie gesichert.' : `Letzte Sicherung: ${new Date(g.letzteSicherung).toLocaleDateString('de-DE')}` + (tageSeit > 30 ? ' – bitte bald wieder sichern.' : '')),
+    el('div', { class: 'zeile' },
+      el('button', { type: 'button', class: 'knopf knopf-haupt', disabled: !liste.length, onclick: async () => {
+        const d = new Date();
+        const tag = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        const ok = await dateiSpeichern(`chemie-ipad-${g.kennung}-${tag}.json`, ipadSicherungErstellen(), 'application/json');
+        if (ok) ipadSicherungGespeichert();
+        ipadAusgabe.replaceChildren(el('p', { class: ok ? 'vergleich' : 'meldung' }, ok ? '✓ Sicherung erstellt.' : 'Abgebrochen – es wurde keine Sicherung gespeichert.'));
+        if (ok) setTimeout(neu, 1500);
+      } }, '💾 iPad sichern'),
+      el('label', { class: 'knopf datei-knopf' }, '📂 iPad-Sicherung laden', ipadDatei)),
+    el('p', { class: 'tipp' }, `Tipp: Im Dateinamen steht die iPad-Kennung (${g.kennung}). So weißt du später, welche Datei zu welchem iPad gehört.`),
+    ipadAusgabe);
+
   // ----- Einstellungen -----
   const zeitlimit = el('label', { class: 'schalter' },
     el('input', { type: 'checkbox', checked: !g.zeitlimitAus, onchange: (e) => { geraetAendern((x) => { x.zeitlimitAus = !e.target.checked; }); } }),
@@ -203,7 +234,7 @@ function adminSeite(umgebungRoh) {
     klasse: () => klasseReiter(lehrerUmgebung),
     sicherung: () => sicherungReiter(lehrerUmgebung),
     codes: () => [codes],
-    ipad: () => [kinderTeil],
+    ipad: () => [ipadSicherung, kinderTeil],
     einstellungen: () => [einstellungen]
   }[reiter]();
   zeigen(leiste, sicherungsHinweis(() => { reiter = 'sicherung'; neu(); }), ...[].concat(inhalt));

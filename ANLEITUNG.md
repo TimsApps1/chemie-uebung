@@ -143,6 +143,17 @@ Mit **„Sicherung laden“** kommt alles zurück (auch auf einem neuen iPad). V
 
 ---
 
+### Sicherung der Schüler-iPads
+Fortschritt, „Meine Fehler“, Abzeichen, Stempel und Freischaltungen der Kinder liegen auf dem jeweiligen
+Schüler-iPad. Damit nichts verloren geht, wenn ein iPad zurückgesetzt oder getauscht wird:
+1. Auf dem **Schüler-iPad** Lehrkraft → **📱 Dieses iPad** → **„💾 iPad sichern“**.
+2. Im Teilen-Menü „In Dateien sichern“ (iCloud) oder per Mail an dich. Im Dateinamen steht die iPad-Kennung.
+3. Zurückholen: auf dem (neuen) iPad Lehrkraft → 📱 → **„📂 iPad-Sicherung laden“**. Vorhandene Daten bleiben,
+   doppelte Runden werden erkannt.
+
+Tipp: etwa einmal im Monat und vor den Ferien sichern. Steht ein iPad länger als 30 Tage ohne Sicherung,
+zeigt die App dort einen Hinweis.
+
 ## 8. Aufgaben ändern oder neue eintragen (auf github.com)
 
 Die Aufgaben stehen in **daten/aufgaben/b1.json**, **b2.json**, **b3.json** und **b4.json**.

@@ -295,3 +295,70 @@ export function neueAbzeichen(name) {
   });
   return neu;
 }
+
+// ---------- Sicherung aller Kinder auf diesem iPad ----------
+// Für den Fall, dass ein iPad zurückgesetzt, getauscht oder Safari-Daten gelöscht werden.
+// Laden führt zusammen: Nichts Vorhandenes geht verloren, doppelte Runden werden erkannt.
+
+export function ipadSicherungErstellen() {
+  const liste = kinder();
+  return JSON.stringify({
+    art: 'chemie-uebung-ipad', version: 1, erstellt: new Date().toISOString(),
+    geraet: geraet(), kinder: liste,
+    profile: Object.fromEntries(liste.map((k) => [k.name, profil(k.name)]))
+  }, null, 1);
+}
+
+export function ipadSicherungGespeichert() {
+  geraetAendern((g) => { g.letzteSicherung = Date.now(); });
+}
+
+function profileVereinen(b, a) {
+  // b = vorhanden, a = aus der Sicherung
+  for (const [bereich, kurs] of Object.entries(a.freigeschaltet || {})) {
+    if (kurs === 'E' || !b.freigeschaltet[bereich]) b.freigeschaltet[bereich] = kurs;
+  }
+  const schluessel = (r) => `${r.zeit}|${r.code || ''}|${r.punkte}`;
+  const da = new Set(b.runden.map(schluessel));
+  const neu = (a.runden || []).filter((r) => !da.has(schluessel(r)));
+  b.runden = [...b.runden, ...neu].sort((x, y) => (x.zeit || 0) - (y.zeit || 0));
+  b.fehler = { ...(a.fehler || {}), ...b.fehler };
+  for (const [id, n] of Object.entries(a.kann || {})) b.kann[id] = Math.max(b.kann[id] || 0, n);
+  b.ausgebessert = Math.max(b.ausgebessert || 0, a.ausgebessert || 0);
+  b.stempel = [...new Set([...(b.stempel || []), ...(a.stempel || [])])];
+  b.abzeichen = [...new Set([...(b.abzeichen || []), ...(a.abzeichen || [])])];
+  b.geschichteGesehen = { ...(a.geschichteGesehen || {}), ...b.geschichteGesehen };
+  b.zuletzt = b.zuletzt || a.zuletzt;
+  b.letzte = b.letzte || a.letzte;
+  return neu.length;
+}
+
+export function ipadSicherungEinlesen(text) {
+  let inhalt;
+  try { inhalt = JSON.parse(text); } catch { return { ok: false, grund: 'Die Datei ist keine iPad-Sicherung dieser App.' }; }
+  if (inhalt?.art !== 'chemie-uebung-ipad' || !Array.isArray(inhalt.kinder)) {
+    return { ok: false, grund: inhalt?.art === 'chemie-uebung-sicherung'
+      ? 'Das ist die Sicherung der Lehrkraft-Ergebnisse. Lade sie unter „💾 Sicherung“.'
+      : 'Die Datei ist keine iPad-Sicherung dieser App.' };
+  }
+  const warLeer = !kinder().length;
+  let neueKinder = 0; let neueRunden = 0;
+  for (const k of inhalt.kinder) {
+    if (!k?.name) continue;
+    const alt = inhalt.profile?.[k.name] || {};
+    if (!kindEintrag(k.name)) {
+      kinderSpeichern([...kinder(), { name: k.name, anzeige: k.anzeige || k.name, element: k.element || 'H', gesperrt: Boolean(k.gesperrt) }]);
+      neueKinder++;
+    }
+    const p = profil(k.name);
+    neueRunden += profileVereinen(p, { ...leeresProfil(), ...alt });
+    profilSpeichern(k.name, p);
+  }
+  // Auf einem leeren (z. B. zurückgesetzten) iPad die alte iPad-Kennung und Rundenzählung übernehmen.
+  if (warLeer && inhalt.geraet?.kennung) {
+    geraetAendern((g) => { g.kennung = inhalt.geraet.kennung; g.runden = Math.max(g.runden || 0, inhalt.geraet.runden || 0); });
+  } else if (inhalt.geraet?.kennung === geraet().kennung) {
+    geraetAendern((g) => { g.runden = Math.max(g.runden || 0, inhalt.geraet.runden || 0); });
+  }
+  return { ok: true, neueKinder, neueRunden, alle: inhalt.kinder.length };
+}

@@ -269,3 +269,42 @@ test('Von der Startseite zurück zu „Wer übt?“: Knopf oben links und „And
   assert.deepEqual(fehler, []);
   await kontext.close();
 });
+
+test('iPad-Sicherung: Kinder sichern, iPad leeren, zurückholen – ohne doppelte Runden', async () => {
+  const { kontext, seite, fehler } = await neueSeite();
+  const r = await seite.evaluate(async () => {
+    const P = await import('./js/profil.js');
+    P.kindAnlegen('ADAAHO', 'C', 'Ada Ahorn');
+    P.freischalten('ADAAHO', 'B3', 'E');
+    P.rundeSpeichern('ADAAHO', { art: 'normal', bereich: 'B3', niveau: 2, punkte: 70, ersterVersuch: 6, anzahl: 8 });
+    P.fehlerMerken('ADAAHO', { id: 'b3-2-01' }, 'B3');
+    const kennung = P.geraet().kennung;
+    const datei = P.ipadSicherungErstellen();
+    P.kindLoeschen('ADAAHO');
+    localStorage.removeItem('chemie:geraet');
+    const ergebnis = P.ipadSicherungEinlesen(datei);
+    const nochmal = P.ipadSicherungEinlesen(datei);
+    const p = P.profil('ADAAHO');
+    const falsch = P.ipadSicherungEinlesen(JSON.stringify({ art: 'chemie-uebung-sicherung', daten: {} }));
+    return { ergebnis, nochmal, runden: p.runden.length, fehler: Object.keys(p.fehler), frei: p.freigeschaltet.B3,
+      name: P.kindEintrag('ADAAHO')?.anzeige, kennungGleich: P.geraet().kennung === kennung, falsch };
+  });
+  assert.equal(r.ergebnis.ok, true);
+  assert.equal(r.ergebnis.neueKinder, 1);
+  assert.equal(r.nochmal.neueRunden, 0, 'zweites Laden doppelt nichts');
+  assert.equal(r.runden, 1);
+  assert.deepEqual(r.fehler, ['b3-2-01']);
+  assert.equal(r.frei, 'E');
+  assert.equal(r.name, 'Ada Ahorn');
+  assert.equal(r.kennungGleich, true, 'iPad-Kennung kommt auf ein leeres iPad zurück');
+  assert.match(r.falsch.grund, /Lehrkraft-Ergebnisse/);
+  // In der Lehrer-Ansicht sichtbar
+  await seite.getByRole('button', { name: 'Lehrkraft' }).click();
+  for (const z of '4711') await seite.getByRole('button', { name: z, exact: true }).click();
+  await seite.getByRole('button', { name: 'OK' }).click();
+  await seite.getByRole('button', { name: '📱 Dieses iPad' }).click();
+  await seite.getByRole('button', { name: '💾 iPad sichern' }).waitFor();
+  assert.match(await seite.locator('body').innerText(), /noch nie gesichert/);
+  assert.deepEqual(fehler, []);
+  await kontext.close();
+});
