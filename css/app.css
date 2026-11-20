@@ -969,3 +969,20 @@ button.bereich { font: inherit; text-align: left; cursor: pointer; width: 100%; 
 .wochen-saeulen { height: 170px; }
 .wochen-saeulen li.leer .saeule { background: transparent; }
 .verlauf-box { display: grid; gap: var(--a2); }
+
+/* Etappe 3, Nachbesserung: freie Noppen pro Stein, Noppenzahl in der Leiste, So geht’s, Querformat */
+.bau-zaehler { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.bau-zaehler li { padding: 4px 10px; border-radius: 999px; border: 2px solid var(--rand-kraeftig); background: #fff; font-size: 0.95rem; }
+.bau-zaehler li.offen { border-color: #8a6a00; background: #fff6d6; }
+.bau-zaehler li.voll { border-color: var(--gut); background: var(--gut-flaeche); color: var(--gut-dunkel); }
+.bau-stein-knopf small.bau-noppenzahl { font-weight: 600; font-size: 0.8rem; color: var(--text-leise); }
+.gut-zu-wissen { display: flex; align-items: flex-start; gap: var(--a2); margin-top: var(--a2); padding: 8px 10px; border-radius: var(--r-klein); background: var(--haupt-zart); }
+.gut-zu-wissen p { margin: 0; flex: 1; }
+.so-gehts { display: grid; gap: var(--a2); }
+.so-gehts .so-gehts-text { flex: 1; margin: 0; }
+@media (orientation: landscape) and (min-width: 900px) {
+  .baustelle:not(.nur-ansehen) { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); align-items: start; column-gap: var(--a3); }
+  .baustelle:not(.nur-ansehen) > .bau-buehne { grid-row: 1 / span 6; }
+  .baustelle:not(.nur-ansehen) > :not(.bau-buehne) { grid-column: 2; }
+}
+.baustelle.nur-ansehen .bau-status:empty, .baustelle.gesperrt .bau-status:empty { display: none; }

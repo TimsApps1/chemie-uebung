@@ -1,5 +1,5 @@
 {
-  "hinweis": "Elemente mit Wertigkeit (Zahl der Noppen). Bei zwei Möglichkeiten gibt es zwei Steine, z. B. Fe (II) und Fe (III).",
+  "hinweis": "Elemente mit Wertigkeit (Zahl der Noppen). Bei zwei Möglichkeiten gibt es zwei Steine, z. B. Fe(II) und Fe(III).",
   "elemente": [
     { "symbol": "H",  "name": "Wasserstoff",  "metall": false, "wertigkeit": [1] },
     { "symbol": "O",  "name": "Sauerstoff",   "metall": false, "wertigkeit": [2] },

@@ -134,7 +134,7 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
 
   // Ruhiger Zeitbalken (nur ★★★). Er hält an, solange ein Fenster offen ist oder vorgelesen wird,
   // und kostet keine Punkte – er zeigt nur, wie lange man ungefähr braucht.
-  function zeitbalken() {
+  function zeitbalken(sekunden = ZEIT_PRO_AUFGABE) {
     const innen = el('span');
     const balken = el('div', { class: 'zeitbalken', role: 'img', 'aria-label': 'Zeitbalken' }, innen);
     let vergangen = 0;
@@ -145,7 +145,7 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
       const pause = document.querySelector('.fenster-hintergrund') || window.speechSynthesis?.speaking || document.hidden;
       if (!pause) vergangen += jetzt - letzte;
       letzte = jetzt;
-      const rest = Math.max(0, 1 - vergangen / (ZEIT_PRO_AUFGABE * 1000));
+      const rest = Math.max(0, 1 - vergangen / (sekunden * 1000));
       innen.style.width = `${rest * 100}%`;
       if (rest === 0) {
         clearInterval(zeitgeber);
@@ -211,7 +211,7 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
       el('div', { class: 'anweisung-zeile' },
         el('p', { class: 'anweisung' }, el('span', { class: 'anweisung-zeichen', 'aria-hidden': 'true' }, a.symbol || '❓'), el('span', {}, a.hilfe_vorher === false ? formelKnoten(a.frage) : text(a.frage))),
         vorlesenKnopf(() => vorleseText(a, typeof darstellung.reihenfolge === 'function' ? darstellung.reihenfolge() : darstellung.reihenfolge))),
-      zeitlimit && !wiederholung ? zeitbalken() : null,
+      zeitlimit && !wiederholung ? zeitbalken(a.typ === 'bauen' ? 90 : ZEIT_PRO_AUFGABE) : null,
       darstellung.wurzel,
       rueck,
       erklaeren);
@@ -244,13 +244,14 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
         }
         // Ich-kann zählt nur echte Erstversuche (nicht die Wiederholung kurz nach der gezeigten Lösung).
         if (versuch === 1 && !wiederholung && art === 'normal') kannZaehlen(name, a.kann);
-        // Einmal pro Bereich: Hinweis zum Zahlenverhältnis bei Metalloxiden.
-        if (a.typ === 'bauen' && /^(Na|Mg|Al|Zn|Pb|Cu|Fe|Ag)\d*O\d*$/.test(a.formel) && !profil(name).hinweise?.verhaeltnis) {
+        // Einmal pro Kind: Hinweis zum Zahlenverhältnis bei Stoffen aus Metall und Nichtmetall (Oxide, Chloride, Sulfide).
+        let gutZuWissen = null;
+        if (a.typ === 'bauen' && /^(Na|Mg|Al|Zn|Pb|Cu|Fe|Ag)/.test(a.formel) && !profil(name).hinweise?.verhaeltnis) {
           aendern(name, (p) => { p.hinweise = { ...(p.hinweise || {}), verhaeltnis: true }; });
-          setTimeout(() => fenster(el('p', { class: 'fenster-text' }, 'Die Formel zeigt das ', el('b', {}, 'Zahlenverhältnis'),
-            ' der Atome. In Wirklichkeit hängen sehr viele Atome in einem großen Verband zusammen.'), { titel: '💡 Gut zu wissen' }), 600);
+          const satz = 'Gut zu wissen: Die Formel zeigt nur das Zahlenverhältnis. In Wirklichkeit hängen sehr viele Teilchen zusammen.';
+          gutZuWissen = el('div', { class: 'gut-zu-wissen' }, el('p', {}, '💡 ', text(satz)), vorlesenKnopf(satz));
         }
-        rueck.replaceChildren(rueckmeldung(true, lobText, null, plus));
+        rueck.replaceChildren(rueckmeldung(true, lobText, null, plus, gutZuWissen));
         weiterKnopf(a, true);
         return;
       }

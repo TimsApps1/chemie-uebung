@@ -19,7 +19,7 @@ export function steinArt(eintrag, elemente) {
   if (!el.wertigkeit.includes(w)) return null;
   return {
     art: eintrag, symbol: el.symbol, name: el.name, metall: el.metall, wertigkeit: w,
-    beschriftung: el.wertigkeit.length > 1 ? `${el.symbol} (${ROEMISCH[w]})` : el.symbol
+    beschriftung: el.wertigkeit.length > 1 ? `${el.symbol}(${ROEMISCH[w]})` : el.symbol
   };
 }
 
@@ -61,7 +61,7 @@ export function verbindungVerboten(m, a, b) {
   if (sa.symbol === sb.symbol) return `Zwei ${sa.symbol}-Steine verbinden wir in diesem Modell nicht miteinander.`;
   if (frei(m, a) < 1 || frei(m, b) < 1) return 'Dafür ist keine Noppe mehr frei.';
   const vorhanden = bindung(m, a, b);
-  if (vorhanden && vorhanden.anzahl >= MAX_BINDUNG) return 'Mehr als drei Verbindungen zwischen zwei Steinen gibt es nicht.';
+  if (vorhanden && vorhanden.anzahl >= MAX_BINDUNG) return 'Mehr als drei Bindungen zwischen zwei Steinen gibt es nicht.';
   // Schwefel nur mit Metallen oder Wasserstoff, Stickstoff nur mit Wasserstoff (NH3).
   for (const [x, y] of [[sa, sb], [sb, sa]]) {
     if (x.symbol === 'S' && !(y.metall || y.symbol === 'H')) return 'Schwefel steckt hier nur mit Metallen oder Wasserstoff zusammen.';
@@ -102,9 +102,11 @@ export function verbinden(m, a, b) {
   return { ok: true };
 }
 
-// Stein lösen (mit allen seinen Verbindungen).
+// Stein lösen (mit allen seinen Bindungen). Der vorgegebene Startstein bleibt liegen.
 export function loesen(m, id) {
-  if (!stein(m, id)) return { ok: false, grund: 'Tippe zuerst auf den Stein, den du lösen willst.' };
+  const s = stein(m, id);
+  if (!s) return { ok: false, grund: 'Tippe zuerst auf den Stein, den du lösen willst.' };
+  if (s.fest) return { ok: false, grund: `Der Startstein ${s.beschriftung} bleibt liegen.` };
   m.steine = m.steine.filter((s) => s.id !== id);
   m.bindungen = m.bindungen.filter((b) => b.a !== id && b.b !== id);
   return { ok: true };
@@ -174,25 +176,52 @@ export function bauErgebnis(m, zielFormel) {
 }
 
 // Hinweis nach einem Fehlversuch (ohne die Lösung zu verraten).
-export function bauHinweis(m, zielFormel, elemente) {
+// steinarten = alle Steine der Aufgabe (Start + Leiste), name = Aufgabentext (für die römische Zahl),
+// denkanstoss = Hinweis aus der Aufgabe; er ergänzt den allgemeinen Zustand „Noch N Noppen frei“.
+export function bauHinweis(m, zielFormel, elemente, { steinarten = [], name = '', denkanstoss = '' } = {}) {
   const e = bauErgebnis(m, zielFormel);
+  const beschr = (sym) => m.steine.find((x) => x.symbol === sym)?.beschriftung || sym;
   const noppen = (sym) => {
     const s = m.steine.find((x) => x.symbol === sym);
     return s ? s.wertigkeit : elemente.find((x) => x.symbol === sym)?.wertigkeit?.[0];
   };
   if (!m.steine.length) return 'Tippe unten auf einen Stein. Er kommt in die Mitte.';
+  // Falscher Stein bei zwei Wertigkeiten (z. B. Cu(II) statt Cu(I))?
+  if (steinarten.length) {
+    const loesung = loesungsModell(zielFormel, steinarten, elemente);
+    const falsch = loesung && m.steine.find((s) => loesung.steine.some((x) => x.symbol === s.symbol && x.wertigkeit !== s.wertigkeit));
+    if (falsch) {
+      return /\((I{1,3}|IV)\)/.test(name)
+        ? `Schau auf die römische Zahl im Namen. Sie sagt, wie viele Noppen der ${falsch.symbol}-Stein hat. Dein Stein ist ${falsch.beschriftung}.`
+        : `Mit dem Stein ${falsch.beschriftung} geht es nicht auf. Probier den anderen ${falsch.symbol}-Stein.`;
+    }
+  }
   if (e.zuViel.length && e.offen > 0) {
     const zuvielSym = e.zuViel[0];
     const andere = Object.keys(formelZaehlung(zielFormel)).find((s) => s !== zuvielSym);
     if (andere) {
-      return `Zähl die Noppen: ${andere} hat ${noppen(andere)}, ${zuvielSym} hat ${noppen(zuvielSym)}. ` +
-        (noppen(andere) === noppen(zuvielSym) ? `Ein ${zuvielSym} reicht.` : `Wie viele ${zuvielSym} brauchst du wirklich?`);
+      return `Zähl die Noppen: ${beschr(andere)} hat ${noppen(andere)}, ${beschr(zuvielSym)} hat ${noppen(zuvielSym)}. ` +
+        (noppen(andere) === noppen(zuvielSym) ? `Ein ${beschr(zuvielSym)} reicht. Zwei Noppen können zum selben Partner gehen.` : `Wie viele ${beschr(zuvielSym)} brauchst du wirklich?`);
     }
   }
-  if (e.offen > 0) return `Es ${e.offen === 1 ? 'ist noch 1 Noppe' : `sind noch ${e.offen} Noppen`} frei. Jede Noppe braucht einen Partner.`;
+  if (e.offen > 0) {
+    return `Noch ${e.offen === 1 ? '1 Noppe' : `${e.offen} Noppen`} frei. ${denkanstoss || 'Jede Noppe braucht einen Partner.'}`;
+  }
   if (!e.zusammen) return 'Alle Steine müssen zu einem einzigen Modell zusammenhängen.';
   if (!e.passt) return `Alle Noppen sind belegt, aber das ist ${e.formel}. Schau, welche Steine du brauchst.`;
   return null;
+}
+
+// Was soll das Kind als Nächstes tun? (Statuszeile der Baustelle)
+export function naechsterSchritt(m) {
+  if (!m.steine.length) return 'Tippe unten auf einen Stein. Er kommt in die Mitte.';
+  const offen = m.steine.filter((s) => frei(m, s.id) > 0);
+  if (!offen.length) return 'Alle Noppen sind belegt.';
+  for (const a of offen) {
+    const b = offen.find((x) => x.id !== a.id && !verbindungVerboten(m, a.id, x.id));
+    if (b) return `${a.beschriftung} und ${b.beschriftung} haben noch freie Noppen. Verbinden: Tippe ${a.beschriftung} an, dann ${b.beschriftung}. Oder nimm unten einen neuen Stein.`;
+  }
+  return 'Nimm unten einen Stein und tippe dann auf eine gelbe Noppe.';
 }
 
 // ---------- Automatisch bauen (für "Welche Formel ist das?" und Lösungen) ----------

@@ -15,6 +15,7 @@ const APP_DATEIEN = [
   'js/admin.js',
   'js/aufgaben.js',
   'js/baustelle.js',
+  'js/so-gehts.js',
   'js/bausteine-logik.js',
   'js/codes.js',
   'js/daten.js',

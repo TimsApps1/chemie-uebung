@@ -5,7 +5,7 @@ import {
   lehrerDaten, einlesen, klasseAusText, klasseSpeichern, aliasSetzen, nichtZugeordnet, vorschlaege, kindName,
   rundenNachKind, uebersicht, verlauf, gespielteNiveaus, gruppeVerwerfen, zuordnungen, bestenliste, aktuelleWoche, wochenText, csvRunden, csvUebersicht,
   sicherungErstellen, sicherungGespeichert, sicherungEinlesen, sicherungFaellig, allesLoeschen, rundeLoeschen, ERINNERUNG_TAGE,
-  halbjahresBeginn
+  halbjahresBeginn, lehrerBereiche, BEREICH_KURZ, NUR_E
 } from './lehrer-daten.js';
 import { qrScannen } from './qr.js';
 import { sperreAussetzen } from './admin.js';
@@ -205,14 +205,14 @@ export function uebersichtReiter({ neu }) {
   const meldung = el('span', { class: 'kopier-meldung', 'aria-live': 'polite' });
   return [
     karte('Übersicht pro Kind',
-      el('p', { class: 'leise' }, 'Pro Niveau: Bestwert (Ø Durchschnitt, % der Aufgaben beim 1. Versuch richtig) · Zahl der Runden. Tippe auf einen Namen für alle Runden und den Verlauf.'),
+      el('p', { class: 'leise' }, 'Pro Niveau: Bestwert (Ø Durchschnitt, % der Aufgaben beim 1. Versuch richtig) · Zahl der Runden. Tippe auf einen Namen für alle Runden und den Verlauf. Bei B1 (Bauen) darf man ausprobieren: „1. Versuch“ heißt dort „ohne Fehlversuch beim Prüfen“.'),
       zeitWahl,
       liste.length ? el('div', { class: 'tabelle-rollen' }, el('table', { class: 'tabelle uebersicht-tabelle' },
-        el('thead', {}, el('tr', {}, el('th', {}, 'Name'), el('th', {}, 'Runden'), el('th', {}, 'B4 Symbole'), el('th', {}, 'B3 Redox'), el('th', {}, 'Zuletzt'))),
+        el('thead', {}, el('tr', {}, el('th', {}, 'Name'), el('th', {}, 'Runden'), lehrerBereiche(d).map((b) => el('th', {}, BEREICH_KURZ[b])), el('th', {}, 'Zuletzt'))),
         el('tbody', {}, liste.map((k) => el('tr', { class: k.runden ? '' : 'leise' },
           el('th', { scope: 'row' }, el('button', { type: 'button', class: 'name-knopf', onclick: () => kindDetail(k.id, neu) }, k.name)),
           el('td', {}, `${k.runden}`, el('div', { class: 'leise klein' }, `diese Woche ${k.dieseWoche}`)),
-          zelle(k, 'B4'), zelle(k, 'B3'),
+          lehrerBereiche(d).map((b) => zelle(k, b)),
           el('td', {}, k.letzterTag !== null ? datumVonTag(k.letzterTag) : '–'))))))
         : el('p', { class: 'leise' }, 'Noch keine Ergebnisse. Lies im Reiter „📥 Ergebnisse“ Codes ein.')),
     karte('Als Tabelle speichern',
@@ -256,13 +256,15 @@ function beamerAnsicht() {
 export function beamerReiter({ neu }) {
   const woche = beamerWahl.woche ?? aktuelleWoche();
   const wahl = (feld, wert, text) => el('button', { type: 'button', class: 'knopf' + (beamerWahl[feld] === wert ? ' knopf-haupt' : ''),
-    onclick: () => { beamerWahl[feld] = wert; neu(); } }, text);
+    onclick: () => { beamerWahl[feld] = wert; if (feld === 'bereich' && NUR_E.includes(wert)) beamerWahl.kurs = ''; neu(); } }, text);
   const vorschau = bestenliste(lehrerDaten(), { ...beamerWahl, woche });
   return [karte('Rangliste für den Beamer',
     el('p', { class: 'leise' }, 'Gezeigt werden nur die besten 5 – getrennt nach Bereich und Niveau. Wochenwert = Summe der 3 besten Runden der Woche. Niemand wird vorgeführt.'),
-    el('h4', {}, 'Bereich'), el('div', { class: 'zeile' }, wahl('bereich', 'B4', 'B4 Symbole'), wahl('bereich', 'B3', 'B3 Redox')),
+    el('h4', {}, 'Bereich'), el('div', { class: 'zeile' }, lehrerBereiche().map((b) => wahl('bereich', b, BEREICH_KURZ[b]))),
     el('h4', {}, 'Niveau'), el('div', { class: 'zeile' }, [1, 2, 3].map((n) => wahl('niveau', n, sterneText(n)))),
-    el('h4', {}, 'Kurs'), el('div', { class: 'zeile' }, wahl('kurs', '', 'Alle'), wahl('kurs', 'G', 'G-Kurs'), wahl('kurs', 'E', 'E-Kurs')),
+    // Bereich 1 und 2 gibt es nur im E-Kurs: Kurswahl wäre dort sinnlos.
+    NUR_E.includes(beamerWahl.bereich) ? el('p', { class: 'leise' }, 'Diesen Bereich übt nur der E-Kurs.')
+      : [el('h4', {}, 'Kurs'), el('div', { class: 'zeile' }, wahl('kurs', '', 'Alle'), wahl('kurs', 'G', 'G-Kurs'), wahl('kurs', 'E', 'E-Kurs'))],
     el('h4', {}, 'Woche'),
     el('div', { class: 'zeile' },
       el('button', { type: 'button', class: 'knopf', 'aria-label': 'Woche davor', onclick: () => { beamerWahl.woche = woche - 1; neu(); } }, '◀'),

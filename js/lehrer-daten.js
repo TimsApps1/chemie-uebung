@@ -234,6 +234,15 @@ export function bestenliste(d, { bereich, niveau, woche, kurs = '' }, anzahl = 5
   }).filter((w) => w.platz <= anzahl);
 }
 
+// Bereiche in der Lehrer-Ansicht (eine Liste für Tabelle, Export und Beamer).
+// Fertige Bereiche immer, spätere nur, sobald es Runden dafür gibt.
+export const BEREICH_KURZ = { B4: 'B4 Symbole', B3: 'B3 Redox', B1: 'B1 Formeln bauen', B2: 'B2 Ausgleichen' };
+const FERTIGE_BEREICHE = ['B4', 'B3', 'B1'];
+export const NUR_E = ['B1', 'B2'];
+export function lehrerBereiche(d = lehrerDaten()) {
+  return Object.keys(BEREICH_KURZ).filter((b) => FERTIGE_BEREICHE.includes(b) || d.runden.some((r) => r.bereich === b));
+}
+
 // Übersicht pro Kind und Bereich (für die Lehrkraft, nicht für den Beamer).
 // abTag: nur Runden ab diesem Tag (z. B. Beginn des Halbjahres).
 export function uebersicht(d = lehrerDaten(), { abTag = null } = {}) {
@@ -242,7 +251,7 @@ export function uebersicht(d = lehrerDaten(), { abTag = null } = {}) {
   return [...nachKind.entries()].map(([id, alleRunden]) => {
     const runden = abTag === null ? alleRunden : alleRunden.filter((r) => r.tag >= abTag);
     const proBereich = {};
-    for (const b of ['B4', 'B3', 'B1', 'B2']) {
+    for (const b of Object.keys(BEREICH_KURZ)) {
       const rb = runden.filter((r) => r.bereich === b);
       if (!rb.length) continue;
       const proNiveau = {};
@@ -330,10 +339,11 @@ export function csvRunden(d = lehrerDaten()) {
 
 export function csvUebersicht(d = lehrerDaten(), optionen = {}) {
   const kopf = ['Name', 'Runden gesamt', 'Runden diese Woche'];
-  for (const b of ['B4', 'B3']) for (const n of [1, 2, 3]) kopf.push(`${b} Niveau ${n}: Runden`, `${b} Niveau ${n}: Bestwert`, `${b} Niveau ${n}: Schnitt`, `${b} Niveau ${n}: 1. Versuch %`);
+  const bereiche = lehrerBereiche(d);
+  for (const b of bereiche) for (const n of [1, 2, 3]) kopf.push(`${b} Niveau ${n}: Runden`, `${b} Niveau ${n}: Bestwert`, `${b} Niveau ${n}: Schnitt`, `${b} Niveau ${n}: 1. Versuch %`);
   const zeilen = uebersicht(d, optionen).map((k) => {
     const z = [k.name, k.runden, k.dieseWoche];
-    for (const b of ['B4', 'B3']) for (const n of [1, 2, 3]) {
+    for (const b of bereiche) for (const n of [1, 2, 3]) {
       const x = k.proBereich[b]?.proNiveau[n];
       z.push(x?.runden ?? 0, x?.best ?? '', x?.schnitt ?? '', x?.ersterQuote ?? '');
     }

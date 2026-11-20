@@ -103,6 +103,9 @@ Es werden immer die Runden der letzten 6 Wochen abgegeben, du kannst also ruhig 
   Teilen-Menü → „In Dateien sichern“ oder per Mail. Die Datei öffnet sich in Numbers oder Excel.
 - **🏆 Beamer:** Bereich, Niveau und Woche wählen, dann „🖥 Beamer-Ansicht öffnen“.
   Wochenwert = Summe der 3 besten Runden der Woche. Gezeigt werden nur die besten 5.
+- **Bereich 1 (Formeln bauen, nur E-Kurs)** erscheint in Übersicht, Tabelle und Beamer wie die anderen Bereiche.
+  Beim Bauen dürfen die Kinder ausprobieren, abnehmen und rückgängig machen. „Beim 1. Versuch richtig“ heißt dort:
+  ohne Fehlversuch beim Prüfen.
 
 ---
 
@@ -117,7 +120,7 @@ Mit **„Sicherung laden“** kommt alles zurück (auch auf einem neuen iPad). V
 
 ## 8. Aufgaben ändern oder neue eintragen (auf github.com)
 
-Die Aufgaben stehen in **daten/aufgaben/b3.json** und **daten/aufgaben/b4.json**.
+Die Aufgaben stehen in **daten/aufgaben/b1.json**, **b3.json** und **b4.json**.
 Das Format ist in **daten/FORMAT.md** genau beschrieben.
 
 1. Auf github.com die Datei öffnen und auf den **Stift** (Bearbeiten) tippen.

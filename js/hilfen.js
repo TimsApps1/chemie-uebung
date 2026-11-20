@@ -154,10 +154,21 @@ function istSymbolFolge(wort) {
 }
 
 // Für die Sprachausgabe: Formeln und Symbole werden buchstabiert, "2 H2O" -> "2 mal H 2 O".
+const ROEMISCH_WORT = { I: 'eins', II: 'zwei', III: 'drei', IV: 'vier' };
+
 export function vorlesbar(text) {
   return String(text)
+    // Römische Zahl der Wertigkeit: "Eisen(III)-oxid" -> "Eisen-drei-oxid", "Fe(II)" -> "Fe-zwei"
+    .replace(/\s?\((I{1,3}|IV)\)/g, (m, r) => `-${ROEMISCH_WORT[r]}`)
+    .replace(/(\d)\s*·\s*(\d)/g, '$1 mal $2')
     // Die Zahl vor einer Formel heißt in der App "große Zahl" (ohne "mal", das wäre schon die Deutung).
-    .replace(/\b(\d+) (?=([A-Z][A-Za-z0-9]*)(?![-\w]))/g, (m, zahl, wort) => (istSymbolFolge(wort) && /[a-z\d]|^[A-Z]{1,3}$/.test(wort) ? `große ${zahl}, ` : m))
+    // Bei einem einzelnen Symbol ohne Index nur in Gleichungen ("2 Fe + …"), nicht im Fließtext ("2 Al haben …").
+    .replace(/(^|[^\w])(\d+) (?=([A-Z][A-Za-z0-9]*)(?![-\w])(\s*[+→])?)/g, (m, vor, zahl, wort, plus) => {
+      if (!istSymbolFolge(wort)) return m;
+      const einzeln = /^[A-Z][a-z]?$/.test(wort);
+      if (einzeln && !plus && !/[+→]\s*$/.test(vor)) return m;
+      return /[a-z\d]|^[A-Z]{1,3}$/.test(wort) ? `${vor}große ${zahl}, ` : m;
+    })
     .replace(/\b[A-Z][A-Za-z0-9]*\b/g, (w) => {
       if (/\d/.test(w) && istFormel(w)) return buchstabieren(w);
       if (w.length <= 4 && istSymbolFolge(w) && (w.length > 1 || bekannteSymbole.has(w))) return buchstabieren(w);

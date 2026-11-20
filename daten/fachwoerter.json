@@ -297,7 +297,7 @@
       ],
       "artikel": "die",
       "mehrzahl": "die Wertigkeiten",
-      "erklaerung": "Wie viele Verbindungen ein Atom eingehen kann. Im Modell ist das die Zahl der Noppen. Die Wertigkeit ist ein Hilfsmodell."
+      "erklaerung": "Wie viele Bindungen ein Atom hat. Im Modell ist das die Zahl der Noppen. Die Wertigkeit ist ein Hilfsmodell. Später lernst du mehr darüber."
     },
     {
       "wort": "Noppe",
@@ -307,7 +307,18 @@
       ],
       "artikel": "die",
       "mehrzahl": "die Noppen",
-      "erklaerung": "Ein kleiner Knopf auf dem Stein. Jede Noppe steht für eine Verbindung."
+      "erklaerung": "Ein kleiner Knopf am Stein. An jeder Noppe hängt genau eine Bindung zu einem anderen Stein."
+    },
+    {
+      "wort": "Bindung",
+      "formen": [
+        "Bindung",
+        "Bindungen",
+        "Doppelbindung"
+      ],
+      "artikel": "die",
+      "mehrzahl": "die Bindungen",
+      "erklaerung": "Damit halten zwei Atome zusammen. Im Modell ist das ein Steg von einer Noppe zur Noppe eines anderen Steins."
     }
   ]
 }

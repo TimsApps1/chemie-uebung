@@ -109,12 +109,12 @@
         {
           "id": "noppen",
           "text": "Ich kann alle Noppen eines Modells füllen.",
-          "hilfe": "Jede Noppe braucht einen Partner. Zwei Steine können auch mit 2 oder 3 Noppen verbunden sein."
+          "hilfe": "An jede Noppe gehört genau eine Bindung zu einem Partner. Zwei Noppen können auch zum selben Partner gehen."
         },
         {
           "id": "bauen",
           "text": "Ich kann Formeln mit dem Noppenmodell bauen.",
-          "hilfe": "Zähle die Noppen jeder Steinsorte. Auf beiden Seiten müssen gleich viele Noppen sein."
+          "hilfe": "Zähle die Noppen jeder Steinsorte. Die Metall-Steine und die Nichtmetall-Steine brauchen zusammen gleich viele Noppen."
         },
         {
           "id": "ablesen",

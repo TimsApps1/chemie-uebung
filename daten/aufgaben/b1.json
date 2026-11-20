@@ -2,24 +2,6 @@
  "bereich": "B1",
  "aufgaben": [
   {
-   "id": "b1-1-01",
-   "niveau": 1,
-   "typ": "bauen",
-   "symbol": "✋",
-   "kann": "noppen",
-   "frage": "Fülle alle Noppen.",
-   "formel": "MgO",
-   "steine": [
-    "O"
-   ],
-   "start": [
-    "Mg"
-   ],
-   "leicht": true,
-   "denkanstoss": "Zwei Steine können auch mit 2 Noppen verbunden sein. Tippe erst auf eine Noppe am Mg, dann auf eine am O.",
-   "erklaerung": "Mg hat 2 Noppen, O hat 2. Sie sind doppelt verbunden: MgO."
-  },
-  {
    "id": "b1-1-02",
    "niveau": 1,
    "typ": "bauen",
@@ -70,7 +52,25 @@
     "O"
    ],
    "denkanstoss": "O hat 2 Noppen. Jedes H hat nur 1.",
-   "erklaerung": "O hat 2 Noppen. Dafür brauchst du 2 H: H2O."
+   "erklaerung": "O hat 2 Noppen. Dafür brauchst du 2 H-Steine: H2O.",
+   "leicht": true
+  },
+  {
+   "id": "b1-1-01",
+   "niveau": 1,
+   "typ": "bauen",
+   "symbol": "✋",
+   "kann": "noppen",
+   "frage": "Fülle alle Noppen.",
+   "formel": "MgO",
+   "steine": [
+    "O"
+   ],
+   "start": [
+    "Mg"
+   ],
+   "denkanstoss": "Mg und O haben je 2 Noppen. Zwei Noppen können zum selben Partner gehen: Tippe Mg an, dann O.",
+   "erklaerung": "Mg hat 2 Noppen, O hat 2. Zwei Stege verbinden sie (Doppelbindung): MgO."
   },
   {
    "id": "b1-1-05",
@@ -86,7 +86,7 @@
    "start": [
     "Zn"
    ],
-   "denkanstoss": "Zn und O haben gleich viele Noppen.",
+   "denkanstoss": "Zn und O haben gleich viele Noppen. Zwei Noppen können zum selben Partner gehen.",
    "erklaerung": "Zn und O haben je 2 Noppen: ZnO."
   },
   {
@@ -103,7 +103,7 @@
    "start": [
     "Pb"
    ],
-   "denkanstoss": "Pb und O haben gleich viele Noppen.",
+   "denkanstoss": "Pb und O haben gleich viele Noppen. Zwei Noppen können zum selben Partner gehen.",
    "erklaerung": "Pb und O haben je 2 Noppen: PbO."
   },
   {
@@ -121,7 +121,7 @@
     "Mg"
    ],
    "denkanstoss": "Mg hat 2 Noppen, Cl nur 1.",
-   "erklaerung": "Mg hat 2 Noppen. Dafür brauchst du 2 Cl: MgCl2."
+   "erklaerung": "Mg hat 2 Noppen. Dafür brauchst du 2 Cl-Steine: MgCl2."
   },
   {
    "id": "b1-1-08",
@@ -138,7 +138,7 @@
     "O"
    ],
    "denkanstoss": "O hat 2 Noppen, Na nur 1.",
-   "erklaerung": "O hat 2 Noppen. Dafür brauchst du 2 Na: Na2O."
+   "erklaerung": "O hat 2 Noppen. Dafür brauchst du 2 Na-Steine: Na2O."
   },
   {
    "id": "b1-1-09",
@@ -155,7 +155,7 @@
     "S"
    ],
    "denkanstoss": "S hat 2 Noppen, H nur 1.",
-   "erklaerung": "S hat 2 Noppen. Dafür brauchst du 2 H: H2S."
+   "erklaerung": "S hat 2 Noppen. Dafür brauchst du 2 H-Steine: H2S."
   },
   {
    "id": "b1-1-10",
@@ -171,7 +171,7 @@
    "start": [
     "Zn"
    ],
-   "denkanstoss": "Zn und S haben gleich viele Noppen.",
+   "denkanstoss": "Zn und S haben gleich viele Noppen. Zwei Noppen können zum selben Partner gehen.",
    "erklaerung": "Zn und S haben je 2 Noppen: ZnS."
   },
   {
@@ -181,15 +181,15 @@
    "symbol": "✋",
    "kann": "noppen",
    "frage": "Fülle alle Noppen.",
-   "formel": "CuO",
+   "formel": "MgS",
    "steine": [
-    "O"
+    "S"
    ],
    "start": [
-    "Cu(II)"
+    "Mg"
    ],
-   "denkanstoss": "Cu (II) hat 2 Noppen.",
-   "erklaerung": "Cu (II) und O haben je 2 Noppen: CuO."
+   "denkanstoss": "Mg und S haben je 2 Noppen. Zwei Noppen können zum selben Partner gehen.",
+   "erklaerung": "Mg und S haben je 2 Noppen. Zwei Stege verbinden sie: MgS."
   },
   {
    "id": "b1-1-12",
@@ -248,8 +248,8 @@
     "Al",
     "O"
    ],
-   "denkanstoss": "Al hat 3 Noppen, O hat 2. Wie viele Noppen müssen es auf beiden Seiten sein?",
-   "erklaerung": "2 Al haben 6 Noppen, 3 O haben auch 6: Al2O3."
+   "denkanstoss": "Al hat 3 Noppen, O hat 2. Die Al-Steine und die O-Steine brauchen zusammen gleich viele Noppen.",
+   "erklaerung": "2 Al-Steine haben 6 Noppen, 3 O-Steine haben auch 6: Al2O3."
   },
   {
    "id": "b1-2-02",
@@ -281,7 +281,7 @@
    ],
    "leicht": true,
    "denkanstoss": "N hat 3 Noppen, H nur 1.",
-   "erklaerung": "N hat 3 Noppen. Dafür brauchst du 3 H: NH3."
+   "erklaerung": "N hat 3 Noppen. Dafür brauchst du 3 H-Steine: NH3."
   },
   {
    "id": "b1-2-04",
@@ -296,7 +296,7 @@
     "H"
    ],
    "denkanstoss": "C hat 4 Noppen, H nur 1.",
-   "erklaerung": "C hat 4 Noppen. Dafür brauchst du 4 H: CH4."
+   "erklaerung": "C hat 4 Noppen. Dafür brauchst du 4 H-Steine: CH4."
   },
   {
    "id": "b1-2-05",
@@ -311,7 +311,7 @@
     "Cl"
    ],
    "denkanstoss": "Al hat 3 Noppen, Cl nur 1.",
-   "erklaerung": "Al hat 3 Noppen. Dafür brauchst du 3 Cl: AlCl3."
+   "erklaerung": "Al hat 3 Noppen. Dafür brauchst du 3 Cl-Steine: AlCl3."
   },
   {
    "id": "b1-2-06",
@@ -326,7 +326,7 @@
     "Cl"
    ],
    "denkanstoss": "Mg hat 2 Noppen, Cl nur 1.",
-   "erklaerung": "Mg hat 2 Noppen. Dafür brauchst du 2 Cl: MgCl2."
+   "erklaerung": "Mg hat 2 Noppen. Dafür brauchst du 2 Cl-Steine: MgCl2."
   },
   {
    "id": "b1-2-07",
@@ -341,7 +341,7 @@
     "S"
    ],
    "denkanstoss": "S hat 2 Noppen, Na nur 1.",
-   "erklaerung": "S hat 2 Noppen. Dafür brauchst du 2 Na: Na2S."
+   "erklaerung": "S hat 2 Noppen. Dafür brauchst du 2 Na-Steine: Na2S."
   },
   {
    "id": "b1-2-08",
@@ -356,7 +356,7 @@
     "O"
    ],
    "denkanstoss": "O hat 2 Noppen, Ag nur 1.",
-   "erklaerung": "O hat 2 Noppen. Dafür brauchst du 2 Ag: Ag2O."
+   "erklaerung": "O hat 2 Noppen. Dafür brauchst du 2 Ag-Steine: Ag2O."
   },
   {
    "id": "b1-2-09",
@@ -371,7 +371,7 @@
     "Cl"
    ],
    "denkanstoss": "Zn hat 2 Noppen, Cl nur 1.",
-   "erklaerung": "Zn hat 2 Noppen. Dafür brauchst du 2 Cl: ZnCl2."
+   "erklaerung": "Zn hat 2 Noppen. Dafür brauchst du 2 Cl-Steine: ZnCl2."
   },
   {
    "id": "b1-2-10",
@@ -453,7 +453,7 @@
     "O"
    ],
    "denkanstoss": "Die römische Zahl sagt, welchen Eisen-Stein du brauchst.",
-   "erklaerung": "Eisen(III) hat 3 Noppen. 2 Fe haben 6 Noppen, 3 O auch 6: Fe2O3."
+   "erklaerung": "Eisen(III) hat 3 Noppen. 2 Fe-Steine haben 6 Noppen, 3 O-Steine auch 6: Fe2O3."
   },
   {
    "id": "b1-3-02",
@@ -486,7 +486,7 @@
     "O"
    ],
    "denkanstoss": "Kupfer(I) hat nur 1 Noppe.",
-   "erklaerung": "Kupfer(I) hat 1 Noppe. O hat 2, also brauchst du 2 Cu: Cu2O."
+   "erklaerung": "Kupfer(I) hat 1 Noppe. O hat 2, also brauchst du 2 Cu-Steine: Cu2O."
   },
   {
    "id": "b1-3-04",
@@ -519,7 +519,7 @@
     "Cl"
    ],
    "denkanstoss": "Eisen(III) hat 3 Noppen, Cl nur 1.",
-   "erklaerung": "Eisen(III) hat 3 Noppen. Dafür brauchst du 3 Cl: FeCl3."
+   "erklaerung": "Eisen(III) hat 3 Noppen. Dafür brauchst du 3 Cl-Steine: FeCl3."
   },
   {
    "id": "b1-3-06",
@@ -535,7 +535,7 @@
     "Cl"
    ],
    "denkanstoss": "Eisen(II) hat 2 Noppen, Cl nur 1.",
-   "erklaerung": "Eisen(II) hat 2 Noppen. Dafür brauchst du 2 Cl: FeCl2."
+   "erklaerung": "Eisen(II) hat 2 Noppen. Dafür brauchst du 2 Cl-Steine: FeCl2."
   },
   {
    "id": "b1-3-07",
@@ -549,8 +549,8 @@
     "Al",
     "S"
    ],
-   "denkanstoss": "Al hat 3 Noppen, S hat 2. Auf beiden Seiten müssen gleich viele Noppen sein.",
-   "erklaerung": "2 Al haben 6 Noppen, 3 S auch 6: Al2S3."
+   "denkanstoss": "Al hat 3 Noppen, S hat 2. Die Al-Steine und die S-Steine brauchen zusammen gleich viele Noppen.",
+   "erklaerung": "2 Al-Steine haben 6 Noppen, 3 S-Steine auch 6: Al2S3."
   },
   {
    "id": "b1-3-08",
@@ -631,7 +631,7 @@
     "Na2O": "2 Na haben 2 Noppen, O hat 2. Na2O stimmt.",
     "MgO": "Mg und O haben je 2 Noppen. MgO stimmt."
    },
-   "denkanstoss": "Prüfe bei jeder Formel: Haben beide Seiten gleich viele Noppen?",
+   "denkanstoss": "Prüfe bei jeder Formel: Haben die Metall-Steine zusammen gleich viele Noppen wie die Nichtmetall-Steine?",
    "erklaerung": "Zähl die Noppen: Mg hat 2, O hat 2. Ein O reicht, richtig ist MgO."
   },
   {
@@ -653,7 +653,7 @@
     "6": "6 ist die Zahl der Noppen, nicht der Steine."
    },
    "denkanstoss": "Suche die kleinste Zahl, die durch 3 und durch 2 teilbar ist.",
-   "erklaerung": "6 Noppen auf jeder Seite: 2 Al (2 · 3) und 3 O (3 · 2). Also 2 Al-Steine."
+   "erklaerung": "Beide Steinsorten haben zusammen 6 Noppen: 2 Al-Steine (2 · 3) und 3 O-Steine (3 · 2). Also 2 Al-Steine."
   }
  ]
 }
