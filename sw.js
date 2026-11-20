@@ -1,6 +1,6 @@
 // Offline-Speicher der App ("Service Worker").
 // Bei jeder Änderung an der App VERSION erhöhen (gleiche Zahl wie in js/version.js).
-const VERSION = 15;
+const VERSION = 16;
 const APP_CACHE = `chemie-app-v${VERSION}`;
 const DATEN_CACHE = 'chemie-daten';
 
@@ -16,6 +16,8 @@ const APP_DATEIEN = [
   'js/aufgaben.js',
   'js/baustelle.js',
   'js/so-gehts.js',
+  'js/ausgleichen.js',
+  'js/ausgleichen-logik.js',
   'js/bausteine-logik.js',
   'js/codes.js',
   'js/daten.js',
@@ -50,6 +52,7 @@ const DATEN_DATEIEN = [
   'daten/reihe.json',
   'daten/fachwoerter.json',
   'daten/aufgaben/b1.json',
+  'daten/aufgaben/b2.json',
   'daten/aufgaben/b3.json',
   'daten/aufgaben/b4.json'
 ];

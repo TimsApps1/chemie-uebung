@@ -18,7 +18,7 @@ Die Aufgaben stehen in `daten/aufgaben/b1.json`, `b3.json` und `b4.json` (späte
 |---|---|---|
 | `id` | ja | Eindeutiger Name, z. B. `"b4-1-03"` (Bereich, Niveau, Nummer). Nie doppelt. |
 | `niveau` | ja | `1`, `2` oder `3` (= ★, ★★, ★★★) |
-| `typ` | ja | `auswahl`, `zahl`, `sortieren`, `klappt`, `wortgleichung`, `antippen`, `bauen`, `modell` (siehe unten) |
+| `typ` | ja | `auswahl`, `zahl`, `sortieren`, `klappt`, `wortgleichung`, `antippen`, `bauen`, `modell`, `ausgleichen` (siehe unten) |
 | `frage` | ja | Arbeitsanweisung, **höchstens ein Satz** |
 | `symbol` | ja | Ein Zeichen vor der Frage: ✋ antippen, ↕ sortieren, 🔢 zählen, ✏️ ergänzen, ❓ auswählen |
 | `denkanstoss` | ja | Hilfe nach dem 1. Fehler. Verrät die Lösung **nicht**. |
@@ -106,6 +106,22 @@ bauen lässt. Keine Schwefeloxide, Stickoxide und kein Kohlenstoffmonooxid (pass
 
 ### `modell` – Welche Formel hat dieses Modell?
 Wie `auswahl`, dazu `formel` und `steine`: Die App baut das Modell selbst und zeigt es in 3D.
+
+### `ausgleichen` – Reaktion mit der Waage ausgleichen (Bereich 2)
+```json
+{ "id": "b2-1-06", "niveau": 1, "typ": "ausgleichen", "symbol": "⚖", "kann": "teilchen",
+  "frage": "Gleiche die Gleichung aus.",
+  "edukte": [ { "formel": "Mg", "name": "Magnesium" }, { "formel": "O2", "name": "Sauerstoff" } ],
+  "produkte": [ { "formel": "MgO", "name": "Magnesiumoxid" } ],
+  "loesung": [2, 1, 2],
+  "denkanstoss": "O2 bringt 2 O-Atome mit. Wie viele MgO brauchst du dafür?",
+  "erklaerung": "2 Mg + O2 → 2 MgO: links 2 Mg und 2 O, rechts auch." }
+```
+- `edukte` = Stoffe vor dem Pfeil, `produkte` = Stoffe danach. Jeder Stoff braucht `formel` und `name` (bei Eisen und Kupfer mit römischer Zahl, z. B. „Eisen(III)-oxid“).
+- `loesung` = die Zahlen davor, erst alle Edukte, dann alle Produkte. Die App prüft beim Start, ob sie stimmen (ausgeglichen, kleinste Zahlen).
+- Die Kinder beginnen mit lauter 1. Auf ★★★ ist die Waage verdeckt, bis man auf „Wiegen“ tippt.
+- **Nur prüfen:** Mit `"pruefen": true` und `"start": [1, 1, 1]` fragt die App „Ist die Gleichung ausgeglichen?“ (Ja/Nein) für genau diese Zahlen.
+- **Index-Falle (optional):** Bei einem Stoff `"falle": { "formel": "H2O2", "text": "Aus H2O würde H2O2 …" }`. Ohne `falle` erklärt die App selbst, warum man die kleinen Zahlen nicht ändern darf.
 
 ### `warum` – Begründung (nur ★★★, Bereich 3)
 Zusatz bei einer Aufgabe. Die App stellt die Frage nach jeder zweiten Antwort. Richtig = 5 Extrapunkte.

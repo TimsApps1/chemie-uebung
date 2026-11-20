@@ -16,7 +16,7 @@ import { freischaltcodePruefen, codeTippfehlerHinweis, punktecode, namensKennung
 import { rundeSpielen, aufgabenWaehlen, RUNDE_LAENGE } from './runde.js';
 import { qrZeigen } from './qr.js';
 import { adminStart } from './admin.js';
-import { soGehtsZeigen } from './so-gehts.js';
+import { soGehtsZeigen, soGehtsAusgleichen } from './so-gehts.js';
 
 const inhalt = document.getElementById('inhalt');
 let daten = null;
@@ -340,8 +340,8 @@ function bereichSeite(name, bereichId) {
   const kurs = p.freigeschaltet[bereichId];
   kopfMitName(name, { links: iconKnopf('i-zurueck', 'Zurück', () => startseite(name), 'knopf-rund kopf-knopf'), titel: b.titel, farbe: bereichId.toLowerCase() });
 
-  // Bereich 1: nach der Geschichte einmal „So geht’s“ (Noppe = Bindung) zeigen.
-  const soGehts = bereichId === 'B1' ? () => soGehtsZeigen(daten.elemente) : null;
+  // Bereich 1 und 2: nach der Geschichte einmal „So geht’s“ zeigen.
+  const soGehts = bereichId === 'B1' ? () => soGehtsZeigen(daten.elemente) : bereichId === 'B2' ? () => soGehtsAusgleichen(daten.elemente) : null;
   if (b.geschichte && !p.geschichteGesehen[bereichId]) {
     aendern(name, (x) => { x.geschichteGesehen[bereichId] = true; });
     geschichteZeigen(b, soGehts);
@@ -366,7 +366,7 @@ function bereichSeite(name, bereichId) {
     el('div', { class: 'anweisung-zeile' }, el('h2', { class: 'titel' }, 'Wähle dein Niveau'), vorlesenKnopf('Wähle dein Niveau. Ein Stern, zwei Sterne oder drei Sterne.')),
     el('p', { class: 'leise' }, '✋ Du entscheidest. Du kannst jederzeit wechseln.'),
     el('div', { class: 'niveaus' }, niveaus),
-    soGehts ? el('button', { type: 'button', class: 'knopf knopf-leise', onclick: soGehts }, '🧱 So geht’s') : null,
+    soGehts ? el('button', { type: 'button', class: 'knopf knopf-leise', onclick: soGehts }, bereichId === 'B2' ? '⚖ So geht’s' : '🧱 So geht’s') : null,
     b.geschichte ? el('button', { type: 'button', class: 'knopf knopf-leise', onclick: () => geschichteZeigen(b) }, '📖 Geschichte nochmal lesen') : null));
 }
 

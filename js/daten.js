@@ -4,6 +4,7 @@
 import { atomeZaehlen, formelZerlegen, symboleSetzen } from './hilfen.js';
 import { aufgabenErzeugen } from './erzeugen.js';
 import { steinArt, loesungsModell } from './bausteine-logik.js';
+import { ausgleichenPruefen } from './ausgleichen-logik.js';
 
 const fehlerListe = [];
 
@@ -101,7 +102,7 @@ function zeileVonId(roh, id) {
 
 // ---------- Aufgaben prüfen ----------
 
-const TYPEN = ['auswahl', 'zahl', 'sortieren', 'klappt', 'wortgleichung', 'antippen', 'bauen', 'modell'];
+const TYPEN = ['auswahl', 'zahl', 'sortieren', 'klappt', 'wortgleichung', 'antippen', 'bauen', 'modell', 'ausgleichen'];
 
 function aufgabePruefen(a, kontext) {
   const probleme = [];
@@ -164,6 +165,7 @@ function aufgabePruefen(a, kontext) {
     else if (!loesungsModell(a.formel, steine, kontext.elemente)) probleme.push(`${a.formel} lässt sich mit diesen Steinen nicht so bauen, dass alle Noppen belegt sind.`);
     if (a.typ === 'modell' && (!Array.isArray(a.antworten) || !a.antworten.includes(a.richtig))) probleme.push(`„richtig“ („${a.richtig}“) steht nicht in „antworten“.`);
   }
+  if (a.typ === 'ausgleichen') probleme.push(...ausgleichenPruefen(a, kontext.elemente));
   if (a.warum) {
     if (!Array.isArray(a.warum.antworten) || !a.warum.antworten.includes(a.warum.richtig)) {
       probleme.push('Bei „warum“ muss „richtig“ in „antworten“ stehen.');

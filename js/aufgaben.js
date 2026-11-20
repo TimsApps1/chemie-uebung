@@ -7,6 +7,8 @@ import { text, baustein, fenster } from './ui.js';
 import { klapptEs, richtigeZahl } from './daten.js';
 import { formelModell } from './modell3d.js';
 import { baustelle } from './baustelle.js';
+import { ausgleichenAufgabe } from './ausgleichen.js';
+import { waage, startZahlen, gleichungText, ausgleichHinweis } from './ausgleichen-logik.js';
 import { steinArt, leeresModell, ersterStein, bauErgebnis, bauHinweis, loesungsModell, vielfachesText } from './bausteine-logik.js';
 
 // ---------- Prüfen ----------
@@ -22,6 +24,8 @@ export function pruefen(a, wert, daten) {
       return bauErgebnis(wert, a.formel).geloest;
     case 'modell':
       return wert === a.richtig;
+    case 'ausgleichen':
+      return a.pruefen ? wert === (waage(a, startZahlen(a)).geloest ? 'ja' : 'nein') : waage(a, wert).geloest;
     case 'sortieren':
       return wert.join('|') === a.karten.join('|');
     case 'klappt':
@@ -39,6 +43,7 @@ export function pruefen(a, wert, daten) {
 // Fester Hinweis zu einer bestimmten falschen Antwort (oder automatisch erzeugt).
 export function fehlerHinweis(a, wert) {
   const schluessel = Array.isArray(wert) ? wert.join(', ') : String(wert);
+  if (a.typ === 'ausgleichen' && !a.pruefen && Array.isArray(wert)) return ausgleichHinweis(a, wert);
   if (a.typ === 'bauen') return bauHinweis(wert, a.formel, elementeListe, { steinarten: [...(a.start || []), ...a.steine], name: a.frage, denkanstoss: a.denkanstoss });
   if (a.fehler && a.fehler[schluessel]) return a.fehler[schluessel];
   if (a.typ === 'sortieren' && Array.isArray(wert)) {
@@ -65,6 +70,7 @@ export function loesungsText(a, daten) {
     case 'zahl': return String(richtigeZahl(a));
     case 'bauen': return a.formel;
     case 'modell': return a.richtig;
+    case 'ausgleichen': return a.pruefen && waage(a, startZahlen(a)).geloest ? 'Ja, sie ist ausgeglichen.' : gleichungText(a, a.loesung);
     case 'sortieren': return a.karten.join(' · ');
     case 'klappt': return klapptEs(daten.reihe, a.oxid, a.stoff) ? 'Es klappt.' : 'Es klappt nicht.';
     case 'wortgleichung': {
@@ -82,6 +88,10 @@ export function vorleseText(a, reihenfolge = null) {
   const teile = [a.frage];
   if (a.typ === 'klappt') teile.push(`${a.oxid} und ${a.stoff}`);
   if (a.typ === 'zahl') teile.push(a.formel);
+  if (a.typ === 'ausgleichen') {
+    teile.push(gleichungText(a, Array.isArray(reihenfolge) ? reihenfolge : startZahlen(a)));
+    teile.push(`Stoffe: ${[...a.edukte, ...a.produkte].map((x) => x.name).join(', ')}`);
+  }
   if (a.typ === 'bauen') {
     if (a.start?.length) teile.push(`Schon da: ${a.start.join(', ')}`);
     teile.push(`Zum Anstecken: ${a.steine.join(', ')}`);
@@ -562,7 +572,7 @@ function modell(a, antworten, daten) {
   return { ...wahl, wurzel: el('div', { class: 'modell-aufgabe' }, bau.wurzel, wahl.wurzel) };
 }
 
-const DARSTELLUNG = { auswahl, zahl, sortieren, klappt, wortgleichung, antippen, bauen, modell };
+const DARSTELLUNG = { auswahl, zahl, sortieren, klappt, wortgleichung, antippen, bauen, modell, ausgleichen: ausgleichenAufgabe };
 
 export function aufgabeDarstellen(a, antworten, daten) {
   return DARSTELLUNG[a.typ](a, antworten, daten);

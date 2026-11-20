@@ -995,3 +995,53 @@ button.bereich { font: inherit; text-align: left; cursor: pointer; width: 100%; 
 .geschichte-platz.b1 { --farbe: var(--b1); --farbe-hell: var(--b1-hell); }
 .fortschritt-bereich.b1 h3 { color: var(--b1-dunkel); }
 .fortschritt-bereich.b1 .saeule { background: var(--b1); }
+
+/* ---------- Etappe 4: Bereich 2, Ausgleichen mit der Waage ---------- */
+.ausgleichen { display: grid; gap: var(--a3); }
+.gleichung-bau { display: flex; flex-wrap: wrap; align-items: stretch; justify-content: center; gap: var(--a2); }
+.gleichung-plus, .gleichung-pfeil { align-self: center; font-size: 1.8rem; font-weight: 800; color: var(--text-leise); padding: 0 2px; }
+.gleichung-pfeil { color: var(--text); }
+.stoff-karte { display: grid; justify-items: center; align-content: start; gap: 6px; min-width: 128px; max-width: 100%; padding: 10px; border: 2px solid var(--rand); border-radius: var(--r-mittel); background: #fff; }
+.stoff-karte.falle-aktiv { border-color: var(--schlecht); background: #fff5f5; }
+.teilchen-box { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; min-height: 52px; }
+.teilchen { display: inline-flex; flex-wrap: wrap; gap: 2px; padding: 4px 5px; border: 2px dashed var(--rand-kraeftig); border-radius: 10px; background: var(--haupt-zart); }
+.teilchen .baustein-klein { min-width: 34px; height: 30px; font-size: 0.95rem; padding: 0 5px 3px; }
+.teilchen-klein .baustein-klein { min-width: 26px; height: 24px; font-size: 0.8rem; margin-top: 8px; padding: 0 3px 2px; }
+.teilchen .baustein-klein .noppen { top: -9px; height: 9px; }
+.teilchen .baustein-klein .noppen i { width: 9px; height: 8px; border-width: 1.5px; }
+.stoff-formel { margin: 0; font-size: 1.6rem; font-weight: 800; }
+.stoff-zahl { color: var(--b2-dunkel); margin-right: 4px; font-size: 1.9rem; }
+.stoff-name { margin: 0; font-size: 0.95rem; color: var(--text-leise); text-align: center; }
+.stoff-steuerung { display: flex; align-items: center; gap: 8px; }
+.stoff-steuerung .knopf-rund { width: 48px; height: 48px; min-width: 48px; font-size: 1.6rem; font-weight: 800; padding: 0; }
+.stoff-anzahl { min-width: 2ch; text-align: center; font-size: 1.3rem; font-weight: 800; }
+.falle-knopf { min-height: 44px; }
+.falle-zeile { font-size: 1.6rem; font-weight: 800; text-align: center; margin: 0 0 var(--a2); }
+.marke-falsch { color: var(--schlecht-dunkel); }
+.waage-box { display: grid; }
+.waage { display: grid; gap: var(--a2); justify-items: center; padding: var(--a3); border-radius: var(--r-mittel); background: var(--b2-hell); }
+.waage.gerade { background: var(--gut-flaeche); }
+.waage.verdeckt p { margin: 0; font-weight: 700; color: var(--text-leise); }
+.waage-bild { position: relative; width: min(320px, 90%); height: 70px; }
+.waage-balken { position: absolute; left: 0; right: 0; top: 18px; height: 8px; border-radius: 4px; background: var(--b2-dunkel); transition: transform .4s ease; display: flex; justify-content: space-between; }
+.waage-schale { position: relative; top: 10px; padding: 2px 10px; border-radius: 0 0 12px 12px; background: var(--b2); color: #fff; font-size: 0.8rem; font-weight: 700; }
+.waage-fuss { position: absolute; left: 50%; top: 22px; width: 0; height: 0; transform: translateX(-50%); border-left: 18px solid transparent; border-right: 18px solid transparent; border-bottom: 40px solid var(--b2-dunkel); }
+.waage-tabelle { border-collapse: collapse; font-size: 1.1rem; }
+.waage-tabelle th, .waage-tabelle td { padding: 4px 12px; text-align: center; }
+.waage-tabelle tr.ungleich td { font-weight: 800; color: var(--schlecht-dunkel); }
+.waage-tabelle tr.gleich .marke-zelle { color: var(--gut-dunkel); font-weight: 800; }
+.waage-satz { margin: 0; font-weight: 700; }
+.tipp-box summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; font-weight: 700; color: var(--haupt-dunkel); }
+.tipp-box p { margin: 0 0 var(--a2); }
+@media (prefers-reduced-motion: reduce) { .waage-balken { transition: none; } }
+.geschichte-platz.b2 { --farbe: var(--b2); --farbe-hell: var(--b2-hell); }
+.fortschritt-bereich.b2 h3 { color: var(--b2-dunkel); }
+.fortschritt-bereich.b2 .saeule { background: var(--b2); }
+.ausgleichen .bau-status:empty, .ausgleichen-aufgabe .bau-formel:empty { display: none; }
+.waage-bild { height: 84px; }
+.waage-schale { top: 8px; width: 74px; text-align: center; padding: 6px 0 2px; border-radius: 0 0 22px 22px; background: transparent; color: var(--b2-dunkel); border: 3px solid var(--b2); border-top: 0; font-size: 0.85rem; }
+@media (max-width: 600px) {
+  .gleichung-bau { flex-direction: column; align-items: center; }
+  .stoff-karte { width: min(320px, 100%); }
+}
+@media (max-width: 600px) { .gleichung-pfeil { transform: rotate(90deg); } }

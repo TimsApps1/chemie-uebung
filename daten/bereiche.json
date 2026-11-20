@@ -141,12 +141,27 @@
         "bild": null
       },
       "niveaus": {
-        "1": "Wenige Stoffe, kleine Zahlen davor, auch nur prüfen.",
+        "1": "Prüfen mit der Waage und kleine Zahlen davor.",
         "2": "Zahlen davor bei zwei Stoffen gleichzeitig.",
-        "3": "Thermit, Hochofen und größere Zahlen."
+        "3": "Thermit, Hochofen und mehr. Die Waage zeigt sich erst beim Wiegen."
       },
-      "ich_kann": [],
-      "kommt_bald": true
+      "ich_kann": [
+        {
+          "id": "waage",
+          "text": "Ich kann prüfen, ob eine Gleichung ausgeglichen ist.",
+          "hilfe": "Zähl jedes Element links und rechts. Überall gleich viele? Dann ist sie ausgeglichen."
+        },
+        {
+          "id": "teilchen",
+          "text": "Ich kann mit der Zahl davor ganze Teilchen dazunehmen.",
+          "hilfe": "Die große Zahl davor sagt, wie viele Teilchen es gibt. Mit + nimmst du ein ganzes Teilchen dazu."
+        },
+        {
+          "id": "index",
+          "text": "Ich weiß, warum die kleinen Zahlen bleiben.",
+          "hilfe": "Die kleinen Zahlen gehören zum Stoff. Änderst du sie, entsteht ein anderer Stoff."
+        }
+      ]
     }
   ]
 }

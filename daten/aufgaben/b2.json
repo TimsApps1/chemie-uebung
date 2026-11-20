@@ -1,0 +1,1293 @@
+{
+ "bereich": "B2",
+ "hinweis": "Bereich 2: Reaktionen ausgleichen. Format siehe daten/FORMAT.md.",
+ "aufgaben": [
+  {
+   "id": "b2-1-01",
+   "niveau": 1,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "waage",
+   "frage": "Ist die Gleichung ausgeglichen?",
+   "edukte": [
+    {
+     "formel": "CuO",
+     "name": "Kupfer(II)-oxid",
+     "falle": {
+      "formel": "Cu2O",
+      "text": "Aus CuO würde Cu2O. Das ist Kupfer(I)-oxid, ein anderer Stoff: rot statt schwarz. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    },
+    {
+     "formel": "Fe",
+     "name": "Eisen"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "Cu",
+     "name": "Kupfer"
+    },
+    {
+     "formel": "FeO",
+     "name": "Eisen(II)-oxid",
+     "falle": {
+      "formel": "Fe2O3",
+      "text": "Aus FeO würde Fe2O3. Das ist Eisen(III)-oxid, ein anderer Stoff (roter Rost). Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    }
+   ],
+   "loesung": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "start": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "pruefen": true,
+   "leicht": true,
+   "denkanstoss": "Zähl jedes Element links und rechts: Cu, O und Fe.",
+   "erklaerung": "Links 1 Cu, 1 O, 1 Fe. Rechts auch. Die Gleichung ist ausgeglichen."
+  },
+  {
+   "id": "b2-1-02",
+   "niveau": 1,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "waage",
+   "frage": "Ist die Gleichung ausgeglichen?",
+   "edukte": [
+    {
+     "formel": "Zn",
+     "name": "Zink"
+    },
+    {
+     "formel": "CuO",
+     "name": "Kupfer(II)-oxid",
+     "falle": {
+      "formel": "Cu2O",
+      "text": "Aus CuO würde Cu2O. Das ist Kupfer(I)-oxid, ein anderer Stoff: rot statt schwarz. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "ZnO",
+     "name": "Zinkoxid"
+    },
+    {
+     "formel": "Cu",
+     "name": "Kupfer"
+    }
+   ],
+   "loesung": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "start": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "pruefen": true,
+   "leicht": true,
+   "denkanstoss": "Zähl jedes Element links und rechts.",
+   "erklaerung": "Links 1 Zn, 1 Cu, 1 O. Rechts auch. Ausgeglichen."
+  },
+  {
+   "id": "b2-1-03",
+   "niveau": 1,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "waage",
+   "frage": "Ist die Gleichung ausgeglichen?",
+   "edukte": [
+    {
+     "formel": "C",
+     "name": "Kohlenstoff"
+    },
+    {
+     "formel": "O2",
+     "name": "Sauerstoff"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "CO2",
+     "name": "Kohlenstoffdioxid"
+    }
+   ],
+   "loesung": [
+    1,
+    1,
+    1
+   ],
+   "start": [
+    1,
+    1,
+    1
+   ],
+   "pruefen": true,
+   "denkanstoss": "Zähl die O-Atome: Wie viele stecken in O2, wie viele in CO2?",
+   "erklaerung": "Links 1 C und 2 O, rechts 1 C und 2 O. Ausgeglichen.",
+   "alltag": "So verbrennt Holzkohle beim Grillen."
+  },
+  {
+   "id": "b2-1-04",
+   "niveau": 1,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "waage",
+   "frage": "Ist die Gleichung ausgeglichen?",
+   "edukte": [
+    {
+     "formel": "Mg",
+     "name": "Magnesium"
+    },
+    {
+     "formel": "O2",
+     "name": "Sauerstoff"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "MgO",
+     "name": "Magnesiumoxid"
+    }
+   ],
+   "loesung": [
+    2,
+    1,
+    2
+   ],
+   "start": [
+    1,
+    1,
+    1
+   ],
+   "pruefen": true,
+   "denkanstoss": "Zähl die O-Atome links und rechts.",
+   "erklaerung": "Links 2 O, rechts nur 1 O. Nicht ausgeglichen. Richtig ist 2 Mg + O2 → 2 MgO."
+  },
+  {
+   "id": "b2-1-05",
+   "niveau": 1,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "waage",
+   "frage": "Ist die Gleichung ausgeglichen?",
+   "edukte": [
+    {
+     "formel": "H2",
+     "name": "Wasserstoff"
+    },
+    {
+     "formel": "O2",
+     "name": "Sauerstoff"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "H2O",
+     "name": "Wasser",
+     "falle": {
+      "formel": "H2O2",
+      "text": "Aus H2O würde H2O2. Das ist Wasserstoffperoxid, ein ganz anderer Stoff: Er bleicht Haare. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    }
+   ],
+   "loesung": [
+    2,
+    1,
+    2
+   ],
+   "start": [
+    1,
+    1,
+    1
+   ],
+   "pruefen": true,
+   "denkanstoss": "Zähl die O-Atome links und rechts.",
+   "erklaerung": "Links 2 O, rechts nur 1 O. Nicht ausgeglichen. Richtig ist 2 H2 + O2 → 2 H2O."
+  },
+  {
+   "id": "b2-1-06",
+   "niveau": 1,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "Mg",
+     "name": "Magnesium"
+    },
+    {
+     "formel": "O2",
+     "name": "Sauerstoff"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "MgO",
+     "name": "Magnesiumoxid"
+    }
+   ],
+   "loesung": [
+    2,
+    1,
+    2
+   ],
+   "leicht": true,
+   "denkanstoss": "O2 bringt 2 O-Atome mit. Wie viele MgO brauchst du dafür?",
+   "erklaerung": "2 Mg + O2 → 2 MgO: links 2 Mg und 2 O, rechts auch.",
+   "alltag": "Magnesium verbrennt mit grellweißem Licht."
+  },
+  {
+   "id": "b2-1-07",
+   "niveau": 1,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "H2",
+     "name": "Wasserstoff"
+    },
+    {
+     "formel": "O2",
+     "name": "Sauerstoff"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "H2O",
+     "name": "Wasser",
+     "falle": {
+      "formel": "H2O2",
+      "text": "Aus H2O würde H2O2. Das ist Wasserstoffperoxid, ein ganz anderer Stoff: Er bleicht Haare. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    }
+   ],
+   "loesung": [
+    2,
+    1,
+    2
+   ],
+   "denkanstoss": "Erst die O-Atome ausgleichen, dann die H-Atome.",
+   "erklaerung": "2 H2 + O2 → 2 H2O: links 4 H und 2 O, rechts auch.",
+   "alltag": "Das ist die Knallgasprobe."
+  },
+  {
+   "id": "b2-1-08",
+   "niveau": 1,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "Cu",
+     "name": "Kupfer"
+    },
+    {
+     "formel": "O2",
+     "name": "Sauerstoff"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "CuO",
+     "name": "Kupfer(II)-oxid",
+     "falle": {
+      "formel": "Cu2O",
+      "text": "Aus CuO würde Cu2O. Das ist Kupfer(I)-oxid, ein anderer Stoff: rot statt schwarz. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    }
+   ],
+   "loesung": [
+    2,
+    1,
+    2
+   ],
+   "denkanstoss": "O2 bringt 2 O-Atome mit. Wie viele CuO brauchst du dafür?",
+   "erklaerung": "2 Cu + O2 → 2 CuO: links 2 Cu und 2 O, rechts auch.",
+   "alltag": "Kupferblech wird in der Flamme schwarz: Es entsteht CuO."
+  },
+  {
+   "id": "b2-1-09",
+   "niveau": 1,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "Zn",
+     "name": "Zink"
+    },
+    {
+     "formel": "O2",
+     "name": "Sauerstoff"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "ZnO",
+     "name": "Zinkoxid"
+    }
+   ],
+   "loesung": [
+    2,
+    1,
+    2
+   ],
+   "denkanstoss": "O2 bringt 2 O-Atome mit. Wie viele ZnO brauchst du dafür?",
+   "erklaerung": "2 Zn + O2 → 2 ZnO: links 2 Zn und 2 O, rechts auch."
+  },
+  {
+   "id": "b2-1-10",
+   "niveau": 1,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "H2",
+     "name": "Wasserstoff"
+    },
+    {
+     "formel": "Cl2",
+     "name": "Chlor"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "HCl",
+     "name": "Chlorwasserstoff"
+    }
+   ],
+   "loesung": [
+    1,
+    1,
+    2
+   ],
+   "denkanstoss": "Links sind 2 H und 2 Cl. Wie viele HCl brauchst du?",
+   "erklaerung": "H2 + Cl2 → 2 HCl: links 2 H und 2 Cl, rechts auch."
+  },
+  {
+   "id": "b2-1-11",
+   "niveau": 1,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "Na",
+     "name": "Natrium"
+    },
+    {
+     "formel": "Cl2",
+     "name": "Chlor"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "NaCl",
+     "name": "Natriumchlorid"
+    }
+   ],
+   "loesung": [
+    2,
+    1,
+    2
+   ],
+   "denkanstoss": "Cl2 bringt 2 Cl-Atome mit. Wie viele NaCl brauchst du?",
+   "erklaerung": "2 Na + Cl2 → 2 NaCl: links 2 Na und 2 Cl, rechts auch.",
+   "alltag": "NaCl ist Kochsalz."
+  },
+  {
+   "id": "b2-2-01",
+   "niveau": 2,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "CuO",
+     "name": "Kupfer(II)-oxid",
+     "falle": {
+      "formel": "Cu2O",
+      "text": "Aus CuO würde Cu2O. Das ist Kupfer(I)-oxid, ein anderer Stoff: rot statt schwarz. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    },
+    {
+     "formel": "C",
+     "name": "Kohlenstoff"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "Cu",
+     "name": "Kupfer"
+    },
+    {
+     "formel": "CO2",
+     "name": "Kohlenstoffdioxid"
+    }
+   ],
+   "loesung": [
+    2,
+    1,
+    2,
+    1
+   ],
+   "denkanstoss": "CO2 braucht 2 O. Woher kommen sie?",
+   "erklaerung": "2 CuO + C → 2 Cu + CO2: links 2 Cu, 2 O, 1 C, rechts auch.",
+   "alltag": "So gewann man schon vor 5000 Jahren Kupfer."
+  },
+  {
+   "id": "b2-2-02",
+   "niveau": 2,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "CuO",
+     "name": "Kupfer(II)-oxid",
+     "falle": {
+      "formel": "Cu2O",
+      "text": "Aus CuO würde Cu2O. Das ist Kupfer(I)-oxid, ein anderer Stoff: rot statt schwarz. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    },
+    {
+     "formel": "Fe",
+     "name": "Eisen"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "Cu",
+     "name": "Kupfer"
+    },
+    {
+     "formel": "Fe2O3",
+     "name": "Eisen(III)-oxid"
+    }
+   ],
+   "loesung": [
+    3,
+    2,
+    3,
+    1
+   ],
+   "denkanstoss": "Fe2O3 braucht 3 O-Atome. Wie viele CuO geben 3 O ab?",
+   "erklaerung": "3 CuO + 2 Fe → 3 Cu + Fe2O3: links 3 Cu, 3 O, 2 Fe, rechts auch."
+  },
+  {
+   "id": "b2-2-03",
+   "niveau": 2,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "Al",
+     "name": "Aluminium"
+    },
+    {
+     "formel": "O2",
+     "name": "Sauerstoff"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "Al2O3",
+     "name": "Aluminiumoxid"
+    }
+   ],
+   "loesung": [
+    4,
+    3,
+    2
+   ],
+   "denkanstoss": "O2 hat 2 O, Al2O3 hat 3 O. Bei welcher Zahl passen beide zusammen?",
+   "erklaerung": "4 Al + 3 O2 → 2 Al2O3: links 4 Al und 6 O, rechts auch.",
+   "alltag": "Diese dünne Oxidschicht schützt Alufolie."
+  },
+  {
+   "id": "b2-2-04",
+   "niveau": 2,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "Na",
+     "name": "Natrium"
+    },
+    {
+     "formel": "O2",
+     "name": "Sauerstoff"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "Na2O",
+     "name": "Natriumoxid"
+    }
+   ],
+   "loesung": [
+    4,
+    1,
+    2
+   ],
+   "denkanstoss": "Erst die O-Atome ausgleichen, dann die Na-Atome.",
+   "erklaerung": "4 Na + O2 → 2 Na2O: links 4 Na und 2 O, rechts auch."
+  },
+  {
+   "id": "b2-2-05",
+   "niveau": 2,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "PbO",
+     "name": "Bleioxid"
+    },
+    {
+     "formel": "C",
+     "name": "Kohlenstoff"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "Pb",
+     "name": "Blei"
+    },
+    {
+     "formel": "CO2",
+     "name": "Kohlenstoffdioxid"
+    }
+   ],
+   "loesung": [
+    2,
+    1,
+    2,
+    1
+   ],
+   "denkanstoss": "CO2 braucht 2 O. Wie viele PbO geben 2 O ab?",
+   "erklaerung": "2 PbO + C → 2 Pb + CO2: links 2 Pb, 2 O, 1 C, rechts auch."
+  },
+  {
+   "id": "b2-2-06",
+   "niveau": 2,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "CH4",
+     "name": "Methan"
+    },
+    {
+     "formel": "O2",
+     "name": "Sauerstoff"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "CO2",
+     "name": "Kohlenstoffdioxid"
+    },
+    {
+     "formel": "H2O",
+     "name": "Wasser",
+     "falle": {
+      "formel": "H2O2",
+      "text": "Aus H2O würde H2O2. Das ist Wasserstoffperoxid, ein ganz anderer Stoff: Er bleicht Haare. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    }
+   ],
+   "loesung": [
+    1,
+    2,
+    1,
+    2
+   ],
+   "denkanstoss": "Erst C, dann H, zuletzt O ausgleichen.",
+   "erklaerung": "CH4 + 2 O2 → CO2 + 2 H2O: links 1 C, 4 H, 4 O, rechts auch.",
+   "alltag": "So verbrennt Erdgas im Gasherd."
+  },
+  {
+   "id": "b2-2-07",
+   "niveau": 2,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "N2",
+     "name": "Stickstoff"
+    },
+    {
+     "formel": "H2",
+     "name": "Wasserstoff"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "NH3",
+     "name": "Ammoniak"
+    }
+   ],
+   "loesung": [
+    1,
+    3,
+    2
+   ],
+   "denkanstoss": "N2 bringt 2 N-Atome mit. Wie viele NH3 brauchst du? Dann die H-Atome zählen.",
+   "erklaerung": "N2 + 3 H2 → 2 NH3: links 2 N und 6 H, rechts auch.",
+   "alltag": "Aus Ammoniak macht man Dünger für die Felder."
+  },
+  {
+   "id": "b2-2-08",
+   "niveau": 2,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "H2O",
+     "name": "Wasser",
+     "falle": {
+      "formel": "H2O2",
+      "text": "Aus H2O würde H2O2. Das ist Wasserstoffperoxid, ein ganz anderer Stoff: Er bleicht Haare. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "H2",
+     "name": "Wasserstoff"
+    },
+    {
+     "formel": "O2",
+     "name": "Sauerstoff"
+    }
+   ],
+   "loesung": [
+    2,
+    2,
+    1
+   ],
+   "denkanstoss": "O2 braucht 2 O. Wie viele H2O brauchst du dafür?",
+   "erklaerung": "2 H2O → 2 H2 + O2: links 4 H und 2 O, rechts auch.",
+   "alltag": "Mit Strom kann man Wasser zerlegen."
+  },
+  {
+   "id": "b2-2-09",
+   "niveau": 2,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "Cu",
+     "name": "Kupfer"
+    },
+    {
+     "formel": "S",
+     "name": "Schwefel"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "Cu2S",
+     "name": "Kupfer(I)-sulfid"
+    }
+   ],
+   "loesung": [
+    2,
+    1,
+    1
+   ],
+   "denkanstoss": "Cu2S braucht 2 Cu-Atome.",
+   "erklaerung": "2 Cu + S → Cu2S: links 2 Cu und 1 S, rechts auch.",
+   "alltag": "Kupfer glüht mit Schwefel auf. Das ist ein bekannter Versuch."
+  },
+  {
+   "id": "b2-2-10",
+   "niveau": 2,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "C",
+     "name": "Kohlenstoff"
+    },
+    {
+     "formel": "H2",
+     "name": "Wasserstoff"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "CH4",
+     "name": "Methan"
+    }
+   ],
+   "loesung": [
+    1,
+    2,
+    1
+   ],
+   "denkanstoss": "CH4 braucht 4 H-Atome. Ein H2 hat 2.",
+   "erklaerung": "C + 2 H2 → CH4: links 1 C und 4 H, rechts auch."
+  },
+  {
+   "id": "b2-2-11",
+   "niveau": 2,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "waage",
+   "frage": "Ist die Gleichung ausgeglichen?",
+   "edukte": [
+    {
+     "formel": "Fe",
+     "name": "Eisen"
+    },
+    {
+     "formel": "S",
+     "name": "Schwefel"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "FeS",
+     "name": "Eisen(II)-sulfid"
+    }
+   ],
+   "loesung": [
+    1,
+    1,
+    1
+   ],
+   "start": [
+    1,
+    1,
+    1
+   ],
+   "pruefen": true,
+   "denkanstoss": "Zähl Fe und S links und rechts.",
+   "erklaerung": "Links 1 Fe und 1 S, rechts auch. Ausgeglichen."
+  },
+  {
+   "id": "b2-2-12",
+   "niveau": 2,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "waage",
+   "frage": "Ist die Gleichung ausgeglichen?",
+   "edukte": [
+    {
+     "formel": "CuO",
+     "name": "Kupfer(II)-oxid",
+     "falle": {
+      "formel": "Cu2O",
+      "text": "Aus CuO würde Cu2O. Das ist Kupfer(I)-oxid, ein anderer Stoff: rot statt schwarz. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    },
+    {
+     "formel": "C",
+     "name": "Kohlenstoff"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "Cu",
+     "name": "Kupfer"
+    },
+    {
+     "formel": "CO2",
+     "name": "Kohlenstoffdioxid"
+    }
+   ],
+   "loesung": [
+    2,
+    1,
+    2,
+    1
+   ],
+   "start": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "pruefen": true,
+   "denkanstoss": "Zähl die O-Atome links und rechts.",
+   "erklaerung": "Links 1 O, rechts 2 O. Nicht ausgeglichen. Richtig ist 2 CuO + C → 2 Cu + CO2."
+  },
+  {
+   "id": "b2-3-01",
+   "niveau": 3,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "Fe2O3",
+     "name": "Eisen(III)-oxid"
+    },
+    {
+     "formel": "Al",
+     "name": "Aluminium"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "Fe",
+     "name": "Eisen"
+    },
+    {
+     "formel": "Al2O3",
+     "name": "Aluminiumoxid"
+    }
+   ],
+   "loesung": [
+    1,
+    2,
+    2,
+    1
+   ],
+   "denkanstoss": "Erst Fe, dann Al ausgleichen. O stimmt schon.",
+   "erklaerung": "Fe2O3 + 2 Al → 2 Fe + Al2O3: links 2 Fe, 3 O, 2 Al, rechts auch.",
+   "alltag": "Das ist Thermit. Damit schweißt man Bahnschienen."
+  },
+  {
+   "id": "b2-3-02",
+   "niveau": 3,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "Fe2O3",
+     "name": "Eisen(III)-oxid"
+    },
+    {
+     "formel": "C",
+     "name": "Kohlenstoff"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "Fe",
+     "name": "Eisen"
+    },
+    {
+     "formel": "CO2",
+     "name": "Kohlenstoffdioxid"
+    }
+   ],
+   "loesung": [
+    2,
+    3,
+    4,
+    3
+   ],
+   "denkanstoss": "Fe2O3 hat 3 O, CO2 hat 2 O. Bei welcher Zahl passen beide zusammen?",
+   "erklaerung": "2 Fe2O3 + 3 C → 4 Fe + 3 CO2: links 4 Fe, 6 O, 3 C, rechts auch.",
+   "alltag": "So ähnlich gewinnt man Eisen im Hochofen."
+  },
+  {
+   "id": "b2-3-03",
+   "niveau": 3,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "Mg",
+     "name": "Magnesium"
+    },
+    {
+     "formel": "CO2",
+     "name": "Kohlenstoffdioxid"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "MgO",
+     "name": "Magnesiumoxid"
+    },
+    {
+     "formel": "C",
+     "name": "Kohlenstoff"
+    }
+   ],
+   "loesung": [
+    2,
+    1,
+    2,
+    1
+   ],
+   "denkanstoss": "CO2 gibt 2 O ab. Wie viele MgO entstehen?",
+   "erklaerung": "2 Mg + CO2 → 2 MgO + C: links 2 Mg, 1 C, 2 O, rechts auch.",
+   "alltag": "Magnesium brennt sogar in Kohlenstoffdioxid weiter."
+  },
+  {
+   "id": "b2-3-04",
+   "niveau": 3,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "FeO",
+     "name": "Eisen(II)-oxid",
+     "falle": {
+      "formel": "Fe2O3",
+      "text": "Aus FeO würde Fe2O3. Das ist Eisen(III)-oxid, ein anderer Stoff (roter Rost). Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    },
+    {
+     "formel": "Al",
+     "name": "Aluminium"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "Fe",
+     "name": "Eisen"
+    },
+    {
+     "formel": "Al2O3",
+     "name": "Aluminiumoxid"
+    }
+   ],
+   "loesung": [
+    3,
+    2,
+    3,
+    1
+   ],
+   "denkanstoss": "Al2O3 braucht 3 O. Wie viele FeO geben 3 O ab?",
+   "erklaerung": "3 FeO + 2 Al → 3 Fe + Al2O3: links 3 Fe, 3 O, 2 Al, rechts auch."
+  },
+  {
+   "id": "b2-3-05",
+   "niveau": 3,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "CuO",
+     "name": "Kupfer(II)-oxid",
+     "falle": {
+      "formel": "Cu2O",
+      "text": "Aus CuO würde Cu2O. Das ist Kupfer(I)-oxid, ein anderer Stoff: rot statt schwarz. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    },
+    {
+     "formel": "Al",
+     "name": "Aluminium"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "Cu",
+     "name": "Kupfer"
+    },
+    {
+     "formel": "Al2O3",
+     "name": "Aluminiumoxid"
+    }
+   ],
+   "loesung": [
+    3,
+    2,
+    3,
+    1
+   ],
+   "denkanstoss": "Al2O3 braucht 3 O. Wie viele CuO geben 3 O ab?",
+   "erklaerung": "3 CuO + 2 Al → 3 Cu + Al2O3: links 3 Cu, 3 O, 2 Al, rechts auch."
+  },
+  {
+   "id": "b2-3-06",
+   "niveau": 3,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "PbO",
+     "name": "Bleioxid"
+    },
+    {
+     "formel": "Al",
+     "name": "Aluminium"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "Pb",
+     "name": "Blei"
+    },
+    {
+     "formel": "Al2O3",
+     "name": "Aluminiumoxid"
+    }
+   ],
+   "loesung": [
+    3,
+    2,
+    3,
+    1
+   ],
+   "denkanstoss": "Al2O3 braucht 3 O. Wie viele PbO geben 3 O ab?",
+   "erklaerung": "3 PbO + 2 Al → 3 Pb + Al2O3: links 3 Pb, 3 O, 2 Al, rechts auch."
+  },
+  {
+   "id": "b2-3-07",
+   "niveau": 3,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "Fe2O3",
+     "name": "Eisen(III)-oxid"
+    },
+    {
+     "formel": "Mg",
+     "name": "Magnesium"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "Fe",
+     "name": "Eisen"
+    },
+    {
+     "formel": "MgO",
+     "name": "Magnesiumoxid"
+    }
+   ],
+   "loesung": [
+    1,
+    3,
+    2,
+    3
+   ],
+   "denkanstoss": "Fe2O3 gibt 3 O ab. Jedes MgO nimmt 1 O.",
+   "erklaerung": "Fe2O3 + 3 Mg → 2 Fe + 3 MgO: links 2 Fe, 3 O, 3 Mg, rechts auch."
+  },
+  {
+   "id": "b2-3-08",
+   "niveau": 3,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "Fe",
+     "name": "Eisen"
+    },
+    {
+     "formel": "Cl2",
+     "name": "Chlor"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "FeCl3",
+     "name": "Eisen(III)-chlorid"
+    }
+   ],
+   "loesung": [
+    2,
+    3,
+    2
+   ],
+   "denkanstoss": "Cl2 hat 2 Cl, FeCl3 hat 3 Cl. Bei welcher Zahl passen beide zusammen?",
+   "erklaerung": "2 Fe + 3 Cl2 → 2 FeCl3: links 2 Fe und 6 Cl, rechts auch."
+  },
+  {
+   "id": "b2-3-09",
+   "niveau": 3,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "Cu2O",
+     "name": "Kupfer(I)-oxid"
+    },
+    {
+     "formel": "C",
+     "name": "Kohlenstoff"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "Cu",
+     "name": "Kupfer"
+    },
+    {
+     "formel": "CO2",
+     "name": "Kohlenstoffdioxid"
+    }
+   ],
+   "loesung": [
+    2,
+    1,
+    4,
+    1
+   ],
+   "denkanstoss": "CO2 braucht 2 O. Wie viele Cu2O geben 2 O ab? Dann Cu zählen.",
+   "erklaerung": "2 Cu2O + C → 4 Cu + CO2: links 4 Cu, 2 O, 1 C, rechts auch."
+  },
+  {
+   "id": "b2-3-10",
+   "niveau": 3,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "Fe",
+     "name": "Eisen"
+    },
+    {
+     "formel": "O2",
+     "name": "Sauerstoff"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "Fe2O3",
+     "name": "Eisen(III)-oxid"
+    }
+   ],
+   "loesung": [
+    4,
+    3,
+    2
+   ],
+   "denkanstoss": "O2 hat 2 O, Fe2O3 hat 3 O. Bei welcher Zahl passen beide zusammen?",
+   "erklaerung": "4 Fe + 3 O2 → 2 Fe2O3: links 4 Fe und 6 O, rechts auch.",
+   "alltag": "So rostet Eisen, vereinfacht. Roter Rost besteht vor allem aus Fe2O3."
+  },
+  {
+   "id": "b2-3-11",
+   "niveau": 3,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "Al2O3",
+     "name": "Aluminiumoxid"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "Al",
+     "name": "Aluminium"
+    },
+    {
+     "formel": "O2",
+     "name": "Sauerstoff"
+    }
+   ],
+   "loesung": [
+    2,
+    4,
+    3
+   ],
+   "denkanstoss": "Al2O3 hat 3 O, O2 hat 2 O. Bei welcher Zahl passen beide zusammen?",
+   "erklaerung": "2 Al2O3 → 4 Al + 3 O2: links 4 Al und 6 O, rechts auch.",
+   "alltag": "So gewinnt man Aluminium, mit sehr viel Strom."
+  },
+  {
+   "id": "b2-2-13",
+   "niveau": 2,
+   "typ": "auswahl",
+   "symbol": "❓",
+   "kann": "index",
+   "frage": "Du brauchst mehr Wasser. Was darfst du schreiben?",
+   "antworten": [
+    "2 H2O",
+    "H2O2",
+    "H4O2",
+    "H2O3"
+   ],
+   "richtig": "2 H2O",
+   "fehler": {
+    "H2O2": "H2O2 ist Wasserstoffperoxid, ein anderer Stoff.",
+    "H4O2": "Die kleinen Zahlen gehören zum Stoff. H4O2 ist kein Wasser.",
+    "H2O3": "Die kleinen Zahlen gehören zum Stoff. H2O3 ist kein Wasser."
+   },
+   "denkanstoss": "Ändern darfst du nur die große Zahl davor.",
+   "erklaerung": "2 H2O heißt: zwei Wasserteilchen. Die kleinen Zahlen bleiben gleich."
+  },
+  {
+   "id": "b2-3-12",
+   "niveau": 3,
+   "typ": "auswahl",
+   "symbol": "❓",
+   "kann": "index",
+   "frage": "Warum darfst du in CuO keine kleine 2 hinter Cu schreiben?",
+   "antworten": [
+    "Dann wäre es ein anderer Stoff: Cu2O.",
+    "Kleine Zahlen sind verboten.",
+    "Dann stimmt die Waage nie."
+   ],
+   "richtig": "Dann wäre es ein anderer Stoff: Cu2O.",
+   "fehler": {
+    "Kleine Zahlen sind verboten.": "In Cu2O steht ja eine kleine 2. Sie gehört zum Stoff.",
+    "Dann stimmt die Waage nie.": "Die Waage kann trotzdem stimmen. Aber es wäre ein anderer Stoff."
+   },
+   "denkanstoss": "Was passiert mit dem Stoff, wenn du die kleine Zahl änderst?",
+   "erklaerung": "Cu2O ist Kupfer(I)-oxid, ein anderer Stoff als CuO, Kupfer(II)-oxid."
+  }
+ ]
+}

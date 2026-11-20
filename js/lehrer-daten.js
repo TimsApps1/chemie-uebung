@@ -263,7 +263,7 @@ export function bestenliste(d, { bereich, niveau, woche, kurs = '' }, anzahl = 5
 // Bereiche in der Lehrer-Ansicht (eine Liste für Tabelle, Export und Beamer).
 // Fertige Bereiche immer, spätere nur, sobald es Runden dafür gibt.
 export const BEREICH_KURZ = { B4: 'B4 Symbole', B3: 'B3 Redox', B1: 'B1 Formeln bauen', B2: 'B2 Ausgleichen' };
-const FERTIGE_BEREICHE = ['B4', 'B3', 'B1'];
+const FERTIGE_BEREICHE = ['B4', 'B3', 'B1', 'B2'];
 export const NUR_E = ['B1', 'B2'];
 export function lehrerBereiche(d = lehrerDaten()) {
   return Object.keys(BEREICH_KURZ).filter((b) => FERTIGE_BEREICHE.includes(b) || d.runden.some((r) => r.bereich === b));

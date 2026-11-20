@@ -187,7 +187,7 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
   }
 
   // Aufgaben mit nur zwei Antworten: Nach einem Fehler wäre der 2. Versuch geschenkt.
-  const nurZweiAntworten = (a) => a.typ === 'klappt' || ((a.typ === 'auswahl' || a.typ === 'modell') && a.antworten.length === 2);
+  const nurZweiAntworten = (a) => a.typ === 'klappt' || (a.typ === 'ausgleichen' && a.pruefen) || ((a.typ === 'auswahl' || a.typ === 'modell') && a.antworten.length === 2);
 
   function zeigeAufgabe(a) {
     let versuch = 1;
@@ -211,7 +211,7 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
       el('div', { class: 'anweisung-zeile' },
         el('p', { class: 'anweisung' }, el('span', { class: 'anweisung-zeichen', 'aria-hidden': 'true' }, a.symbol || '❓'), el('span', {}, a.hilfe_vorher === false ? formelKnoten(a.frage) : text(a.frage))),
         vorlesenKnopf(() => vorleseText(a, typeof darstellung.reihenfolge === 'function' ? darstellung.reihenfolge() : darstellung.reihenfolge))),
-      zeitlimit && !wiederholung ? zeitbalken(a.typ === 'bauen' ? 90 : ZEIT_PRO_AUFGABE) : null,
+      zeitlimit && !wiederholung ? zeitbalken(a.typ === 'bauen' || (a.typ === 'ausgleichen' && !a.pruefen) ? 90 : ZEIT_PRO_AUFGABE) : null,
       darstellung.wurzel,
       rueck,
       erklaeren);
