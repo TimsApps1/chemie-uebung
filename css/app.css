@@ -1089,3 +1089,8 @@ button.bereich { font: inherit; text-align: left; cursor: pointer; width: 100%; 
 .teilchen { max-width: 100%; }
 .stoff-name { font-size: 1rem; }
 .falle-knopf { font-size: 0.95rem; }
+.waage-box { position: static; }
+.waage-box.offen { position: sticky; bottom: 0; background: #fff; padding-top: 6px; box-shadow: 0 -6px 10px -6px rgba(0,0,0,.15); }
+.fenster .waage-box.offen { position: static; box-shadow: none; }
+.ausgleichen .bau-status { font-size: 1.15rem; }
+.stoff-name { hyphens: auto; overflow-wrap: anywhere; }

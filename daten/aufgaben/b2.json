@@ -129,7 +129,7 @@
      "name": "Kohlenstoffdioxid",
      "falle": {
       "formel": "CO3",
-      "text": "Aus CO2 würde CO3. Diesen Stoff gibt es nicht. Kohlenstoffdioxid ist immer CO2. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus CO2 würde CO3. Das ist kein Kohlenstoffdioxid mehr – Kohlenstoffdioxid ist immer CO2. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     }
    ],
@@ -397,7 +397,7 @@
      "name": "Chlorwasserstoff",
      "falle": {
       "formel": "HCl2",
-      "text": "Aus HCl würde HCl2. Das passt nicht zu den Noppen: H hat nur 1 Noppe. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus HCl würde HCl2. Das ist ein anderer Stoff, nicht mehr Chlorwasserstoff. Es passt auch nicht zu den Noppen: H hat nur 1 Noppe. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     }
    ],
@@ -432,7 +432,7 @@
      "name": "Natriumchlorid",
      "falle": {
       "formel": "NaCl2",
-      "text": "Aus NaCl würde NaCl2. Das passt nicht zu den Noppen: Na hat nur 1 Noppe. Kochsalz ist immer NaCl. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus NaCl würde NaCl2. Das ist kein Kochsalz mehr – Kochsalz ist immer NaCl. Es passt auch nicht zu den Noppen: Na hat nur 1 Noppe. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     }
    ],
@@ -518,7 +518,7 @@
      "name": "Kohlenstoffdioxid",
      "falle": {
       "formel": "CO3",
-      "text": "Aus CO2 würde CO3. Diesen Stoff gibt es nicht. Kohlenstoffdioxid ist immer CO2. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus CO2 würde CO3. Das ist kein Kohlenstoffdioxid mehr – Kohlenstoffdioxid ist immer CO2. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     }
    ],
@@ -574,7 +574,7 @@
     1
    ],
    "denkanstoss": "Fe2O3 braucht 3 O-Atome. Wie viele CuO geben 3 O ab?",
-   "erklaerung": "3 CuO + 2 Fe → 3 Cu + Fe2O3: links 3 Cu, 3 O, 2 Fe, rechts auch. Eisen bildet zwei Oxide: FeO und Fe2O3. Hier entsteht Fe2O3."
+   "erklaerung": "3 CuO + 2 Fe → 3 Cu + Fe2O3: links 3 Cu, 3 O, 2 Fe, rechts auch. Eisen bildet mehrere Oxide, zum Beispiel FeO und Fe2O3. Hier entsteht Fe2O3."
   },
   {
    "id": "b2-2-03",
@@ -678,7 +678,7 @@
      "name": "Kohlenstoffdioxid",
      "falle": {
       "formel": "CO3",
-      "text": "Aus CO2 würde CO3. Diesen Stoff gibt es nicht. Kohlenstoffdioxid ist immer CO2. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus CO2 würde CO3. Das ist kein Kohlenstoffdioxid mehr – Kohlenstoffdioxid ist immer CO2. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     }
    ],
@@ -704,7 +704,7 @@
      "name": "Methan",
      "falle": {
       "formel": "CH5",
-      "text": "Aus CH4 würde CH5. Das passt nicht zu den Noppen: C hat nur 4 Noppen. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus CH4 würde CH5. Das ist kein Methan mehr – Methan ist immer CH4. Es passt auch nicht zu den Noppen: C hat nur 4 Noppen. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     },
     {
@@ -718,7 +718,7 @@
      "name": "Kohlenstoffdioxid",
      "falle": {
       "formel": "CO3",
-      "text": "Aus CO2 würde CO3. Diesen Stoff gibt es nicht. Kohlenstoffdioxid ist immer CO2. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus CO2 würde CO3. Das ist kein Kohlenstoffdioxid mehr – Kohlenstoffdioxid ist immer CO2. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     },
     {
@@ -763,7 +763,7 @@
      "name": "Ammoniak",
      "falle": {
       "formel": "NH4",
-      "text": "Aus NH3 würde NH4. Das passt nicht zu den Noppen: N hat nur 3 Noppen. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus NH3 würde NH4. Das ist kein Ammoniak mehr – Ammoniak ist immer NH3. Es passt auch nicht zu den Noppen: N hat nur 3 Noppen. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     }
    ],
@@ -871,7 +871,7 @@
      "name": "Methan",
      "falle": {
       "formel": "CH5",
-      "text": "Aus CH4 würde CH5. Das passt nicht zu den Noppen: C hat nur 4 Noppen. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus CH4 würde CH5. Das ist kein Methan mehr – Methan ist immer CH4. Es passt auch nicht zu den Noppen: C hat nur 4 Noppen. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     }
    ],
@@ -955,7 +955,7 @@
      "name": "Kohlenstoffdioxid",
      "falle": {
       "formel": "CO3",
-      "text": "Aus CO2 würde CO3. Diesen Stoff gibt es nicht. Kohlenstoffdioxid ist immer CO2. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus CO2 würde CO3. Das ist kein Kohlenstoffdioxid mehr – Kohlenstoffdioxid ist immer CO2. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     }
    ],
@@ -1051,7 +1051,7 @@
      "name": "Kohlenstoffdioxid",
      "falle": {
       "formel": "CO3",
-      "text": "Aus CO2 würde CO3. Diesen Stoff gibt es nicht. Kohlenstoffdioxid ist immer CO2. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus CO2 würde CO3. Das ist kein Kohlenstoffdioxid mehr – Kohlenstoffdioxid ist immer CO2. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     }
    ],
@@ -1082,7 +1082,7 @@
      "name": "Kohlenstoffdioxid",
      "falle": {
       "formel": "CO3",
-      "text": "Aus CO2 würde CO3. Diesen Stoff gibt es nicht. Kohlenstoffdioxid ist immer CO2. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus CO2 würde CO3. Das ist kein Kohlenstoffdioxid mehr – Kohlenstoffdioxid ist immer CO2. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     }
    ],
@@ -1309,7 +1309,7 @@
      "name": "Eisen(III)-chlorid",
      "falle": {
       "formel": "FeCl4",
-      "text": "Aus FeCl3 würde FeCl4. Das passt nicht zu den Noppen: Fe(III) hat nur 3 Noppen. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus FeCl3 würde FeCl4. Das ist nicht mehr Eisen(III)-chlorid. Es passt auch nicht zu den Noppen: Fe(III) hat nur 3 Noppen. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     }
    ],
@@ -1352,7 +1352,7 @@
      "name": "Kohlenstoffdioxid",
      "falle": {
       "formel": "CO3",
-      "text": "Aus CO2 würde CO3. Diesen Stoff gibt es nicht. Kohlenstoffdioxid ist immer CO2. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus CO2 würde CO3. Das ist kein Kohlenstoffdioxid mehr – Kohlenstoffdioxid ist immer CO2. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     }
    ],

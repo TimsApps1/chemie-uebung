@@ -12,6 +12,7 @@ const LOB_STANDARD = {
   erster: ['Richtig!', 'Stimmt genau!', 'Gut gemacht!', 'Sehr gut!'],
   zweiter: ['Beim 2. Versuch richtig – gut nachgedacht!', 'Richtig! Der Denkanstoß hat geholfen.', 'Gut, dass du drangeblieben bist!'],
   ausgebessert: ['Ausgebessert! Diesmal hat es geklappt.', 'Super, jetzt sitzt es!'],
+  ausgleichen_zweiter: ['Umgebaut und geschafft – die Waage steht gerade!', 'Drangeblieben – jetzt passt jedes Atom.', 'Gut nachgezählt!'],
   ausgleichen: ['Die Waage steht gerade – alle Atome passen!', 'Links und rechts gleich viele Atome. Stark!', 'Sauber ausgeglichen!', 'Alle Atome sind wieder da – genau so!']
 };
 
@@ -36,10 +37,13 @@ export function aufgabenWaehlen(alle, niveau, kurs, zuletzt = []) {
     : pool.filter((a) => a.leicht);
   // Einstieg: höchstens eine von der App erzeugte Aufgabe.
   const einstiegQuelle = frischZuerst(einstiegPool.length >= 2 ? einstiegPool : pool);
+  // Dieselbe Reaktion nicht zweimal in einer Runde (z. B. einmal ausgleichen, einmal „Ist sie ausgeglichen?“).
+  const reaktion = (x) => (x.typ === 'ausgleichen' ? [...x.edukte, ...x.produkte].map((s) => s.formel).join('|') : null);
   const einstieg = [];
   for (const a of einstiegQuelle) {
     if (einstieg.length >= 2) break;
     if (a.generiert && einstieg.some((x) => x.generiert)) continue;
+    if (reaktion(a) && einstieg.some((x) => reaktion(x) === reaktion(a))) continue;
     einstieg.push(a);
   }
   const rest = frischZuerst(pool.filter((a) => !einstieg.includes(a)));
@@ -52,7 +56,8 @@ export function aufgabenWaehlen(alle, niveau, kurs, zuletzt = []) {
   // Bereich 2: Das Ausgleichen ist die Hauptsache (bis 6 pro Runde), höchstens 1 Auswahlfrage.
   const mitAusgleichen = pool.some((x) => x.typ === 'ausgleichen' && !x.pruefen);
   const grenze = (k) => (mitAusgleichen ? ({ ausgleichen: 6, auswahl: 1, pruefen: 2 }[k] ?? 4) : (k === 'pruefen' ? 2 : 4));
-  const passt = (a, liste) => !(a.typ === 'sortieren' && zahl(liste, (x) => x.typ === 'sortieren') >= 2) &&
+  const passt = (a, liste) => !(reaktion(a) && liste.some((x) => reaktion(x) === reaktion(a))) &&
+    !(a.typ === 'sortieren' && zahl(liste, (x) => x.typ === 'sortieren') >= 2) &&
     !(a.generiert && zahl(liste, (x) => x.generiert) >= 3) &&
     zahl(liste, (x) => art(x) === art(a)) < grenze(art(a));
   for (const a of rest) {
@@ -60,9 +65,12 @@ export function aufgabenWaehlen(alle, niveau, kurs, zuletzt = []) {
     if (passt(a, [...einstieg, ...auswahl])) auswahl.push(a);
   }
   // Falls zu wenig übrig ist, mit den übrigen auffüllen.
-  for (const a of rest) {
-    if (auswahl.length >= RUNDE_LAENGE - einstieg.length) break;
-    if (!auswahl.includes(a)) auswahl.push(a);
+  const doppelt = (a) => reaktion(a) && [...einstieg, ...auswahl].some((x) => reaktion(x) === reaktion(a));
+  for (const nurNeue of [true, false]) {
+    for (const a of rest) {
+      if (auswahl.length >= RUNDE_LAENGE - einstieg.length) break;
+      if (!auswahl.includes(a) && !(nurNeue && doppelt(a))) auswahl.push(a);
+    }
   }
   return [...einstieg, ...abwechselnd(auswahl, einstieg)];
 }
@@ -240,7 +248,7 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
         }
         if (!wiederholung && versuch === 1) stand.ersterVersuch += 1;
         let lobText = a.typ === 'ausgleichen' && !a.pruefen
-          ? (versuch === 1 ? lob(daten, 'ausgleichen') : 'Umgebaut und geschafft – die Waage steht gerade!')
+          ? lob(daten, versuch === 1 ? 'ausgleichen' : 'ausgleichen_zweiter')
           : lob(daten, versuch === 1 ? 'erster' : 'zweiter');
         if (art === 'fehler') {
           const erledigt = fehlerWiederholt(name, a.id, versuch === 1);
@@ -288,10 +296,11 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
       const loesung = loesungsText(a, daten);
       rueck.replaceChildren(rueckmeldung(false, nurZweiAntworten(a) && versuch === 1 ? 'Leider nicht. Merk dir die Lösung.' : 'Das war noch nicht richtig.', null, 0,
         el('div', { class: 'loesung' },
-          el('p', {}, el('b', {}, '💡 So geht’s: '), text(loesung)),
+          // Beim Ausgleichen steht die richtige Gleichung schon über der Karte: nicht doppelt zeigen.
+          a.typ === 'ausgleichen' && !a.pruefen ? null : el('p', {}, el('b', {}, '💡 So geht’s: '), text(loesung)),
           el('p', {}, text(a.erklaerung)),
           art === 'normal' && !wiederholung ? el('p', { class: 'leise' }, '↻ Diese Aufgabe kommt am Ende der Runde noch einmal.') : null),
-        `Lösung: ${loesung}. ${a.erklaerung}`));
+        a.typ === 'ausgleichen' && !a.pruefen ? a.erklaerung : `Lösung: ${loesung}. ${a.erklaerung}`));
       weiterKnopf(a, false);
     }
 
