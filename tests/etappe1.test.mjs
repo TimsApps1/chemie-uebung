@@ -6,7 +6,7 @@ import path from 'node:path';
 import { createRequire } from 'node:module';
 import { starten, WURZEL, PFAD } from './server.mjs';
 import { nameVereinheitlichen, tagNummer, wocheVonTag, atomeZaehlen } from '../js/hilfen.js';
-import { freischaltcode, freischaltcodePruefen, punktecode, punktecodeLesen, KURSE_PRO_BEREICH } from '../js/codes.js';
+import { freischaltcode, freischaltcodePruefen, punktecode, punktecodeLesen, KURSE_PRO_BEREICH, pinPruefsumme } from '../js/codes.js';
 import { ALPHABET } from '../js/pruefsumme.js';
 
 const { chromium } = createRequire(import.meta.url)('playwright');
@@ -203,7 +203,14 @@ before(async () => {
 after(async () => { await browser?.close(); server?.close(); });
 
 async function neueSeite(viewport = { width: 820, height: 1180 }) {
-  const kontext = await browser.newContext({ viewport, hasTouch: true });
+  // Ohne Offline-Speicher, damit die Test-PIN 4711 statt der echten PIN gilt.
+  const kontext = await browser.newContext({ viewport, hasTouch: true, serviceWorkers: 'block' });
+  await kontext.route('**/daten/app.json', async (route) => {
+    const antwort = await route.fetch();
+    const daten = await antwort.json();
+    daten.admin_pin_pruefsumme = pinPruefsumme('4711');
+    await route.fulfill({ response: antwort, json: daten });
+  });
   const seite = await kontext.newPage();
   const fehler = [];
   seite.on('pageerror', (e) => fehler.push(e.message));
