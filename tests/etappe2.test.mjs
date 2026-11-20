@@ -345,3 +345,26 @@ test('Nicht zugeordnete Gruppe verwerfen; Zuordnung aufheben', async () => {
   assert.deepEqual(r, { nachZuordnung: 0, zuordnungen: 1, offenNachAufheben: 1, quatschWieder: 0 });
   await kontext.close();
 });
+
+test('Klassenliste: Spalten aus Numbers/Excel, „Nachname, Vorname“ und Kurs nur als letztes Feld', async () => {
+  const { klassenZeile } = await import('../js/lehrer-daten.js');
+  assert.deepEqual(klassenZeile('Lena\tSchmidt\tE'), { anzeige: 'Lena Schmidt', kurs: 'E', einWort: false });
+  assert.deepEqual(klassenZeile('Schmidt, Lena'), { anzeige: 'Lena Schmidt', kurs: '', einWort: false });
+  assert.deepEqual(klassenZeile('Schmidt, Lena; g'), { anzeige: 'Lena Schmidt', kurs: 'G', einWort: false });
+  assert.deepEqual(klassenZeile('Lena Schmidt; G'), { anzeige: 'Lena Schmidt', kurs: 'G', einWort: false });
+  assert.equal(klassenZeile('Lena').einWort, true);
+});
+
+test('Symbol-Aufgaben: keine Antworten mit großem I oder kleinem l als Ablenker, kein Iod', async () => {
+  const { aufgabenErzeugen } = await import('../js/erzeugen.js');
+  const fs = await import('node:fs');
+  const elemente = JSON.parse(fs.readFileSync(new URL('../daten/elemente.json', import.meta.url), 'utf8'));
+  const d = { app: {}, aufgaben: { B4: [] }, elemente: elemente.elemente || elemente };
+  aufgabenErzeugen(d);
+  const symbolAufgaben = d.aufgaben.B4.filter((a) => a.frage?.startsWith('Welches Symbol hat'));
+  assert.ok(symbolAufgaben.length > 10);
+  for (const a of symbolAufgaben) {
+    assert.notEqual(a.richtig, 'I');
+    for (const x of a.antworten.filter((x) => x !== a.richtig)) assert.ok(!/[lI]/.test(x), `${a.frage}: ${x}`);
+  }
+});

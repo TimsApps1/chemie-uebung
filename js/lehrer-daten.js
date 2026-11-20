@@ -97,19 +97,36 @@ export function rundeLoeschen(code) {
 // ---------- Klassenliste ----------
 // Eine Zeile pro Kind: "Vorname Nachname" und optional "; E" oder "; G".
 
+// Eine Zeile zerlegen. Funktioniert auch mit Spalten aus Numbers/Excel (Tab) und mit „Nachname, Vorname“.
+// Der Kurs zählt nur, wenn das letzte Feld genau G oder E ist.
+export function klassenZeile(zeile) {
+  let felder = String(zeile).split(/[;,\t]/).map((f) => f.trim()).filter(Boolean);
+  let kurs = '';
+  if (felder.length > 1 && /^[ge]$/i.test(felder[felder.length - 1])) kurs = felder.pop().toUpperCase();
+  // Kurs am Ende ohne Trennzeichen: "Lena Schmidt G"
+  if (!kurs && felder.length === 1) {
+    const m = felder[0].match(/^(.+\S)\s+([GgEe])$/);
+    if (m && m[1].includes(' ')) { felder = [m[1]]; kurs = m[2].toUpperCase(); }
+  }
+  // "Schmidt, Lena" -> "Lena Schmidt" (nur bei Komma, Tab-Spalten bleiben in ihrer Reihenfolge)
+  let anzeige;
+  if (felder.length === 2 && /^[^,]+,[^,]+/.test(zeile) && !/[;\t]/.test(zeile.split(',')[0])) anzeige = `${felder[1]} ${felder[0]}`;
+  else anzeige = felder.join(' ');
+  anzeige = anzeige.replace(/\s+/g, ' ').trim();
+  return { anzeige, kurs, einWort: !anzeige.includes(' ') };
+}
+
 export function klasseAusText(text) {
   // Die ID hängt nur am Namen (nicht an der Zeile): Einfügen oder Löschen von Zeilen ändert nichts.
   const vergeben = new Set();
   return String(text || '').split(/\r?\n/).map((z) => z.trim()).filter(Boolean).map((zeile) => {
-    const [namensTeil, kursTeil] = zeile.split(/[;,\t]/);
-    const anzeige = namensTeil.trim().replace(/\s+/g, ' ');
-    const kurs = /^\s*e\s*$/i.test(kursTeil || '') ? 'E' : /^\s*g\s*$/i.test(kursTeil || '') ? 'G' : '';
+    const { anzeige, kurs } = klassenZeile(zeile);
     const kurz = kurzname(anzeige);
     const kennung = namensKennung(anzeige);
     let id = `${kurz}-${kennung}`;
     for (let n = 2; vergeben.has(id); n++) id = `${kurz}-${kennung}-${n}`;
     vergeben.add(id);
-    return { id, anzeige, kurz, kennung, kurs };
+    return { id, anzeige, kurz, kennung, kurs, einWort: !anzeige.includes(' ') };
   }).filter((k) => k.kurz);
 }
 

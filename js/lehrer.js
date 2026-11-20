@@ -288,14 +288,15 @@ export function klasseReiter({ neu }) {
     vorschau.replaceChildren(
       liste.length ? el('div', { class: 'tabelle-rollen' }, el('table', { class: 'tabelle' },
         el('thead', {}, el('tr', {}, el('th', {}, 'Name'), el('th', {}, 'Kurzname im Code'), el('th', {}, 'Kennung'), el('th', {}, 'Kurs'))),
-        el('tbody', {}, liste.map((k) => el('tr', {}, el('td', {}, k.anzeige), el('td', {}, el('code', {}, k.kurz)), el('td', {}, el('code', {}, k.kennung)), el('td', {}, k.kurs || '–')))))) : null,
-      doppelt.length ? el('p', { class: 'meldung' }, `⚠ Doppelt: ${[...new Set(doppelt.map((k) => k.anzeige))].join(', ')}`) : null);
+        el('tbody', {}, liste.map((k) => el('tr', {}, el('td', {}, k.einWort ? `⚠ ${k.anzeige}` : k.anzeige), el('td', {}, el('code', {}, k.kurz)), el('td', {}, el('code', {}, k.kennung)), el('td', {}, k.kurs || '–')))))) : null,
+      doppelt.length ? el('p', { class: 'meldung' }, `⚠ Doppelt: ${[...new Set(doppelt.map((k) => k.anzeige))].join(', ')}`) : null,
+      liste.some((k) => k.einWort) ? el('p', { class: 'meldung' }, `⚠ Nur ein Wort: ${liste.filter((k) => k.einWort).map((k) => k.anzeige).join(', ')}. Die Kinder müssen Vor- und Nachnamen eintippen – bitte beides eintragen.`) : null);
   };
   feld.addEventListener('input', zeigeVorschau);
   zeigeVorschau();
   const meldung = el('span', { class: 'kopier-meldung', 'aria-live': 'polite' });
   return [karte('Klassenliste',
-    el('p', { class: 'leise' }, 'Ein Kind pro Zeile: Vorname und Nachname, optional „; G“ oder „; E“. Die Kinder sollen ihren Namen in der App genau so eintippen. Dann ordnet die App alle Codes automatisch zu.'),
+    el('p', { class: 'leise' }, 'Ein Kind pro Zeile: Vorname und Nachname, optional „; G“ oder „; E“. Spalten aus Numbers/Excel und „Nachname, Vorname“ gehen auch. Die Kinder sollen ihren Namen in der App genau so eintippen. Dann ordnet die App alle Codes automatisch zu.'),
     feld,
     el('div', { class: 'zeile' }, el('button', { type: 'button', class: 'knopf knopf-haupt', onclick: () => {
       klasseSpeichern(klasseAusText(feld.value));

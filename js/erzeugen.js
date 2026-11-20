@@ -11,7 +11,8 @@ const LATEIN = {
 // Gold und Silber haben keine Oxide in der Reihe; als Stoff wären sie zu einfache "klappt nicht"-Fälle.
 const NICHT_ALS_STOFF = ['Gold', 'Silber'];
 const HAEUFIG = ['H', 'O', 'C', 'N', 'S', 'Cl', 'Na', 'Mg', 'Al', 'Fe', 'Cu', 'Zn', 'K', 'Ca'];
-const SELTENER = ['Pb', 'Ag', 'Au', 'Co', 'Si', 'Hg', 'Sn', 'He', 'Ne', 'P', 'F', 'I'];
+const SELTENER = ['Pb', 'Ag', 'Au', 'Co', 'Si', 'Hg', 'Sn', 'He', 'Ne', 'P', 'F'];
+// Iod fehlt absichtlich: großes I und kleines l sehen in der iPad-Schrift gleich aus.
 
 // Kleiner fester Zufall, damit die erzeugten Aufgaben bei jedem Start gleich sind.
 function zufall(saat) {
@@ -130,7 +131,7 @@ function symbolAufgaben(elemente, vorhanden) {
     const rnd = zufall(nr + niveau * 50);
     const andere = elemente.filter((x) => x.symbol !== sym);
     const latein = LATEIN[sym] && LATEIN[sym] !== e.name ? ` Das kommt vom lateinischen Namen ${LATEIN[sym]}.` : '';
-    // Name -> Symbol
+    // Name -> Symbol (Ablenker mit l oder I fallen weg: in der Schrift nicht unterscheidbar)
     const falsche = eindeutig([
       sym.length === 2 ? sym.toUpperCase() : null,
       sym.length === 2 ? sym[0] : null,
@@ -138,7 +139,7 @@ function symbolAufgaben(elemente, vorhanden) {
       e.name.slice(0, 2) !== sym ? e.name.slice(0, 2) : null,
       ...andere.filter((x) => x.symbol[0] === sym[0]).map((x) => x.symbol),
       andere[Math.floor(rnd() * andere.length)].symbol
-    ].filter((x) => x && x !== sym && !(sym.length === 1 && x === sym))).slice(0, 3);
+    ].filter((x) => x && x !== sym && !(sym.length === 1 && x === sym) && !/[lI]/.test(x))).slice(0, 3);
     if (falsche.length >= 2 && !schonDa.has(sym)) {
       liste.push({
         id: `gen-s-${sym}-${niveau}`.toLowerCase(), niveau, typ: 'auswahl', symbol: '❓', kann: 'symbole', generiert: true,
