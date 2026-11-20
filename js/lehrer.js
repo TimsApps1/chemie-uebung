@@ -4,7 +4,8 @@ import { fenster, fragen } from './ui.js';
 import {
   lehrerDaten, einlesen, klasseAusText, klasseSpeichern, aliasSetzen, nichtZugeordnet, vorschlaege, kindName,
   rundenNachKind, uebersicht, verlauf, bestenliste, aktuelleWoche, wochenText, csvRunden, csvUebersicht,
-  sicherungErstellen, sicherungEinlesen, sicherungFaellig, allesLoeschen, rundeLoeschen, ERINNERUNG_TAGE
+  sicherungErstellen, sicherungGespeichert, sicherungEinlesen, sicherungFaellig, allesLoeschen, rundeLoeschen, ERINNERUNG_TAGE,
+  halbjahresBeginn
 } from './lehrer-daten.js';
 import { qrScannen } from './qr.js';
 import { sperreAussetzen } from './admin.js';
@@ -53,9 +54,14 @@ export function sicherungsHinweis(zurSicherung) {
 
 function berichtKnoten(bericht) {
   const teile = [];
+  if (bericht.speicherVoll) {
+    return el('div', { class: 'bericht', role: 'status' }, el('p', { class: 'fehler-kasten' },
+      '✗ Der Speicher auf diesem iPad ist voll. Es wurde nichts gespeichert. Sichere deine Daten (💾) und lösche alte Ergebnisse.'));
+  }
   teile.push(el('p', { class: bericht.neu.length ? 'vergleich' : 'leise' },
     bericht.neu.length ? `✓ ${bericht.neu.length} ${bericht.neu.length === 1 ? 'Runde' : 'Runden'} neu eingelesen` : 'Keine neuen Runden gefunden.'));
   if (bericht.doppelt.length) teile.push(el('p', { class: 'leise' }, `${bericht.doppelt.length} schon vorhanden (doppelt, ignoriert).`));
+  if (bericht.geloescht.length) teile.push(el('p', { class: 'leise' }, `${bericht.geloescht.length} hattest du gelöscht (ignoriert).`));
   if (bericht.ungueltig.length) {
     teile.push(el('div', { class: 'fehler-kasten' },
       el('p', {}, el('b', {}, `✗ ${bericht.ungueltig.length} ungültig:`)),
@@ -79,7 +85,8 @@ export function ergebnisseReiter({ neu }) {
       const bericht = einlesen(text, 'qr');
       const name = bericht.neu[0] ? bericht.neu[0].name : bericht.doppelt[0]?.split('-')[0] || '';
       const seite = (text.match(/^CHEMIE1 (\d+\/\d+)/) || [])[1];
-      return `${bericht.neu.length ? '✓' : '•'} ${name}${seite ? ` (QR ${seite})` : ''}: ${bericht.neu.length} neu` +
+      if (bericht.speicherVoll) return '✗ Speicher voll – nichts gespeichert!';
+      return `${bericht.ungueltig.length && !bericht.neu.length ? '✗' : bericht.neu.length ? '✓' : '•'} ${name}${seite ? ` (QR ${seite})` : ''}: ${bericht.neu.length} neu` +
         (bericht.doppelt.length ? `, ${bericht.doppelt.length} schon da` : '') + (bericht.ungueltig.length ? `, ${bericht.ungueltig.length} ungültig` : '');
     }).then(() => {
       // Nach dem Schließen die Ansicht auffrischen.
@@ -133,13 +140,13 @@ function kindDetail(id, neu) {
       el('td', {}, datumVonTag(r.tag)), el('td', {}, r.bereich), el('td', {}, sterneText(r.niveau)), el('td', {}, r.kurs || '–'),
       el('td', {}, String(r.punkte)), el('td', {}, r.erster !== null && r.erster !== undefined ? `${r.erster}/8` : '–'), el('td', {}, r.warum ? String(r.warum) : '–'),
       el('td', {}, el('button', { type: 'button', class: 'knopf knopf-klein', 'aria-label': `Runde vom ${datumVonTag(r.tag)} löschen`, onclick: async () => {
-        if (await fragen(`Diese Runde (${datumVonTag(r.tag)}, ${r.punkte} Punkte) löschen?`, 'Ja, löschen', 'Abbrechen')) {
+        if (await fragen(`Diese Runde (${datumVonTag(r.tag)}, ${r.punkte} Punkte) löschen? Sie kommt auch beim nächsten Einlesen nicht zurück.`, 'Ja, löschen', 'Abbrechen', { hauptIstNein: true })) {
           rundeLoeschen(r.code);
-          document.querySelector('.fenster-hintergrund')?.remove();
+          zuDetail?.();
           neu();
         }
       } }, '🗑')))))));
-  fenster(el('div', { class: 'kind-detail' },
+  const zuDetail = fenster(el('div', { class: 'kind-detail' },
     el('h4', {}, 'Punkte pro Woche (letzte 8 Wochen)'),
     el('ol', { class: 'saeulen wochen-saeulen', 'aria-label': 'Punkte pro Woche: ' + v.map((w) => w.punkte).join(', ') },
       v.map((w) => el('li', { style: `--h:${Math.max(3, (w.punkte / max) * 100)}%` },
@@ -149,9 +156,16 @@ function kindDetail(id, neu) {
     runden.length ? tabelle : el('p', { class: 'leise' }, 'Noch keine Runden.')), { titel: kindName(d, id) });
 }
 
+let zeitraum = 'alles';
+
 export function uebersichtReiter({ neu }) {
   const d = lehrerDaten();
-  const liste = uebersicht(d);
+  const abTag = zeitraum === 'halbjahr' ? halbjahresBeginn() : zeitraum === 'vier' ? aktuelleWoche() * 7 - 4 - 21 : null;
+  const liste = uebersicht(d, { abTag });
+  const zeitWahl = el('div', { class: 'zeile', role: 'radiogroup', 'aria-label': 'Zeitraum' },
+    [['alles', 'Alles'], ['halbjahr', `Dieses Halbjahr (ab ${datumVonTag(halbjahresBeginn())})`], ['vier', 'Letzte 4 Wochen']].map(([wert, titel]) =>
+      el('button', { type: 'button', class: 'knopf knopf-klein' + (zeitraum === wert ? ' knopf-haupt' : ''), role: 'radio', 'aria-checked': String(zeitraum === wert),
+        onclick: () => { zeitraum = wert; neu(); } }, titel)));
   const zelle = (k, b) => {
     const x = k.proBereich[b];
     if (!x) return el('td', { class: 'leise' }, '–');
@@ -165,6 +179,7 @@ export function uebersichtReiter({ neu }) {
   return [
     karte('Übersicht pro Kind',
       el('p', { class: 'leise' }, 'Pro Niveau: Bestwert (Ø Durchschnitt, % der Aufgaben beim 1. Versuch richtig) · Zahl der Runden. Tippe auf einen Namen für alle Runden und den Verlauf.'),
+      zeitWahl,
       liste.length ? el('div', { class: 'tabelle-rollen' }, el('table', { class: 'tabelle uebersicht-tabelle' },
         el('thead', {}, el('tr', {}, el('th', {}, 'Name'), el('th', {}, 'Runden'), el('th', {}, 'B4 Symbole'), el('th', {}, 'B3 Redox'), el('th', {}, 'Zuletzt'))),
         el('tbody', {}, liste.map((k) => el('tr', { class: k.runden ? '' : 'leise' },
@@ -177,14 +192,14 @@ export function uebersichtReiter({ neu }) {
       el('p', { class: 'leise' }, 'Die Tabellen öffnen sich in Numbers oder Excel. Auf dem iPad wählst du danach „In Dateien sichern“ oder schickst sie dir per Mail.'),
       el('div', { class: 'zeile' },
         el('button', { type: 'button', class: 'knopf', onclick: async () => { await dateiSpeichern(`chemie-alle-runden-${heute()}.csv`, csvRunden(d), 'text/csv'); meldung.textContent = '✓'; } }, '📄 Alle Runden'),
-        el('button', { type: 'button', class: 'knopf', onclick: async () => { await dateiSpeichern(`chemie-uebersicht-${heute()}.csv`, csvUebersicht(d), 'text/csv'); meldung.textContent = '✓'; } }, '📄 Übersicht pro Kind'),
+        el('button', { type: 'button', class: 'knopf', onclick: async () => { await dateiSpeichern(`chemie-uebersicht-${heute()}.csv`, csvUebersicht(d, { abTag }), 'text/csv'); meldung.textContent = '✓'; } }, '📄 Übersicht pro Kind'),
         meldung))
   ];
 }
 
 // ---------- Reiter: Beamer ----------
 
-let beamerWahl = { bereich: 'B3', niveau: 1, woche: null };
+let beamerWahl = { bereich: 'B3', niveau: 1, woche: null, kurs: '' };
 
 function beamerAnsicht() {
   const d = lehrerDaten();
@@ -196,7 +211,8 @@ function beamerAnsicht() {
     el('div', { class: 'beamer' },
       el('div', { class: 'beamer-kopf' },
         el('span', { class: 'beamer-titel' }, '🏆 Die besten 5'),
-        el('span', { class: 'beamer-bereich' }, `${bereichTitel(beamerWahl.bereich)} · `, el('span', { class: 'sterne' }, sterneText(beamerWahl.niveau))),
+        el('span', { class: 'beamer-bereich' }, `${bereichTitel(beamerWahl.bereich)} · `, el('span', { class: 'sterne' }, sterneText(beamerWahl.niveau)),
+          beamerWahl.kurs ? ` · ${beamerWahl.kurs}-Kurs` : ''),
         el('button', { type: 'button', class: 'knopf beamer-zu', onclick: schliessen, 'aria-label': 'Beamer-Ansicht schließen' }, '✕')),
       el('p', { class: 'beamer-woche' }, `Woche ${wochenText(woche)} · Wochenwert = die 3 besten Runden`),
       liste.length ? el('ol', { class: 'rangliste' }, liste.map((w) => el('li', { class: 'rang' },
@@ -219,13 +235,14 @@ export function beamerReiter({ neu }) {
     el('p', { class: 'leise' }, 'Gezeigt werden nur die besten 5 – getrennt nach Bereich und Niveau. Wochenwert = Summe der 3 besten Runden der Woche. Niemand wird vorgeführt.'),
     el('h4', {}, 'Bereich'), el('div', { class: 'zeile' }, wahl('bereich', 'B4', 'B4 Symbole'), wahl('bereich', 'B3', 'B3 Redox')),
     el('h4', {}, 'Niveau'), el('div', { class: 'zeile' }, [1, 2, 3].map((n) => wahl('niveau', n, sterneText(n)))),
+    el('h4', {}, 'Kurs'), el('div', { class: 'zeile' }, wahl('kurs', '', 'Alle'), wahl('kurs', 'G', 'G-Kurs'), wahl('kurs', 'E', 'E-Kurs')),
     el('h4', {}, 'Woche'),
     el('div', { class: 'zeile' },
       el('button', { type: 'button', class: 'knopf', 'aria-label': 'Woche davor', onclick: () => { beamerWahl.woche = woche - 1; neu(); } }, '◀'),
       el('span', { class: 'woche-text' }, wochenText(woche), woche === aktuelleWoche() ? ' (diese Woche)' : ''),
       el('button', { type: 'button', class: 'knopf', 'aria-label': 'Woche danach', disabled: woche >= aktuelleWoche(), onclick: () => { beamerWahl.woche = woche + 1; neu(); } }, '▶')),
     el('h4', {}, 'Vorschau'),
-    vorschau.length ? el('ol', { class: 'vorschau-liste' }, vorschau.map((w) => el('li', {}, `${w.platz}. ${w.name} – ${w.wert} (${w.runden} ${w.runden === 1 ? 'Runde' : 'Runden'})`)))
+    vorschau.length ? el('ul', { class: 'vorschau-liste' }, vorschau.map((w) => el('li', {}, `${w.platz}. ${w.name} – ${w.wert} (${w.runden} ${w.runden === 1 ? 'Runde' : 'Runden'})`)))
       : el('p', { class: 'leise' }, 'Für diese Auswahl gibt es noch keine Runden.'),
     el('button', { type: 'button', class: 'knopf knopf-haupt knopf-gross', onclick: beamerAnsicht }, '🖥 Beamer-Ansicht öffnen'))];
 }
@@ -283,7 +300,8 @@ export function sicherungReiter({ neu }) {
     el('div', { class: 'zeile' },
       el('button', { type: 'button', class: 'knopf knopf-haupt', onclick: async () => {
         const ok = await dateiSpeichern(`chemie-sicherung-${heute()}.json`, sicherungErstellen(), 'application/json');
-        ausgabe.replaceChildren(el('p', { class: 'vergleich' }, ok ? '✓ Sicherung erstellt.' : 'Abgebrochen.'));
+        if (ok) sicherungGespeichert();
+        ausgabe.replaceChildren(el('p', { class: ok ? 'vergleich' : 'meldung' }, ok ? '✓ Sicherung erstellt.' : 'Abgebrochen – es wurde keine Sicherung gespeichert.'));
         setTimeout(neu, 1500);
       } }, '💾 Sicherung speichern'),
       el('label', { class: 'knopf datei-knopf' }, '📂 Sicherung laden', dateiFeld)),

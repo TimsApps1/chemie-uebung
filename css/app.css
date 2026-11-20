@@ -933,8 +933,7 @@ button.bereich { font: inherit; text-align: left; cursor: pointer; width: 100%; 
 .scan-meldungen { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; max-height: 30vh; overflow: auto; }
 .scan-meldungen li { padding: 8px 12px; border-radius: var(--r-klein); background: var(--gut-flaeche); color: var(--gut-dunkel); font-weight: 700; }
 
-/* =====================================================================
-   Etappe 3: Baustelle mit Noppen (Bereich 1)
+/* ==============================================================   Etappe 3: Baustelle mit Noppen (Bereich 1)
    ===================================================================== */
 .bau-aufgabe, .modell-aufgabe { display: grid; gap: var(--a3); }
 .baustelle { display: grid; gap: var(--a2); }
@@ -959,3 +958,11 @@ button.bereich { font: inherit; text-align: left; cursor: pointer; width: 100%; 
 .bau-liste li.markiert { outline: 2px solid var(--haupt); }
 .bau-liste-text { flex: 1; min-width: 12em; }
 .baustelle.gesperrt .bau-liste .knopf { display: none; }
+=======
+/* ---------- Etappe 2, Prüfrunde 1 ---------- */
+:root { --rand-kraeftig: #868ea6; }
+.qr-bild { width: min(420px, 80vw, calc(100dvh - 300px)); min-width: 200px; }
+.qr-kopf { display: flex; align-items: center; gap: var(--a3); }
+.vorschau-liste { list-style: none; padding-left: 0; margin-bottom: var(--a4); }
+.scan-meldungen li.ungueltig { background: var(--schlecht-flaeche); color: var(--schlecht-dunkel); }
+.ergebnis-punkte.ergebnis-klein { font-size: 2.2rem; }
