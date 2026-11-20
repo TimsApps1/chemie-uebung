@@ -10,7 +10,7 @@
     { "id": "b3-1-02", "niveau": 1, "typ": "sortieren", "symbol": "↕", "kann": "reihe",
       "frage": "Sortiere von edel (oben) nach unedel (unten).",
       "karten": ["Silber", "Kupfer", "Eisen", "Zink", "Magnesium"],
-      "denkanstoss": "Gold glänzt auch nach 1000 Jahren noch, Magnesium wird an der Luft schnell matt.",
+      "denkanstoss": "Silber findet man in der Natur manchmal rein, Magnesium nie.",
       "erklaerung": "Die Reihe geht von edel nach unedel: Silber, Kupfer, Eisen, Zink, Magnesium." },
 
     { "id": "b3-1-03", "niveau": 1, "typ": "klappt", "symbol": "🔥", "leicht": true, "kann": "klappt",
@@ -80,7 +80,7 @@
       "denkanstoss": "Oben stehen die Schmuckmetalle, unten das Metall, das hell brennt.",
       "erklaerung": "Die Reihe von edel nach unedel lautet: Gold, Silber, Kupfer, Eisen, Zink, Aluminium, Magnesium." },
 
-    { "id": "b3-2-02", "niveau": 2, "typ": "klappt", "symbol": "🔥", "leicht": true, "kann": "klappt",
+    { "id": "b3-2-02", "niveau": 2, "typ": "klappt", "symbol": "🔥", "kann": "klappt",
       "frage": "Klappt es beim Erhitzen?", "oxid": "Bleioxid", "stoff": "Eisen",
       "denkanstoss": "Blei und Eisen stehen in der Reihe nah beieinander, schau genau hin.",
       "erklaerung": "Eisen ist etwas unedler als Blei und nimmt dem Bleioxid den Sauerstoff weg." },
@@ -159,7 +159,7 @@
       "denkanstoss": "Nach einer Reduktion hat der Stoff weniger Sauerstoff als vorher.",
       "erklaerung": "Bei einer Reduktion gibt ein Stoff Sauerstoff ab." },
 
-    { "id": "b3-2-14", "niveau": 2, "typ": "auswahl", "symbol": "❓", "kann": "redox",
+    { "id": "b3-2-14", "hilfe_vorher": false, "niveau": 2, "typ": "auswahl", "symbol": "❓", "kann": "redox",
       "frage": "Was passiert bei einer Redoxreaktion?",
       "antworten": ["Ein Stoff gibt Sauerstoff ab und ein anderer nimmt ihn auf.", "Ein Stoff nimmt nur Sauerstoff auf.", "Zwei Metalle mischen sich."], "richtig": "Ein Stoff gibt Sauerstoff ab und ein anderer nimmt ihn auf.",
       "fehler": { "Ein Stoff nimmt nur Sauerstoff auf.": "Das ist nur eine Oxidation, es fehlt die Reduktion." },
@@ -206,7 +206,7 @@
       "denkanstoss": "Gold ist am edelsten, Magnesium am unedelsten. Wo passt Kohlenstoff hin?",
       "erklaerung": "Die ganze Reihe lautet: Gold, Silber, Kupfer, Blei, Eisen, Kohlenstoff, Zink, Aluminium, Magnesium." },
 
-    { "id": "b3-3-02", "niveau": 3, "typ": "klappt", "symbol": "🔥", "leicht": true, "kann": "klappt",
+    { "id": "b3-3-02", "niveau": 3, "typ": "klappt", "symbol": "🔥", "kann": "klappt",
       "frage": "Klappt es beim Erhitzen?", "oxid": "Kupferoxid", "stoff": "Blei",
       "denkanstoss": "Kupfer und Blei stehen nah beieinander, welcher Stoff ist unedler?",
       "erklaerung": "Blei ist etwas unedler als Kupfer und nimmt dem Kupferoxid den Sauerstoff weg.",
@@ -279,7 +279,7 @@
       "denkanstoss": "Oxidiert wird der Stoff, der Sauerstoff aufnimmt.",
       "erklaerung": "Kohlenstoff nimmt Sauerstoff auf und wird zu Kohlenstoffdioxid, also wird Kohlenstoff oxidiert." },
 
-    { "id": "b3-3-11", "niveau": 3, "typ": "auswahl", "symbol": "❓", "kann": "redox",
+    { "id": "b3-3-11", "hilfe_vorher": false, "niveau": 3, "typ": "auswahl", "symbol": "❓", "kann": "redox",
       "frage": "Was passiert mit Magnesium, wenn es an der Luft hell brennt?",
       "antworten": ["Es wird oxidiert.", "Es wird reduziert.", "Es gibt Sauerstoff ab."], "richtig": "Es wird oxidiert.",
       "fehler": { "Es wird reduziert.": "Magnesium nimmt Sauerstoff aus der Luft auf, wie heißt das?", "Es gibt Sauerstoff ab.": "Magnesium hat am Anfang keinen Sauerstoff, es kann keinen abgeben." },

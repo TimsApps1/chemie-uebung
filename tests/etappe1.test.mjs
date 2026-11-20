@@ -38,19 +38,29 @@ test('Freischaltcodes: gültig, getrennt nach Kurs, ohne Verwechslungszeichen', 
   assert.equal(freischaltcodePruefen(freischaltcode('B3', 'G', 1), 2), null, 'alte Serie gesperrt');
 });
 
-test('Punktecode: Kurs, Erstversuche, Begründungen, iPad-Kennung, Rundennummer; Prüfsumme und Plausibilität', () => {
-  const code = punktecode({ name: 'LENASCH', bereich: 'B3', niveau: 3, punkte: 80, tag: 127, kurs: 'E', erster: 6, warum: 2, geraet: 'K3', nummer: 7 });
-  assert.match(code, /^LENASCH-B3-3-0080-0127-E62-K3-007-[23456789ABCDEFGHJKMNPQRSTUVWXYZ]{3}$/);
+test('Punktecode: Kurs, Erstversuche, Begründungen, Namens-Kennung, Rundennummer; Prüfsumme und Plausibilität', async () => {
+  const { namensKennung } = await import('../js/codes.js');
+  const k = namensKennung('Lena Schmidt');
+  assert.notEqual(k, namensKennung('Lena Schneider'), 'gleicher Kurzname, verschiedene Kennung');
+  assert.equal(k, namensKennung('  lena   schmidt '), 'gleiche Kennung bei anderer Schreibweise');
+  const code = punktecode({ name: 'LENASCH', bereich: 'B3', niveau: 3, punkte: 80, tag: 127, kurs: 'E', erster: 6, warum: 2, kennung: k, nummer: 7 });
+  assert.match(code, new RegExp(`^LENASCH-B3-3-0080-0127-E62-${k}-007-[23456789ABCDEFGHJKMNPQRSTUVWXYZ]{3}$`));
   const gelesen = punktecodeLesen(code.toLowerCase().replace(/-/g, ' - '));
   assert.equal(gelesen.ok, true);
-  assert.deepEqual([gelesen.punkte, gelesen.kurs, gelesen.erster, gelesen.warum, gelesen.geraet, gelesen.nummer], [80, 'E', 6, 2, 'K3', 7]);
-  for (const [alt, neu] of [['0080', '0090'], ['LENASCH', 'LENASCK'], ['E62', 'G62'], ['E62', 'E72'], ['-K3-', '-K4-'], ['-007-', '-008-']]) {
+  assert.deepEqual([gelesen.punkte, gelesen.kurs, gelesen.erster, gelesen.warum, gelesen.kennung, gelesen.nummer], [80, 'E', 6, 2, k, 7]);
+  for (const [alt, neu] of [['0080', '0090'], ['LENASCH', 'LENASCK'], ['E62', 'G62'], ['E62', 'E72'], ['-007-', '-008-']]) {
     assert.equal(punktecodeLesen(code.replace(alt, neu)).ok, false, `${alt} -> ${neu}`);
   }
   assert.equal(punktecodeLesen('LENA-B3-2-0080-0127-DQS').ok, true, 'älteres Format');
   // Unmögliche Werte sind ungültig, auch mit richtiger Prüfsumme
-  assert.equal(punktecodeLesen(punktecode({ name: 'X', bereich: 'B3', niveau: 2, punkte: 999, tag: 1, erster: 8 })).ok, false);
-  assert.equal(punktecodeLesen(punktecode({ name: 'X', bereich: 'B3', niveau: 1, punkte: 30, tag: 1, erster: 8 })).ok, false);
+  const c = (o) => punktecodeLesen(punktecode({ name: 'X', bereich: 'B3', niveau: 2, punkte: 50, tag: 1, erster: 5, ...o })).ok;
+  assert.equal(c({}), true);
+  assert.equal(c({ punkte: 80, erster: 0 }), false, '80 Punkte ohne Erstversuch');
+  assert.equal(c({ punkte: 999, erster: 8 }), false);
+  assert.equal(c({ punkte: 30, erster: 8 }), false);
+  assert.equal(c({ punkte: 60, erster: 5, warum: 2 }), false, 'Begründungen nur auf ★★★');
+  assert.equal(c({ niveau: 3, punkte: 60, erster: 5, warum: 2 }), true);
+  assert.equal(c({ bereich: 'B1', kurs: 'G' }), false, 'B1 gibt es nur im E-Kurs');
   assert.match(punktecode({ name: 'TOM', bereich: 'B4', niveau: 1, punkte: 60, tag: 10, nummer: 1000 }), /-001-/);
 });
 
@@ -561,5 +571,90 @@ test('Umbenennen bildet den Kurznamen richtig und ändert den Klarnamen', async 
   assert.equal(ergebnis.kinder[0].anzeige, 'Tim Müller');
   assert.equal(ergebnis.alt, null);
   assert.ok(ergebnis.neu);
+  await kontext.close();
+});
+
+test('„Klappt es?“: Nach der Auflösung steht nie „null“ oder „undefined“ im Bild', async () => {
+  const { kontext, seite, fehler } = await neueSeite();
+  const schlecht = await seite.evaluate(async () => {
+    const { aufgabeDarstellen } = await import('./js/aufgaben.js');
+    const { allesLaden } = await import('./js/daten.js');
+    const d = await allesLaden();
+    const funde = [];
+    for (const a of d.aufgaben.B3.filter((x) => x.typ === 'klappt')) {
+      for (const wert of [true, false]) {
+        const darst = aufgabeDarstellen(a, () => {}, d);
+        document.getElementById('inhalt').replaceChildren(darst.wurzel);
+        darst.ergebnis(wert, false, true);
+        const t = document.getElementById('inhalt').innerText;
+        if (/\bnull\b|undefined/.test(t)) funde.push(a.id);
+      }
+    }
+    return funde;
+  });
+  assert.deepEqual(schlecht, []);
+  assert.deepEqual(fehler, []);
+  await kontext.close();
+});
+
+test('375 px: Auswahl-Antworten passen ohne waagerechtes Scrollen (auch markiert)', async () => {
+  const { kontext, seite } = await neueSeite({ width: 375, height: 740 });
+  const zuBreit = await seite.evaluate(async () => {
+    const { aufgabeDarstellen } = await import('./js/aufgaben.js');
+    const { allesLaden } = await import('./js/daten.js');
+    const d = await allesLaden();
+    const funde = [];
+    for (const a of [...d.aufgaben.B3, ...d.aufgaben.B4].filter((x) => x.typ === 'auswahl')) {
+      const darst = aufgabeDarstellen(a, () => {}, d);
+      document.getElementById('inhalt').replaceChildren(darst.wurzel);
+      darst.ergebnis(a.antworten.find((x) => x !== a.richtig), false, true);
+      if (document.documentElement.scrollWidth > window.innerWidth) funde.push(a.id);
+      for (const k of document.querySelectorAll('.antwort')) if (k.scrollWidth > k.clientWidth + 1) { funde.push(a.id + ' (Knopf)'); break; }
+    }
+    return funde;
+  });
+  assert.deepEqual(zuBreit, []);
+  await kontext.close();
+});
+
+test('Sortier-Denkanstöße nennen nur Stoffe, die auch auf den Karten stehen', async () => {
+  const { d } = await datenLaden();
+  const namen = d.reihe.stoffe.map((x) => x.name);
+  for (const a of d.aufgaben.B3.filter((x) => x.typ === 'sortieren' && x.karten)) {
+    for (const n of namen) if (a.denkanstoss.includes(n)) assert.ok(a.karten.includes(n), `${a.id}: ${n} steht nicht auf den Karten`);
+  }
+});
+
+test('Rundenauswahl: nie mehr als 2 gleiche Typen hintereinander (wenn möglich)', async () => {
+  const { kontext, seite } = await neueSeite();
+  const max = await seite.evaluate(async () => {
+    const { aufgabenWaehlen } = await import('./js/runde.js');
+    const { allesLaden } = await import('./js/daten.js');
+    const d = await allesLaden();
+    let schlimmste = 0;
+    for (let i = 0; i < 100; i++) {
+      for (const [b, n] of [['B4', 1], ['B4', 3], ['B3', 1], ['B3', 2]]) {
+        const r = aufgabenWaehlen(d.aufgaben[b], n, 'G');
+        let lauf = 1;
+        for (let j = 1; j < r.length; j++) { lauf = r[j].typ === r[j - 1].typ ? lauf + 1 : 1; schlimmste = Math.max(schlimmste, lauf); }
+      }
+    }
+    return schlimmste;
+  });
+  assert.ok(max <= 3, `Längste Folge gleicher Typen: ${max}`);
+  await kontext.close();
+});
+
+test('G-Kind sieht Bereiche nur für den E-Kurs nicht als gesperrt', async () => {
+  const { kontext, seite } = await neueSeite();
+  await seite.evaluate(() => {
+    localStorage.setItem('chemie:kinder', JSON.stringify([{ name: 'MEHMEYIL', anzeige: 'Mehmet Yilmaz', element: 'Na', gesperrt: false }]));
+    localStorage.setItem('chemie:kind:MEHMEYIL', JSON.stringify({ freigeschaltet: { B3: 'G', B4: 'G' } }));
+  });
+  await seite.reload();
+  await seite.getByRole('button', { name: /Mehmet/ }).click();
+  await seite.getByRole('heading', { name: 'Hallo Mehmet!' }).waitFor();
+  assert.equal(await seite.locator('.bereich.b1, .bereich.b2').count(), 0);
+  assert.equal(await seite.getByRole('button', { name: 'Code eingeben' }).count(), 0);
   await kontext.close();
 });

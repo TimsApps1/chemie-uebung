@@ -850,3 +850,25 @@ button.bereich { font: inherit; text-align: left; cursor: pointer; width: 100%; 
 .kann-balken { display: inline-flex; gap: 3px; vertical-align: middle; margin-left: 4px; }
 .kann-balken span { width: 14px; height: 14px; border-radius: 3px; border: 2px solid var(--haupt); }
 .kann-balken span.voll { background: var(--haupt); }
+
+/* ---------- Prüfrunde 4 ---------- */
+.ergebnis-nein { margin: 0; padding: 6px 10px; border-radius: var(--r-klein); background: #eef0f6; font-weight: 700; }
+.namen { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+.knopf-name { font-size: clamp(1.05rem, 2.6vw, 1.3rem); overflow-wrap: normal; word-break: normal; hyphens: auto; -webkit-hyphens: auto; }
+.knopf-name > span { max-width: 100%; }
+.antwort { min-width: 0; }
+.antwort > span { min-width: 0; overflow-wrap: anywhere; }
+@media (max-width: 480px) {
+  .antworten { grid-template-columns: 1fr; }
+  .antwort { font-size: 1.3rem; min-height: 60px; justify-content: flex-start; }
+  .antworten:not(.antworten-lang) .antwort { justify-content: flex-start; }
+}
+.sortierkarte.ist-falsch { border-color: var(--schlecht); background: var(--schlecht-flaeche); }
+.luecke.ist-falsch { border-style: solid; border-color: var(--schlecht); background: var(--schlecht-flaeche); color: var(--schlecht-dunkel); }
+.zahl-loesung { grid-column: 1 / -1; }
+.fenster { max-height: calc(100dvh - 32px); }
+.fenster-knoepfe { position: sticky; bottom: calc(-1 * var(--a5)); background: var(--flaeche); padding: var(--a3) 0 var(--a2); }
+.code-details summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; list-style: none; }
+.code-details summary h3 { margin: 0; }
+.code-details summary::before { content: '▸'; margin-right: 8px; font-weight: 800; }
+.code-details[open] summary::before { content: '▾'; }

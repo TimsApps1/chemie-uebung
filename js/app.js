@@ -12,7 +12,7 @@ import {
   kinder, kindEintrag, kindAnlegen, profil, aendern, freischalten, rundeSpeichern, rundenInWoche,
   normaleRunden, bestwert, sterneFuer, niveauVorschlag, faelligeFehler, KANN_SCHWELLE, LIEBLINGSELEMENTE, geraet
 } from './profil.js';
-import { freischaltcodePruefen, codeTippfehlerHinweis, punktecode } from './codes.js';
+import { freischaltcodePruefen, codeTippfehlerHinweis, punktecode, namensKennung } from './codes.js';
 import { rundeSpielen, aufgabenWaehlen, RUNDE_LAENGE } from './runde.js';
 import { adminStart } from './admin.js';
 
@@ -220,8 +220,11 @@ function startseite(name) {
   const woche = wocheVonTag(tagNummer());
   const geschafft = rundenInWoche(p, woche);
 
-  const kacheln = daten.bereiche.map((b) => bereichKachel(name, p, b));
-  const nochGesperrt = daten.bereiche.some((b) => !p.freigeschaltet[b.id]);
+  // G-Kurs-Kinder sehen Bereiche nur für den E-Kurs gar nicht erst (nicht als "gesperrt").
+  const kursKind = Object.values(p.freigeschaltet).includes('E') ? 'E' : Object.keys(p.freigeschaltet).length ? 'G' : null;
+  const sichtbar = daten.bereiche.filter((b) => p.freigeschaltet[b.id] || !kursKind || (b.kurse || ['G', 'E']).includes(kursKind));
+  const kacheln = sichtbar.map((b) => bereichKachel(name, p, b));
+  const nochGesperrt = sichtbar.some((b) => !p.freigeschaltet[b.id]);
 
   zeigen(
     datenFehlerKasten(alleFehler()),
@@ -442,7 +445,7 @@ function rundenende(name, ergebnis, kannVorher) {
   const tag = tagNummer();
   const nummer = naechsteRundenNummer(vorher);
   const code = punktecode({ name, bereich: ergebnis.bereich, niveau: ergebnis.niveau, punkte: ergebnis.punkte, tag,
-    kurs: ergebnis.kurs, erster: ergebnis.ersterVersuch, warum: ergebnis.warumRichtig, geraet: geraet().kennung, nummer });
+    kurs: ergebnis.kurs, erster: ergebnis.ersterVersuch, warum: ergebnis.warumRichtig, kennung: namensKennung(kindEintrag(name)?.anzeige || name), nummer });
   aendern(name, (x) => { x.zuletzt = [...(ergebnis.gesehen || []), ...(x.zuletzt || [])].slice(0, 16); });
   const p = rundeSpeichern(name, { art: 'normal', bereich: ergebnis.bereich, niveau: ergebnis.niveau, kurs: ergebnis.kurs,
     punkte: ergebnis.punkte, ersterVersuch: ergebnis.ersterVersuch, anzahl: ergebnis.anzahl,
@@ -538,7 +541,7 @@ async function inZwischenablage(textInhalt, knoten) {
 function codeVonRunde(name, p, r, i) {
   return r.code || punktecode({ name, bereich: r.bereich, niveau: r.niveau, punkte: r.punkte, tag: r.tag,
     kurs: r.kurs || p.freigeschaltet[r.bereich] || 'G', erster: r.ersterVersuch || 0, warum: r.warumRichtig || 0,
-    geraet: geraet().kennung, nummer: r.nummer ?? i + 1 });
+    kennung: namensKennung(kindEintrag(name)?.anzeige || name), nummer: r.nummer ?? i + 1 });
 }
 
 // ---------- Mein Fortschritt ----------
@@ -608,8 +611,8 @@ function meinFortschritt(name) {
 
   const normale = p.runden.filter((r) => r.art === 'normal');
   const letzteCodes = normale.map((r, i) => ({ r, code: codeVonRunde(name, p, r, i) })).slice(-20).reverse();
-  const codeListe = letzteCodes.length ? el('section', { class: 'karte' },
-    el('h3', {}, 'Meine Punktecodes'),
+  const codeListe = letzteCodes.length ? el('details', { class: 'karte code-details' },
+    el('summary', {}, el('h3', {}, 'Codes für die Lehrkraft')),
     el('p', { class: 'leise' }, 'Die letzten Runden. Tippe auf „Kopieren“, wenn du einen Code noch nicht abgegeben hast.'),
     el('ul', { class: 'code-liste' }, letzteCodes.map(({ r, code }) => {
       const t = el('span', { class: 'code' }, code);

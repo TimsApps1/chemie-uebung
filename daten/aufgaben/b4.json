@@ -168,7 +168,7 @@
 
     { "id": "b4-3-03", "niveau": 3, "typ": "zahl", "symbol": "🔢", "kann": "zahl_davor",
       "frage": "Wie viele O-Atome sind es?", "formel": "3 CO2", "zaehle": "O",
-      "denkanstoss": "Die große 3 gilt für das ganze Teilchen CO2.",
+      "denkanstoss": "Die große 3 gilt für die ganze Formel CO2.",
       "erklaerung": "Ein CO2 hat 2 O-Atome, 3 CO2 haben 3 mal 2 = 6 O-Atome." },
 
     { "id": "b4-3-04", "niveau": 3, "typ": "zahl", "symbol": "🔢", "kann": "zahl_davor",
@@ -188,12 +188,12 @@
 
     { "id": "b4-3-07", "niveau": 3, "typ": "zahl", "symbol": "🔢", "kann": "zahl_davor",
       "frage": "Wie viele H-Atome sind es?", "formel": "4 NH3", "zaehle": "H",
-      "denkanstoss": "Ein NH3 hat 3 H-Atome, und die große 4 gilt für das ganze Teilchen.",
+      "denkanstoss": "Ein NH3 hat 3 H-Atome, und die große 4 gilt für die ganze Formel.",
       "erklaerung": "4 NH3 haben 4 mal 3 = 12 H-Atome." },
 
     { "id": "b4-3-08", "niveau": 3, "typ": "zahl", "symbol": "🔢", "kann": "zahl_davor",
       "frage": "Wie viele O-Atome sind es?", "formel": "2 Fe2O3", "zaehle": "O",
-      "denkanstoss": "Die kleine 2 gehört zu Fe, die große 2 gilt für das ganze Teilchen.",
+      "denkanstoss": "Die kleine 2 gehört zu Fe, die große 2 gilt für die ganze Formel.",
       "erklaerung": "Ein Fe2O3 hat 3 O-Atome, 2 Fe2O3 haben 2 mal 3 = 6 O-Atome." },
 
     { "id": "b4-3-09", "niveau": 3, "typ": "zahl", "symbol": "🔢", "kann": "zahl_davor",
@@ -204,9 +204,9 @@
     { "id": "b4-3-10", "niveau": 3, "typ": "auswahl", "symbol": "❓", "leicht": true, "kann": "zahl_davor",
       "frage": "Was bedeutet die große 2 in 2 H2O?",
       "antworten": ["Es sind zwei Wasser-Teilchen.", "Es sind zwei H-Atome.", "Es sind zwei O-Atome."], "richtig": "Es sind zwei Wasser-Teilchen.",
-      "fehler": { "Es sind zwei H-Atome.": "Die kleine 2 gehört zu H, die große 2 gilt für das ganze Teilchen.", "Es sind zwei O-Atome.": "Die große 2 gilt für das ganze Teilchen, nicht nur für O." },
+      "fehler": { "Es sind zwei H-Atome.": "Die kleine 2 gehört zu H, die große 2 gilt für die ganze Formel.", "Es sind zwei O-Atome.": "Die große 2 gilt für die ganze Formel, nicht nur für O." },
       "denkanstoss": "Die große Zahl steht vor der ganzen Formel.",
-      "erklaerung": "Die große 2 gilt für das ganze Teilchen, also sind es zwei Wasser-Teilchen." },
+      "erklaerung": "Die große 2 gilt für die ganze Formel, also sind es zwei Wasser-Teilchen." },
 
     { "id": "b4-3-11", "niveau": 3, "typ": "auswahl", "symbol": "❓", "kann": "namen",
       "frage": "Welche Elemente stecken in Aluminiumchlorid?",

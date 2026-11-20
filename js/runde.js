@@ -58,7 +58,20 @@ export function aufgabenWaehlen(alle, niveau, kurs, zuletzt = []) {
     if (auswahl.length >= RUNDE_LAENGE - einstieg.length) break;
     if (!auswahl.includes(a)) auswahl.push(a);
   }
-  return [...einstieg, ...auswahl];
+  return [...einstieg, ...abwechselnd(auswahl, einstieg)];
+}
+
+// Reihenfolge so mischen, dass höchstens 2 gleiche Aufgabentypen direkt hintereinander kommen.
+function abwechselnd(liste, davor = []) {
+  const rest = mischen(liste);
+  const aus = [];
+  const zweiGleiche = (folge, typ) => folge.length >= 2 && folge[folge.length - 1].typ === typ && folge[folge.length - 2].typ === typ;
+  while (rest.length) {
+    const bisher = [...davor, ...aus];
+    const i = rest.findIndex((a) => !zweiGleiche(bisher, a.typ));
+    aus.push(rest.splice(i >= 0 ? i : 0, 1)[0]);
+  }
+  return aus;
 }
 
 // ---------- Runde spielen ----------

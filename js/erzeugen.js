@@ -194,8 +194,22 @@ function zahlAufgaben(vorhanden) {
   return liste;
 }
 
+// ---------- Bereich 3: Sortieren mit jedes Mal anderen Karten ----------
+
+function sortierAufgaben() {
+  const grund = { typ: 'sortieren', symbol: '↕', kann: 'reihe', generiert: true,
+    frage: 'Sortiere von edel (oben) nach unedel (unten).',
+    denkanstoss: 'Edle Metalle bleiben lange blank. Unedle Metalle reagieren leicht mit Sauerstoff.',
+    erklaerung: 'Die Reihe von edel nach unedel: Gold, Silber, Kupfer, Blei, Eisen, Kohlenstoff, Zink, Aluminium, Magnesium.' };
+  return [
+    { ...grund, id: 'gen-sort-1', niveau: 1, karten_zufall: 4 },
+    { ...grund, id: 'gen-sort-2', niveau: 2, karten_zufall: 6, mit_kohlenstoff: true },
+    { ...grund, id: 'gen-sort-3', niveau: 3, karten_zufall: 7, mit_kohlenstoff: true }
+  ];
+}
+
 export function aufgabenErzeugen(d) {
   if (d.app.aufgaben_erzeugen === false) return;
-  if (d.aufgaben.B3 && d.reihe) d.aufgaben.B3.push(...klapptAufgaben(d.reihe, d.aufgaben.B3), ...gleichungsAufgaben(d.reihe, d.aufgaben.B3));
+  if (d.aufgaben.B3 && d.reihe) d.aufgaben.B3.push(...klapptAufgaben(d.reihe, d.aufgaben.B3), ...gleichungsAufgaben(d.reihe, d.aufgaben.B3), ...sortierAufgaben());
   if (d.aufgaben.B4 && d.elemente.length) d.aufgaben.B4.push(...symbolAufgaben(d.elemente, d.aufgaben.B4), ...zahlAufgaben(d.aufgaben.B4));
 }

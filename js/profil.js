@@ -38,6 +38,11 @@ export function anzeigeName(name) {
   return k?.anzeige && k.anzeige.toUpperCase() !== name ? `${k.anzeige} (${name})` : name;
 }
 
+export function kindLoeschen(name) {
+  kinderSpeichern(kinder().filter((k) => k.name !== name));
+  entfernen('kind:' + name);
+}
+
 export function kindSperren(name, gesperrt) {
   kinderSpeichern(kinder().map((k) => (k.name === name ? { ...k, gesperrt } : k)));
 }
@@ -220,14 +225,7 @@ export function kannZaehlen(name, kannId) {
 // ---------- Einstellungen dieses iPads ----------
 
 export function geraet() {
-  const g = { ton: false, zeitlimitAus: false, serie: 1, ...(lesen('geraet', {}) || {}) };
-  if (!g.kennung) {
-    // Zwei Zeichen, die dieses iPad im Punktecode kennzeichnen (zufällig beim ersten Start).
-    const z = '23456789ABCDEFGHJKMNPQRSTUVWXYZ';
-    g.kennung = z[Math.floor(Math.random() * z.length)] + z[Math.floor(Math.random() * z.length)];
-    schreiben('geraet', g);
-  }
-  return g;
+  return { ton: false, zeitlimitAus: false, serie: 1, ...(lesen('geraet', {}) || {}) };
 }
 export function geraetAendern(fn) {
   const g = geraet();

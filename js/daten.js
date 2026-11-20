@@ -127,7 +127,9 @@ function aufgabePruefen(a, kontext) {
       atomeZaehlen(a.formel, a.zaehle);
     } catch (e) { probleme.push(e.message || '„formel“ fehlt.'); }
   }
-  if (a.typ === 'sortieren') {
+  if (a.typ === 'sortieren' && a.karten_zufall) {
+    if (!(a.karten_zufall >= 3 && a.karten_zufall <= 9)) probleme.push('„karten_zufall“ muss zwischen 3 und 9 liegen.');
+  } else if (a.typ === 'sortieren') {
     if (!Array.isArray(a.karten) || a.karten.length < 3) probleme.push('„karten“ braucht mindestens 3 Einträge.');
     else {
       for (const k of a.karten) if (!reiheNamen.includes(k)) probleme.push(`Karte „${k}“ steht nicht in reihe.json.`);

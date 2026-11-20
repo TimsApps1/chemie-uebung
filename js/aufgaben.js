@@ -34,6 +34,13 @@ export function pruefen(a, wert, daten) {
 export function fehlerHinweis(a, wert) {
   const schluessel = Array.isArray(wert) ? wert.join(', ') : String(wert);
   if (a.fehler && a.fehler[schluessel]) return a.fehler[schluessel];
+  if (a.typ === 'sortieren' && Array.isArray(wert)) {
+    const n = wert.filter((k, i) => a.karten[i] === k).length;
+    return `${n} von ${a.karten.length} Karten stehen schon an der richtigen Stelle. ${a.denkanstoss}`;
+  }
+  if (a.typ === 'antippen' && a.rechts?.includes(wert) && /oxid$/i.test(wert)) {
+    return `${wert} entsteht erst bei der Reaktion. Schau vor den Pfeil.`;
+  }
   if (a.typ === 'zahl') {
     const faktor = Number((String(a.formel).match(/^\s*(\d+)\s/) || [])[1] || 1);
     const gesamt = richtigeZahl(a);
@@ -72,7 +79,7 @@ export function vorleseText(a, reihenfolge = null) {
   if (a.gleichung) teile.push(a.gleichung);
   if (a.antworten && a.typ === 'auswahl') {
     const liste = reihenfolge || a.antworten;
-    teile.push(liste.map((t, i) => `Antwort ${i + 1}: ${t.length <= 3 && !t.includes(' ') ? buchstabieren(t) : t}`).join('. '));
+    teile.push(liste.map((t, i) => `Antwort ${i + 1}: ${/^[A-Za-z]{1,3}$/.test(t) && /^[A-Z]/.test(t) && !/^[A-Z][a-z]{2}$/.test(t) ? buchstabieren(t) : t}`).join('. '));
   }
   if (a.typ === 'klappt') teile.push('Klappt, oder klappt nicht');
   return teile.join('. ');
@@ -165,7 +172,8 @@ function zahl(a, antworten) {
     ergebnis(wert, richtig, endgueltig) {
       anzeige.classList.add(richtig ? 'ist-richtig' : 'ist-falsch');
       anzeige.replaceChildren(marke(richtig), String(wert));
-      if (!richtig && endgueltig) anzeige.after(el('span', { class: 'zahl-loesung' }, marke(true), String(richtigeZahl(a))));
+      if (endgueltig) wurzel.querySelector('.tastenfeld').hidden = true;
+      if (!richtig && endgueltig) anzeige.after(el('span', { class: 'zahl-loesung' }, 'Richtig wäre: ', marke(true), String(richtigeZahl(a))));
     },
     nochmal() {
       anzeige.classList.remove('ist-richtig', 'ist-falsch');
@@ -179,6 +187,12 @@ function zahl(a, antworten) {
 
 function sortieren(a, antworten, daten) {
   const info = Object.fromEntries(daten.reihe.stoffe.map((s) => [s.name, s]));
+  if (a.karten_zufall) {
+    // Jedes Mal andere Karten aus der Reihe (in richtiger Reihenfolge gespeichert).
+    const moegliche = daten.reihe.stoffe.map((s) => s.name).filter((n) => a.mit_kohlenstoff || n !== 'Kohlenstoff');
+    const gezogen = new Set(mischen(moegliche).slice(0, a.karten_zufall));
+    a.karten = moegliche.filter((n) => gezogen.has(n));
+  }
   let reihenfolge = mischen(a.karten);
   while (reihenfolge.join('|') === a.karten.join('|') && a.karten.length > 1) reihenfolge = mischen(a.karten);
 
@@ -288,8 +302,12 @@ function sortieren(a, antworten, daten) {
     reihenfolge: () => [...reihenfolge],
     ergebnis(wert, richtig, endgueltig) {
       if (!richtig && !endgueltig) return;
-      if (!richtig) { reihenfolge = [...a.karten]; zeichnen(); }
-      [...liste.children].forEach((k) => { k.classList.add('ist-richtig'); k.prepend(marke(true)); });
+      // Eigene Reihenfolge stehen lassen: ✓ = richtige Stelle, ✗ = falsche Stelle.
+      [...liste.children].forEach((k, i) => {
+        const ok = a.karten[i] === k.dataset.name;
+        k.classList.add(ok ? 'ist-richtig' : 'ist-falsch');
+        k.prepend(marke(ok));
+      });
     },
     nochmal() { gesperrt = false; pruefKnopf.disabled = false; }
   };
@@ -334,10 +352,12 @@ function klappt(a, antworten, daten) {
         reiheBox.hidden = false;
         const ja = klapptEs(daten.reihe, a.oxid, a.stoff);
         const produktOxid = daten.reihe.stoffe.find((s) => s.name === a.stoff)?.oxid;
-        reiheBox.replaceChildren(
-          ja && produktOxid ? el('p', { class: 'gleichung ergebnis-gleichung' }, text(`${a.oxid} + ${a.stoff} → ${oxidElement} + ${produktOxid}`)) : null,
+        reiheBox.replaceChildren(...[
+          ja && produktOxid
+            ? el('p', { class: 'gleichung ergebnis-gleichung' }, text(`${a.oxid} + ${a.stoff} → ${oxidElement} + ${produktOxid}`))
+            : el('p', { class: 'ergebnis-nein' }, `${a.oxid} + ${a.stoff}: Es entsteht nichts Neues.`),
           el('p', { class: 'tipp' }, `So stehen ${oxidElement} und ${a.stoff} in der Reihe:`),
-          reiheMitMarken(daten, [oxidElement, a.stoff]));
+          reiheMitMarken(daten, [oxidElement, a.stoff])].filter(Boolean));
       }
     },
     nochmal() { knoepfe.forEach((k) => { if (!k.classList.contains('ist-falsch')) k.disabled = false; }); }
@@ -392,12 +412,17 @@ function wortgleichung(a, antworten) {
     ergebnis(wert, richtig, endgueltig) {
       if (richtig) { luecken.forEach((l) => { l.classList.add('ist-richtig'); l.prepend(marke(true)); beschriften(l, 'geloest'); }); return; }
       if (endgueltig) {
-        let i = 0;
+        // Eigene Antwort stehen lassen und je Lücke ✓/✗ zeigen; die Lösung steht in der Rückmeldung.
+        const [links, rechts] = luckenAufteilen(a);
+        const rest = { l: [...links], r: [...rechts] };
         luecken.forEach((l) => {
-          l.dataset.wert = a.richtig[i++];
-          l.replaceChildren(marke(true), formelKnoten(l.dataset.wert));
-          l.classList.add('ist-richtig');
-          beschriften(l, 'geloest');
+          const seiteRest = rest[l.dataset.seite];
+          const pos = seiteRest.indexOf(l.dataset.wert);
+          const ok = pos >= 0;
+          if (ok) seiteRest.splice(pos, 1);
+          l.classList.add(ok ? 'ist-richtig' : 'ist-falsch');
+          l.prepend(marke(ok));
+          l.setAttribute('aria-label', `Lücke: ${l.dataset.wert}, ${ok ? 'richtig' : 'falsch'}`);
         });
       }
     },

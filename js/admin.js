@@ -2,7 +2,7 @@
 import { el, kurzname, datumVonTag } from './hilfen.js';
 import { kopfSetzen, iconKnopf, fenster, fragen, baustein } from './ui.js';
 import { pinPruefen, pinPruefsumme, freischaltcode, KURSE_PRO_BEREICH } from './codes.js';
-import { anzeigeName, kinder, kindUmbenennen, kinderZusammenfuehren, kindSperren, profil, geraet, geraetAendern } from './profil.js';
+import { anzeigeName, kindLoeschen, kinder, kindUmbenennen, kinderZusammenfuehren, kindSperren, profil, geraet, geraetAendern } from './profil.js';
 
 // Die Lehrer-Ansicht sperrt sich wieder: beim Verlassen (jeder Weg), wenn das iPad in den
 // Hintergrund geht und nach 5 Minuten ohne Tippen.
@@ -122,14 +122,24 @@ function adminSeite(umgebungRoh) {
         el('button', { type: 'button', class: 'knopf knopf-klein', onclick: () => rundenZeigen(k.name) }, 'Runden'),
         el('button', { type: 'button', class: 'knopf knopf-klein', onclick: () => umbenennen(k.name, neu) }, 'Umbenennen'),
         liste.length > 1 ? el('button', { type: 'button', class: 'knopf knopf-klein', onclick: () => zusammenfuehren(k.name, liste, neu) }, 'Zusammenführen') : null,
-        el('button', { type: 'button', class: 'knopf knopf-klein', onclick: () => { kindSperren(k.name, !k.gesperrt); neu(); } }, k.gesperrt ? 'Entsperren' : 'Sperren'))));
+        el('button', { type: 'button', class: 'knopf knopf-klein', onclick: () => { kindSperren(k.name, !k.gesperrt); neu(); } }, k.gesperrt ? 'Entsperren' : 'Sperren'),
+        el('button', { type: 'button', class: 'knopf knopf-klein', onclick: async () => {
+          if (await fragen(`„${anzeigeName(k.name)}“ mit allen Runden von diesem iPad löschen? Das geht nicht rückgängig.`, 'Ja, löschen', 'Abbrechen')) { kindLoeschen(k.name); neu(); }
+        } }, 'Löschen'))));
   });
+  const alleLoeschen = liste.length ? el('button', { type: 'button', class: 'knopf', onclick: async () => {
+    if (await fragen('Alle Namen und Ergebnisse auf diesem iPad löschen (z. B. am Schuljahresende)? Das geht nicht rückgängig.', 'Ja, alles löschen', 'Abbrechen')) {
+      liste.forEach((k) => kindLoeschen(k.name));
+      neu();
+    }
+  } }, 'Alle Namen auf diesem iPad löschen') : null;
   const kinderTeil = abschnitt('Namen auf diesem iPad',
     liste.length
       ? el('div', { class: 'tabelle-rollen' }, el('table', { class: 'tabelle' },
         el('thead', {}, el('tr', {}, el('th', {}, 'Name'), el('th', {}, 'Runden'), el('th', {}, 'Frei'), el('th', {}, ''))),
         el('tbody', {}, kinderZeilen)))
-      : el('p', { class: 'leise' }, 'Auf diesem iPad gibt es noch keine Namen.'));
+      : el('p', { class: 'leise' }, 'Auf diesem iPad gibt es noch keine Namen.'),
+    alleLoeschen);
 
   // ----- Einstellungen -----
   const zeitlimit = el('label', { class: 'schalter' },
