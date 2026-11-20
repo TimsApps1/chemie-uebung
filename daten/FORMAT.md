@@ -1,7 +1,6 @@
 # Format der Aufgaben-Dateien
 
-Die Aufgaben stehen in `daten/aufgaben/b3.json` und `daten/aufgaben/b4.json`
-(später auch `b1.json`, `b2.json`). Jede Datei sieht so aus:
+Die Aufgaben stehen in `daten/aufgaben/b1.json`, `b3.json` und `b4.json` (später auch `b2.json`). Jede Datei sieht so aus:
 
 ```json
 {
@@ -19,7 +18,7 @@ Die Aufgaben stehen in `daten/aufgaben/b3.json` und `daten/aufgaben/b4.json`
 |---|---|---|
 | `id` | ja | Eindeutiger Name, z. B. `"b4-1-03"` (Bereich, Niveau, Nummer). Nie doppelt. |
 | `niveau` | ja | `1`, `2` oder `3` (= ★, ★★, ★★★) |
-| `typ` | ja | `auswahl`, `zahl`, `sortieren`, `klappt`, `wortgleichung`, `antippen` (siehe unten) |
+| `typ` | ja | `auswahl`, `zahl`, `sortieren`, `klappt`, `wortgleichung`, `antippen`, `bauen`, `modell` (siehe unten) |
 | `frage` | ja | Arbeitsanweisung, **höchstens ein Satz** |
 | `symbol` | ja | Ein Zeichen vor der Frage: ✋ antippen, ↕ sortieren, 🔢 zählen, ✏️ ergänzen, ❓ auswählen |
 | `denkanstoss` | ja | Hilfe nach dem 1. Fehler. Verrät die Lösung **nicht**. |
@@ -92,6 +91,20 @@ Zinkoxid + Kohlenstoff, Aluminiumoxid + Magnesium.
   "links": ["Kupferoxid", "Zink"], "rechts": ["Kupfer", "Zinkoxid"], "richtig": "Kupferoxid",
   "fehler": { "Kupfer": "Kupfer hat keinen Sauerstoff. Wer gibt Sauerstoff ab?" }, ... }
 ```
+
+### `bauen` – Formel mit Noppen-Bausteinen bauen (Bereich 1)
+```json
+{ "id": "b1-2-01", "niveau": 2, "typ": "bauen", "symbol": "🧱", "kann": "bauen",
+  "frage": "Baue Aluminiumoxid.", "formel": "Al2O3", "steine": ["Al", "O"], ... }
+```
+`steine` = die Steine in der Leiste. Bei Eisen und Kupfer mit römischer Zahl: `"Fe(II)"`, `"Fe(III)"`,
+`"Cu(I)"`, `"Cu(II)"`. Optional `"start": ["Mg"]` – dieser Stein liegt schon zu Beginn da
+(für „Fülle alle Noppen“). Gelöst ist die Aufgabe, wenn alle Noppen belegt sind und die Atomzahl zur
+`formel` passt; die Anordnung ist egal. Die App prüft beim Start, ob sich die Formel mit diesen Steinen
+bauen lässt. Keine Schwefeloxide, Stickoxide und kein Kohlenstoffmonooxid (passen nicht ins Noppenmodell).
+
+### `modell` – Welche Formel hat dieses Modell?
+Wie `auswahl`, dazu `formel` und `steine`: Die App baut das Modell selbst und zeigt es in 3D.
 
 ### `warum` – Begründung (nur ★★★, Bereich 3)
 Zusatz bei einer Aufgabe. Die App stellt die Frage nach jeder zweiten Antwort. Richtig = 5 Extrapunkte.

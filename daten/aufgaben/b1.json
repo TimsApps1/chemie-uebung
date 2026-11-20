@@ -1,0 +1,659 @@
+{
+ "bereich": "B1",
+ "aufgaben": [
+  {
+   "id": "b1-1-01",
+   "niveau": 1,
+   "typ": "bauen",
+   "symbol": "✋",
+   "kann": "noppen",
+   "frage": "Fülle alle Noppen.",
+   "formel": "MgO",
+   "steine": [
+    "O"
+   ],
+   "start": [
+    "Mg"
+   ],
+   "leicht": true,
+   "denkanstoss": "Zwei Steine können auch mit 2 Noppen verbunden sein. Tippe erst auf eine Noppe am Mg, dann auf eine am O.",
+   "erklaerung": "Mg hat 2 Noppen, O hat 2. Sie sind doppelt verbunden: MgO."
+  },
+  {
+   "id": "b1-1-02",
+   "niveau": 1,
+   "typ": "bauen",
+   "symbol": "✋",
+   "kann": "noppen",
+   "frage": "Fülle alle Noppen.",
+   "formel": "NaCl",
+   "steine": [
+    "Cl"
+   ],
+   "start": [
+    "Na"
+   ],
+   "leicht": true,
+   "denkanstoss": "Na hat 1 Noppe. Wie viele Cl brauchst du?",
+   "erklaerung": "Na hat 1 Noppe, Cl hat 1. Ein Cl reicht: NaCl."
+  },
+  {
+   "id": "b1-1-03",
+   "niveau": 1,
+   "typ": "bauen",
+   "symbol": "✋",
+   "kann": "noppen",
+   "frage": "Fülle alle Noppen.",
+   "formel": "HCl",
+   "steine": [
+    "Cl"
+   ],
+   "start": [
+    "H"
+   ],
+   "leicht": true,
+   "denkanstoss": "H hat nur 1 Noppe.",
+   "erklaerung": "H und Cl haben je 1 Noppe: HCl."
+  },
+  {
+   "id": "b1-1-04",
+   "niveau": 1,
+   "typ": "bauen",
+   "symbol": "✋",
+   "kann": "noppen",
+   "frage": "Fülle alle Noppen.",
+   "formel": "H2O",
+   "steine": [
+    "H"
+   ],
+   "start": [
+    "O"
+   ],
+   "denkanstoss": "O hat 2 Noppen. Jedes H hat nur 1.",
+   "erklaerung": "O hat 2 Noppen. Dafür brauchst du 2 H: H2O."
+  },
+  {
+   "id": "b1-1-05",
+   "niveau": 1,
+   "typ": "bauen",
+   "symbol": "✋",
+   "kann": "noppen",
+   "frage": "Fülle alle Noppen.",
+   "formel": "ZnO",
+   "steine": [
+    "O"
+   ],
+   "start": [
+    "Zn"
+   ],
+   "denkanstoss": "Zn und O haben gleich viele Noppen.",
+   "erklaerung": "Zn und O haben je 2 Noppen: ZnO."
+  },
+  {
+   "id": "b1-1-06",
+   "niveau": 1,
+   "typ": "bauen",
+   "symbol": "✋",
+   "kann": "noppen",
+   "frage": "Fülle alle Noppen.",
+   "formel": "PbO",
+   "steine": [
+    "O"
+   ],
+   "start": [
+    "Pb"
+   ],
+   "denkanstoss": "Pb und O haben gleich viele Noppen.",
+   "erklaerung": "Pb und O haben je 2 Noppen: PbO."
+  },
+  {
+   "id": "b1-1-07",
+   "niveau": 1,
+   "typ": "bauen",
+   "symbol": "✋",
+   "kann": "noppen",
+   "frage": "Fülle alle Noppen.",
+   "formel": "MgCl2",
+   "steine": [
+    "Cl"
+   ],
+   "start": [
+    "Mg"
+   ],
+   "denkanstoss": "Mg hat 2 Noppen, Cl nur 1.",
+   "erklaerung": "Mg hat 2 Noppen. Dafür brauchst du 2 Cl: MgCl2."
+  },
+  {
+   "id": "b1-1-08",
+   "niveau": 1,
+   "typ": "bauen",
+   "symbol": "✋",
+   "kann": "noppen",
+   "frage": "Fülle alle Noppen.",
+   "formel": "Na2O",
+   "steine": [
+    "Na"
+   ],
+   "start": [
+    "O"
+   ],
+   "denkanstoss": "O hat 2 Noppen, Na nur 1.",
+   "erklaerung": "O hat 2 Noppen. Dafür brauchst du 2 Na: Na2O."
+  },
+  {
+   "id": "b1-1-09",
+   "niveau": 1,
+   "typ": "bauen",
+   "symbol": "✋",
+   "kann": "noppen",
+   "frage": "Fülle alle Noppen.",
+   "formel": "H2S",
+   "steine": [
+    "H"
+   ],
+   "start": [
+    "S"
+   ],
+   "denkanstoss": "S hat 2 Noppen, H nur 1.",
+   "erklaerung": "S hat 2 Noppen. Dafür brauchst du 2 H: H2S."
+  },
+  {
+   "id": "b1-1-10",
+   "niveau": 1,
+   "typ": "bauen",
+   "symbol": "✋",
+   "kann": "noppen",
+   "frage": "Fülle alle Noppen.",
+   "formel": "ZnS",
+   "steine": [
+    "S"
+   ],
+   "start": [
+    "Zn"
+   ],
+   "denkanstoss": "Zn und S haben gleich viele Noppen.",
+   "erklaerung": "Zn und S haben je 2 Noppen: ZnS."
+  },
+  {
+   "id": "b1-1-11",
+   "niveau": 1,
+   "typ": "bauen",
+   "symbol": "✋",
+   "kann": "noppen",
+   "frage": "Fülle alle Noppen.",
+   "formel": "CuO",
+   "steine": [
+    "O"
+   ],
+   "start": [
+    "Cu(II)"
+   ],
+   "denkanstoss": "Cu (II) hat 2 Noppen.",
+   "erklaerung": "Cu (II) und O haben je 2 Noppen: CuO."
+  },
+  {
+   "id": "b1-1-12",
+   "niveau": 1,
+   "typ": "modell",
+   "symbol": "🔍",
+   "kann": "ablesen",
+   "frage": "Welche Formel hat dieses Modell?",
+   "formel": "H2O",
+   "steine": [
+    "H",
+    "O"
+   ],
+   "antworten": [
+    "H2O",
+    "HO",
+    "HO2",
+    "H3O2"
+   ],
+   "richtig": "H2O",
+   "leicht": true,
+   "denkanstoss": "Zähle die Steine jeder Sorte.",
+   "erklaerung": "Es sind 2 H-Steine und 1 O-Stein: H2O."
+  },
+  {
+   "id": "b1-1-13",
+   "niveau": 1,
+   "typ": "modell",
+   "symbol": "🔍",
+   "kann": "ablesen",
+   "frage": "Welche Formel hat dieses Modell?",
+   "formel": "NaCl",
+   "steine": [
+    "Na",
+    "Cl"
+   ],
+   "antworten": [
+    "NaCl",
+    "Na2Cl",
+    "NaCl2",
+    "Na2Cl2"
+   ],
+   "richtig": "NaCl",
+   "denkanstoss": "Zähle die Steine jeder Sorte.",
+   "erklaerung": "Es sind 1 Na-Stein und 1 Cl-Stein: NaCl."
+  },
+  {
+   "id": "b1-2-01",
+   "niveau": 2,
+   "typ": "bauen",
+   "symbol": "🧱",
+   "kann": "bauen",
+   "frage": "Baue Aluminiumoxid.",
+   "formel": "Al2O3",
+   "steine": [
+    "Al",
+    "O"
+   ],
+   "denkanstoss": "Al hat 3 Noppen, O hat 2. Wie viele Noppen müssen es auf beiden Seiten sein?",
+   "erklaerung": "2 Al haben 6 Noppen, 3 O haben auch 6: Al2O3."
+  },
+  {
+   "id": "b1-2-02",
+   "niveau": 2,
+   "typ": "bauen",
+   "symbol": "🧱",
+   "kann": "bauen",
+   "frage": "Baue Kohlenstoffdioxid.",
+   "formel": "CO2",
+   "steine": [
+    "C",
+    "O"
+   ],
+   "leicht": true,
+   "denkanstoss": "C hat 4 Noppen. Jedes O braucht 2 davon.",
+   "erklaerung": "C hat 4 Noppen, jedes O 2. Zwei O füllen C: CO2."
+  },
+  {
+   "id": "b1-2-03",
+   "niveau": 2,
+   "typ": "bauen",
+   "symbol": "🧱",
+   "kann": "bauen",
+   "frage": "Baue Ammoniak.",
+   "formel": "NH3",
+   "steine": [
+    "N",
+    "H"
+   ],
+   "leicht": true,
+   "denkanstoss": "N hat 3 Noppen, H nur 1.",
+   "erklaerung": "N hat 3 Noppen. Dafür brauchst du 3 H: NH3."
+  },
+  {
+   "id": "b1-2-04",
+   "niveau": 2,
+   "typ": "bauen",
+   "symbol": "🧱",
+   "kann": "bauen",
+   "frage": "Baue Methan.",
+   "formel": "CH4",
+   "steine": [
+    "C",
+    "H"
+   ],
+   "denkanstoss": "C hat 4 Noppen, H nur 1.",
+   "erklaerung": "C hat 4 Noppen. Dafür brauchst du 4 H: CH4."
+  },
+  {
+   "id": "b1-2-05",
+   "niveau": 2,
+   "typ": "bauen",
+   "symbol": "🧱",
+   "kann": "bauen",
+   "frage": "Baue Aluminiumchlorid.",
+   "formel": "AlCl3",
+   "steine": [
+    "Al",
+    "Cl"
+   ],
+   "denkanstoss": "Al hat 3 Noppen, Cl nur 1.",
+   "erklaerung": "Al hat 3 Noppen. Dafür brauchst du 3 Cl: AlCl3."
+  },
+  {
+   "id": "b1-2-06",
+   "niveau": 2,
+   "typ": "bauen",
+   "symbol": "🧱",
+   "kann": "bauen",
+   "frage": "Baue Magnesiumchlorid.",
+   "formel": "MgCl2",
+   "steine": [
+    "Mg",
+    "Cl"
+   ],
+   "denkanstoss": "Mg hat 2 Noppen, Cl nur 1.",
+   "erklaerung": "Mg hat 2 Noppen. Dafür brauchst du 2 Cl: MgCl2."
+  },
+  {
+   "id": "b1-2-07",
+   "niveau": 2,
+   "typ": "bauen",
+   "symbol": "🧱",
+   "kann": "bauen",
+   "frage": "Baue Natriumsulfid.",
+   "formel": "Na2S",
+   "steine": [
+    "Na",
+    "S"
+   ],
+   "denkanstoss": "S hat 2 Noppen, Na nur 1.",
+   "erklaerung": "S hat 2 Noppen. Dafür brauchst du 2 Na: Na2S."
+  },
+  {
+   "id": "b1-2-08",
+   "niveau": 2,
+   "typ": "bauen",
+   "symbol": "🧱",
+   "kann": "bauen",
+   "frage": "Baue Silberoxid.",
+   "formel": "Ag2O",
+   "steine": [
+    "Ag",
+    "O"
+   ],
+   "denkanstoss": "O hat 2 Noppen, Ag nur 1.",
+   "erklaerung": "O hat 2 Noppen. Dafür brauchst du 2 Ag: Ag2O."
+  },
+  {
+   "id": "b1-2-09",
+   "niveau": 2,
+   "typ": "bauen",
+   "symbol": "🧱",
+   "kann": "bauen",
+   "frage": "Baue Zinkchlorid.",
+   "formel": "ZnCl2",
+   "steine": [
+    "Zn",
+    "Cl"
+   ],
+   "denkanstoss": "Zn hat 2 Noppen, Cl nur 1.",
+   "erklaerung": "Zn hat 2 Noppen. Dafür brauchst du 2 Cl: ZnCl2."
+  },
+  {
+   "id": "b1-2-10",
+   "niveau": 2,
+   "typ": "modell",
+   "symbol": "🔍",
+   "kann": "ablesen",
+   "frage": "Welche Formel hat dieses Modell?",
+   "formel": "Al2O3",
+   "steine": [
+    "Al",
+    "O"
+   ],
+   "antworten": [
+    "Al2O3",
+    "AlO",
+    "Al3O2",
+    "AlO3"
+   ],
+   "richtig": "Al2O3",
+   "denkanstoss": "Zähle die Al-Steine und die O-Steine.",
+   "erklaerung": "Es sind 2 Al-Steine und 3 O-Steine: Al2O3."
+  },
+  {
+   "id": "b1-2-11",
+   "niveau": 2,
+   "typ": "modell",
+   "symbol": "🔍",
+   "kann": "ablesen",
+   "frage": "Welche Formel hat dieses Modell?",
+   "formel": "CO2",
+   "steine": [
+    "C",
+    "O"
+   ],
+   "antworten": [
+    "CO2",
+    "C2O",
+    "CO4",
+    "C2O3"
+   ],
+   "richtig": "CO2",
+   "denkanstoss": "Zähle die C-Steine und die O-Steine.",
+   "erklaerung": "Es sind 1 C-Stein und 2 O-Steine: CO2."
+  },
+  {
+   "id": "b1-2-12",
+   "niveau": 2,
+   "typ": "modell",
+   "symbol": "🔍",
+   "kann": "ablesen",
+   "frage": "Welche Formel hat dieses Modell?",
+   "formel": "NH3",
+   "steine": [
+    "N",
+    "H"
+   ],
+   "antworten": [
+    "NH3",
+    "NH",
+    "N3H",
+    "NH2"
+   ],
+   "richtig": "NH3",
+   "denkanstoss": "Zähle die N-Steine und die H-Steine.",
+   "erklaerung": "Es sind 1 N-Stein und 3 H-Steine: NH3."
+  },
+  {
+   "id": "b1-3-01",
+   "niveau": 3,
+   "typ": "bauen",
+   "symbol": "🧱",
+   "kann": "zwei_wertigkeiten",
+   "frage": "Baue Eisen(III)-oxid.",
+   "formel": "Fe2O3",
+   "steine": [
+    "Fe(II)",
+    "Fe(III)",
+    "O"
+   ],
+   "denkanstoss": "Die römische Zahl sagt, welchen Eisen-Stein du brauchst.",
+   "erklaerung": "Eisen(III) hat 3 Noppen. 2 Fe haben 6 Noppen, 3 O auch 6: Fe2O3."
+  },
+  {
+   "id": "b1-3-02",
+   "niveau": 3,
+   "typ": "bauen",
+   "symbol": "🧱",
+   "kann": "zwei_wertigkeiten",
+   "frage": "Baue Eisen(II)-oxid.",
+   "formel": "FeO",
+   "steine": [
+    "Fe(II)",
+    "Fe(III)",
+    "O"
+   ],
+   "leicht": true,
+   "denkanstoss": "Die römische Zahl sagt, welchen Eisen-Stein du brauchst.",
+   "erklaerung": "Eisen(II) hat 2 Noppen, O auch 2: FeO."
+  },
+  {
+   "id": "b1-3-03",
+   "niveau": 3,
+   "typ": "bauen",
+   "symbol": "🧱",
+   "kann": "zwei_wertigkeiten",
+   "frage": "Baue Kupfer(I)-oxid.",
+   "formel": "Cu2O",
+   "steine": [
+    "Cu(I)",
+    "Cu(II)",
+    "O"
+   ],
+   "denkanstoss": "Kupfer(I) hat nur 1 Noppe.",
+   "erklaerung": "Kupfer(I) hat 1 Noppe. O hat 2, also brauchst du 2 Cu: Cu2O."
+  },
+  {
+   "id": "b1-3-04",
+   "niveau": 3,
+   "typ": "bauen",
+   "symbol": "🧱",
+   "kann": "zwei_wertigkeiten",
+   "frage": "Baue Kupfer(II)-oxid.",
+   "formel": "CuO",
+   "steine": [
+    "Cu(I)",
+    "Cu(II)",
+    "O"
+   ],
+   "leicht": true,
+   "denkanstoss": "Die römische Zahl sagt, welchen Kupfer-Stein du brauchst.",
+   "erklaerung": "Kupfer(II) hat 2 Noppen, O auch 2: CuO."
+  },
+  {
+   "id": "b1-3-05",
+   "niveau": 3,
+   "typ": "bauen",
+   "symbol": "🧱",
+   "kann": "zwei_wertigkeiten",
+   "frage": "Baue Eisen(III)-chlorid.",
+   "formel": "FeCl3",
+   "steine": [
+    "Fe(II)",
+    "Fe(III)",
+    "Cl"
+   ],
+   "denkanstoss": "Eisen(III) hat 3 Noppen, Cl nur 1.",
+   "erklaerung": "Eisen(III) hat 3 Noppen. Dafür brauchst du 3 Cl: FeCl3."
+  },
+  {
+   "id": "b1-3-06",
+   "niveau": 3,
+   "typ": "bauen",
+   "symbol": "🧱",
+   "kann": "zwei_wertigkeiten",
+   "frage": "Baue Eisen(II)-chlorid.",
+   "formel": "FeCl2",
+   "steine": [
+    "Fe(II)",
+    "Fe(III)",
+    "Cl"
+   ],
+   "denkanstoss": "Eisen(II) hat 2 Noppen, Cl nur 1.",
+   "erklaerung": "Eisen(II) hat 2 Noppen. Dafür brauchst du 2 Cl: FeCl2."
+  },
+  {
+   "id": "b1-3-07",
+   "niveau": 3,
+   "typ": "bauen",
+   "symbol": "🧱",
+   "kann": "bauen",
+   "frage": "Baue Aluminiumsulfid.",
+   "formel": "Al2S3",
+   "steine": [
+    "Al",
+    "S"
+   ],
+   "denkanstoss": "Al hat 3 Noppen, S hat 2. Auf beiden Seiten müssen gleich viele Noppen sein.",
+   "erklaerung": "2 Al haben 6 Noppen, 3 S auch 6: Al2S3."
+  },
+  {
+   "id": "b1-3-08",
+   "niveau": 3,
+   "typ": "modell",
+   "symbol": "🔍",
+   "kann": "zwei_wertigkeiten",
+   "frage": "Ist das Eisen(II)-oxid oder Eisen(III)-oxid?",
+   "formel": "Fe2O3",
+   "steine": [
+    "Fe(III)",
+    "O"
+   ],
+   "antworten": [
+    "Eisen(III)-oxid",
+    "Eisen(II)-oxid"
+   ],
+   "richtig": "Eisen(III)-oxid",
+   "denkanstoss": "Zähle die Noppen an einem Eisen-Stein.",
+   "erklaerung": "Jeder Eisen-Stein hat 3 Noppen: Eisen(III)-oxid, Fe2O3."
+  },
+  {
+   "id": "b1-3-09",
+   "niveau": 3,
+   "typ": "modell",
+   "symbol": "🔍",
+   "kann": "zwei_wertigkeiten",
+   "frage": "Ist das Eisen(II)-oxid oder Eisen(III)-oxid?",
+   "formel": "FeO",
+   "steine": [
+    "Fe(II)",
+    "O"
+   ],
+   "antworten": [
+    "Eisen(II)-oxid",
+    "Eisen(III)-oxid"
+   ],
+   "richtig": "Eisen(II)-oxid",
+   "denkanstoss": "Zähle die Noppen am Eisen-Stein.",
+   "erklaerung": "Der Eisen-Stein hat 2 Noppen: Eisen(II)-oxid, FeO."
+  },
+  {
+   "id": "b1-3-10",
+   "niveau": 3,
+   "typ": "modell",
+   "symbol": "🔍",
+   "kann": "zwei_wertigkeiten",
+   "frage": "Ist das Kupfer(I)-oxid oder Kupfer(II)-oxid?",
+   "formel": "Cu2O",
+   "steine": [
+    "Cu(I)",
+    "O"
+   ],
+   "antworten": [
+    "Kupfer(I)-oxid",
+    "Kupfer(II)-oxid"
+   ],
+   "richtig": "Kupfer(I)-oxid",
+   "denkanstoss": "Zähle die Noppen an einem Kupfer-Stein.",
+   "erklaerung": "Jeder Kupfer-Stein hat 1 Noppe: Kupfer(I)-oxid, Cu2O."
+  },
+  {
+   "id": "b1-3-11",
+   "niveau": 3,
+   "typ": "auswahl",
+   "symbol": "❓",
+   "kann": "bauen",
+   "frage": "Welche Formel ist falsch?",
+   "antworten": [
+    "MgO2",
+    "MgO",
+    "Al2O3",
+    "Na2O"
+   ],
+   "richtig": "MgO2",
+   "fehler": {
+    "Al2O3": "2 Al haben 6 Noppen, 3 O auch 6. Al2O3 stimmt.",
+    "Na2O": "2 Na haben 2 Noppen, O hat 2. Na2O stimmt.",
+    "MgO": "Mg und O haben je 2 Noppen. MgO stimmt."
+   },
+   "denkanstoss": "Prüfe bei jeder Formel: Haben beide Seiten gleich viele Noppen?",
+   "erklaerung": "Zähl die Noppen: Mg hat 2, O hat 2. Ein O reicht, richtig ist MgO."
+  },
+  {
+   "id": "b1-3-12",
+   "niveau": 3,
+   "typ": "auswahl",
+   "symbol": "❓",
+   "kann": "bauen",
+   "frage": "Aluminium hat 3 Noppen, Sauerstoff 2: Wie viele Al-Steine brauchst du für Aluminiumoxid?",
+   "antworten": [
+    "2",
+    "1",
+    "3",
+    "6"
+   ],
+   "richtig": "2",
+   "fehler": {
+    "3": "Mit 3 Al hättest du 9 Noppen. Das passt nicht zu den O-Steinen.",
+    "6": "6 ist die Zahl der Noppen, nicht der Steine."
+   },
+   "denkanstoss": "Suche die kleinste Zahl, die durch 3 und durch 2 teilbar ist.",
+   "erklaerung": "6 Noppen auf jeder Seite: 2 Al (2 · 3) und 3 O (3 · 2). Also 2 Al-Steine."
+  }
+ ]
+}

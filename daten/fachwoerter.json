@@ -288,6 +288,26 @@
       "artikel": "der",
       "mehrzahl": "die Stoffe",
       "erklaerung": "Alles, woraus Dinge bestehen, zum Beispiel Eisen, Wasser oder Sauerstoff."
+    },
+    {
+      "wort": "Wertigkeit",
+      "formen": [
+        "Wertigkeit",
+        "Wertigkeiten"
+      ],
+      "artikel": "die",
+      "mehrzahl": "die Wertigkeiten",
+      "erklaerung": "Wie viele Verbindungen ein Atom eingehen kann. Im Modell ist das die Zahl der Noppen. Die Wertigkeit ist ein Hilfsmodell."
+    },
+    {
+      "wort": "Noppe",
+      "formen": [
+        "Noppe",
+        "Noppen"
+      ],
+      "artikel": "die",
+      "mehrzahl": "die Noppen",
+      "erklaerung": "Ein kleiner Knopf auf dem Stein. Jede Noppe steht für eine Verbindung."
     }
   ]
 }

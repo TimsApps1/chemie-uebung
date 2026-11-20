@@ -3,6 +3,7 @@
 // fehlerhafte Aufgaben werden übersprungen – die App läuft trotzdem weiter.
 import { atomeZaehlen, formelZerlegen, symboleSetzen } from './hilfen.js';
 import { aufgabenErzeugen } from './erzeugen.js';
+import { steinArt, loesungsModell } from './bausteine-logik.js';
 
 const fehlerListe = [];
 
@@ -100,7 +101,7 @@ function zeileVonId(roh, id) {
 
 // ---------- Aufgaben prüfen ----------
 
-const TYPEN = ['auswahl', 'zahl', 'sortieren', 'klappt', 'wortgleichung', 'antippen'];
+const TYPEN = ['auswahl', 'zahl', 'sortieren', 'klappt', 'wortgleichung', 'antippen', 'bauen', 'modell'];
 
 function aufgabePruefen(a, kontext) {
   const probleme = [];
@@ -154,6 +155,14 @@ function aufgabePruefen(a, kontext) {
   if (a.typ === 'antippen') {
     const stoffe = [...(a.links || []), ...(a.rechts || [])];
     if (!stoffe.includes(a.richtig)) probleme.push(`„richtig“ („${a.richtig}“) steht nicht in der Gleichung.`);
+  }
+  if (a.typ === 'bauen' || a.typ === 'modell') {
+    const steine = [...(a.start || []), ...(a.steine || [])];
+    if (!Array.isArray(a.steine) || !a.steine.length) probleme.push('„steine“ braucht mindestens einen Stein, z. B. ["Mg", "O"].');
+    const unbekannt = steine.filter((s) => !steinArt(s, kontext.elemente));
+    if (unbekannt.length) probleme.push(`Unbekannte Steine: ${unbekannt.join(', ')} (Symbol aus elemente.json, bei Fe/Cu mit (II) usw.).`);
+    else if (!loesungsModell(a.formel, steine, kontext.elemente)) probleme.push(`${a.formel} lässt sich mit diesen Steinen nicht so bauen, dass alle Noppen belegt sind.`);
+    if (a.typ === 'modell' && (!Array.isArray(a.antworten) || !a.antworten.includes(a.richtig))) probleme.push(`„richtig“ („${a.richtig}“) steht nicht in „antworten“.`);
   }
   if (a.warum) {
     if (!Array.isArray(a.warum.antworten) || !a.warum.antworten.includes(a.warum.richtig)) {

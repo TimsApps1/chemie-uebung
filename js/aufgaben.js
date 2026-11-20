@@ -6,6 +6,8 @@ import { el, mischen, formelKnoten, buchstabieren } from './hilfen.js';
 import { text, baustein, fenster } from './ui.js';
 import { klapptEs, richtigeZahl } from './daten.js';
 import { formelModell } from './modell3d.js';
+import { baustelle } from './baustelle.js';
+import { steinArt, leeresModell, ersterStein, bauErgebnis, bauHinweis, loesungsModell } from './bausteine-logik.js';
 
 // ---------- Prüfen ----------
 
@@ -16,6 +18,10 @@ export function pruefen(a, wert, daten) {
       return wert === a.richtig;
     case 'zahl':
       return Number(wert) === richtigeZahl(a);
+    case 'bauen':
+      return bauErgebnis(wert, a.formel).geloest;
+    case 'modell':
+      return wert === a.richtig;
     case 'sortieren':
       return wert.join('|') === a.karten.join('|');
     case 'klappt':
@@ -33,6 +39,7 @@ export function pruefen(a, wert, daten) {
 // Fester Hinweis zu einer bestimmten falschen Antwort (oder automatisch erzeugt).
 export function fehlerHinweis(a, wert) {
   const schluessel = Array.isArray(wert) ? wert.join(', ') : String(wert);
+  if (a.typ === 'bauen') return bauHinweis(wert, a.formel, elementeListe);
   if (a.fehler && a.fehler[schluessel]) return a.fehler[schluessel];
   if (a.typ === 'sortieren' && Array.isArray(wert)) {
     const n = wert.filter((k, i) => a.karten[i] === k).length;
@@ -56,6 +63,8 @@ export function loesungsText(a, daten) {
     case 'auswahl':
     case 'antippen': return a.richtig;
     case 'zahl': return String(richtigeZahl(a));
+    case 'bauen': return a.formel;
+    case 'modell': return a.richtig;
     case 'sortieren': return a.karten.join(' · ');
     case 'klappt': return klapptEs(daten.reihe, a.oxid, a.stoff) ? 'Es klappt.' : 'Es klappt nicht.';
     case 'wortgleichung': {
@@ -73,6 +82,8 @@ export function vorleseText(a, reihenfolge = null) {
   const teile = [a.frage];
   if (a.typ === 'klappt') teile.push(`${a.oxid} und ${a.stoff}`);
   if (a.typ === 'zahl') teile.push(a.formel);
+  if (a.typ === 'bauen') teile.push('Steine: ' + [...(a.start || []), ...a.steine].join(', '));
+  if (a.typ === 'modell') teile.push((reihenfolge || a.antworten).map((t, i) => `Antwort ${i + 1}: ${t}`).join('. '));
   if (a.links) teile.push(`${a.links.map((s) => (s === '?' ? 'Lücke' : s)).join(' + ')} → ${a.rechts.map((s) => (s === '?' ? 'Lücke' : s)).join(' + ')}`);
   if (a.typ === 'wortgleichung') teile.push('Zur Auswahl: ' + (reihenfolge || a.auswahl).map((s, i) => `${i + 1}: ${s}`).join('. '));
   if (a.typ === 'sortieren') teile.push((reihenfolge || a.karten).map((k, i) => `Karte ${i + 1}: ${k}`).join('. '));
@@ -467,7 +478,70 @@ function antippen(a, antworten) {
   };
 }
 
-const DARSTELLUNG = { auswahl, zahl, sortieren, klappt, wortgleichung, antippen };
+// ---------- Bauen mit Noppen (Bereich 1) ----------
+
+let elementeListe = [];
+
+function startModell(a, elemente) {
+  const m = leeresModell();
+  for (const eintrag of a.start || []) {
+    const art = steinArt(eintrag, elemente);
+    if (art && !m.steine.length) ersterStein(m, art);
+  }
+  return m;
+}
+
+function bauen(a, antworten, daten) {
+  elementeListe = daten.elemente;
+  const leiste = a.steine.map((s) => steinArt(s, daten.elemente)).filter(Boolean);
+  const formelZeile = el('p', { class: 'bau-formel', 'aria-live': 'polite' }, 'Formel: ', el('b', {}, '?'));
+  let fertig = false;
+  const bau = baustelle({
+    leiste, modell: startModell(a, daten.elemente),
+    beiAenderung: (m) => {
+      const e = bauErgebnis(m, a.formel);
+      // Die Formel erscheint erst, wenn alle Noppen belegt sind und die Atomzahl stimmt.
+      formelZeile.replaceChildren('Formel: ', el('b', {}, e.geloest ? formelKnoten(a.formel) : '?'));
+      if (e.geloest && !fertig) { fertig = true; pruefKnopf.disabled = true; antworten(m); }
+    }
+  });
+  const pruefKnopf = el('button', { type: 'button', class: 'knopf knopf-haupt knopf-breit', onclick: () => {
+    pruefKnopf.disabled = true;
+    antworten(bau.modell());
+  } }, 'Fertig – prüfen');
+  const wurzel = el('div', { class: 'bau-aufgabe' },
+    bau.wurzel, formelZeile, pruefKnopf,
+    el('p', { class: 'tipp' }, 'Die Wertigkeit ist ein Hilfsmodell. Später lernst du es genauer.'));
+  return {
+    wurzel,
+    ergebnis(wert, richtig, endgueltig) {
+      if (richtig) {
+        bau.sperren();
+        formelZeile.replaceChildren(el('span', { class: 'marke' }, '✓'), ' Formel: ', el('b', {}, formelKnoten(a.formel)));
+        formelZeile.classList.add('ist-richtig');
+        return;
+      }
+      if (endgueltig) {
+        const loesung = loesungsModell(a.formel, [...(a.start || []), ...a.steine], daten.elemente);
+        if (loesung) bau.setzeModell(loesung);
+        bau.sperren();
+        formelZeile.replaceChildren('So sieht ', el('b', {}, formelKnoten(a.formel)), ' aus: Alle Noppen sind belegt.');
+      }
+    },
+    nochmal() { fertig = false; pruefKnopf.disabled = false; bau.entsperren(); }
+  };
+}
+
+// ---------- Welche Formel hat dieses Modell? ----------
+
+function modell(a, antworten, daten) {
+  const m = loesungsModell(a.formel, a.steine, daten.elemente);
+  const bau = baustelle({ modell: m || leeresModell(), nurAnsehen: true, hoehe: 280 });
+  const wahl = auswahl({ ...a, typ: 'auswahl' }, antworten);
+  return { ...wahl, wurzel: el('div', { class: 'modell-aufgabe' }, bau.wurzel, wahl.wurzel) };
+}
+
+const DARSTELLUNG = { auswahl, zahl, sortieren, klappt, wortgleichung, antippen, bauen, modell };
 
 export function aufgabeDarstellen(a, antworten, daten) {
   return DARSTELLUNG[a.typ](a, antworten, daten);

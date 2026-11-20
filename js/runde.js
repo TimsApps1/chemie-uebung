@@ -2,7 +2,7 @@
 import { el, mischen, sterneText, formelKnoten } from './hilfen.js';
 import { kopfSetzen, icon, iconKnopf, text, vorlesenKnopf, vorlesenStoppen, fenster, fragen, tonSpielen } from './ui.js';
 import { aufgabeDarstellen, pruefen, fehlerHinweis, loesungsText, vorleseText } from './aufgaben.js';
-import { fehlerMerken, fehlerWiederholt, kannZaehlen, geraet } from './profil.js';
+import { fehlerMerken, fehlerWiederholt, kannZaehlen, geraet, profil, aendern } from './profil.js';
 
 export const RUNDE_LAENGE = 8;
 const ZEIT_PRO_AUFGABE = 45; // Sekunden, nur ★★★
@@ -187,7 +187,7 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
   }
 
   // Aufgaben mit nur zwei Antworten: Nach einem Fehler wäre der 2. Versuch geschenkt.
-  const nurZweiAntworten = (a) => a.typ === 'klappt' || (a.typ === 'auswahl' && a.antworten.length === 2);
+  const nurZweiAntworten = (a) => a.typ === 'klappt' || ((a.typ === 'auswahl' || a.typ === 'modell') && a.antworten.length === 2);
 
   function zeigeAufgabe(a) {
     let versuch = 1;
@@ -244,6 +244,12 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
         }
         // Ich-kann zählt nur echte Erstversuche (nicht die Wiederholung kurz nach der gezeigten Lösung).
         if (versuch === 1 && !wiederholung && art === 'normal') kannZaehlen(name, a.kann);
+        // Einmal pro Bereich: Hinweis zum Zahlenverhältnis bei Metalloxiden.
+        if (a.typ === 'bauen' && /^(Na|Mg|Al|Zn|Pb|Cu|Fe|Ag)\d*O\d*$/.test(a.formel) && !profil(name).hinweise?.verhaeltnis) {
+          aendern(name, (p) => { p.hinweise = { ...(p.hinweise || {}), verhaeltnis: true }; });
+          setTimeout(() => fenster(el('p', { class: 'fenster-text' }, 'Die Formel zeigt das ', el('b', {}, 'Zahlenverhältnis'),
+            ' der Atome. In Wirklichkeit hängen sehr viele Atome in einem großen Verband zusammen.'), { titel: '💡 Gut zu wissen' }), 600);
+        }
         rueck.replaceChildren(rueckmeldung(true, lobText, null, plus));
         weiterKnopf(a, true);
         return;

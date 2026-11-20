@@ -932,3 +932,30 @@ button.bereich { font: inherit; text-align: left; cursor: pointer; width: 100%; 
 .scan-video { width: 100%; max-height: 55vh; background: #000; border-radius: var(--r-mittel); object-fit: cover; }
 .scan-meldungen { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; max-height: 30vh; overflow: auto; }
 .scan-meldungen li { padding: 8px 12px; border-radius: var(--r-klein); background: var(--gut-flaeche); color: var(--gut-dunkel); font-weight: 700; }
+
+/* =====================================================================
+   Etappe 3: Baustelle mit Noppen (Bereich 1)
+   ===================================================================== */
+.bau-aufgabe, .modell-aufgabe { display: grid; gap: var(--a3); }
+.baustelle { display: grid; gap: var(--a2); }
+.bau-buehne { border-radius: var(--r-mittel); overflow: hidden; background: #eef0f8; }
+.bau-buehne canvas { display: block; width: 100%; touch-action: none; }
+.bau-status { margin: 0; min-height: 1.5em; font-weight: 600; color: var(--text-leise); }
+.bau-status.warnung { color: var(--schlecht-dunkel); }
+.bau-leiste { display: flex; flex-wrap: wrap; gap: var(--a2); }
+.bau-stein-knopf { display: grid; justify-items: center; gap: 2px; min-width: 76px; min-height: 76px; padding: 8px 10px; border: 2px solid var(--rand-kraeftig); border-radius: var(--r-mittel); background: #fff; font: inherit; color: var(--text); cursor: pointer; box-shadow: 0 3px 0 var(--kante); }
+.bau-stein-knopf .baustein { margin-top: 12px; }
+.bau-stein-knopf small { font-weight: 700; font-size: 0.9rem; }
+.bau-stein-knopf.gewaehlt { border: 3px solid var(--haupt); background: var(--haupt-zart); }
+.bau-stein-knopf.gewaehlt small::before { content: '✓ '; color: var(--haupt-dunkel); }
+.bau-steuerung .knopf { min-height: 48px; }
+.bau-formel { margin: 0; font-size: var(--text-gross); text-align: center; padding: 8px; border-radius: var(--r-mittel); background: var(--haupt-zart); }
+.bau-formel.ist-richtig { background: var(--gut-flaeche); color: var(--gut-dunkel); }
+.bau-formel .marke { background: var(--gut); margin-right: 6px; }
+.bau-liste-box summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; font-weight: 700; color: var(--haupt-dunkel); }
+.bau-liste { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+.bau-liste li { display: flex; flex-wrap: wrap; align-items: center; gap: var(--a2); padding: 6px; border-radius: var(--r-klein); }
+.bau-liste li.wartet { background: var(--haupt-zart); }
+.bau-liste li.markiert { outline: 2px solid var(--haupt); }
+.bau-liste-text { flex: 1; min-width: 12em; }
+.baustelle.gesperrt .bau-liste .knopf { display: none; }

@@ -95,14 +95,38 @@
         "E"
       ],
       "bildzeichen": "baustein",
-      "geschichte": null,
-      "niveaus": {
-        "1": "„Fülle alle Noppen“ mit kleinen Modellen aus zwei Steinarten.",
-        "2": "Bauen nach Namen, wenn mehrere gleiche Atome nötig sind.",
-        "3": "Eisen(II)/(III) und Kupfer(I)/(II) unterscheiden, Fehler verbessern."
+      "geschichte": {
+        "titel": "Bausteine der Stoffe",
+        "text": "1852 hatte der englische Chemiker Edward Frankland eine Idee: Jedes Atom kann sich nur mit einer bestimmten Zahl anderer Atome verbinden. Diese Zahl nennen wir heute Wertigkeit. In dieser App ist sie die Zahl der Noppen auf einem Baustein.",
+        "bild": null
       },
-      "ich_kann": [],
-      "kommt_bald": true
+      "niveaus": {
+        "1": "„Fülle alle Noppen“: kleine Modelle aus zwei Steinarten.",
+        "2": "Bauen nach Namen, wenn mehrere gleiche Steine nötig sind.",
+        "3": "Eisen(II)/(III) und Kupfer(I)/(II) unterscheiden, Fehler finden."
+      },
+      "ich_kann": [
+        {
+          "id": "noppen",
+          "text": "Ich kann alle Noppen eines Modells füllen.",
+          "hilfe": "Jede Noppe braucht einen Partner. Zwei Steine können auch mit 2 oder 3 Noppen verbunden sein."
+        },
+        {
+          "id": "bauen",
+          "text": "Ich kann Formeln mit dem Noppenmodell bauen.",
+          "hilfe": "Zähle die Noppen jeder Steinsorte. Auf beiden Seiten müssen gleich viele Noppen sein."
+        },
+        {
+          "id": "ablesen",
+          "text": "Ich kann die Formel an einem Modell ablesen.",
+          "hilfe": "Zähle die Steine jeder Sorte. Die Anzahl schreibst du klein hinter das Symbol."
+        },
+        {
+          "id": "zwei_wertigkeiten",
+          "text": "Ich kann Eisen(II)/(III) und Kupfer(I)/(II) unterscheiden.",
+          "hilfe": "Die römische Zahl sagt, wie viele Noppen der Stein hat."
+        }
+      ]
     },
     {
       "id": "B2",
