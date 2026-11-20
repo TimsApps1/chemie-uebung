@@ -14,6 +14,7 @@ import {
 } from './profil.js';
 import { freischaltcodePruefen, codeTippfehlerHinweis, punktecode, namensKennung } from './codes.js';
 import { rundeSpielen, aufgabenWaehlen, RUNDE_LAENGE } from './runde.js';
+import { qrZeigen } from './qr.js';
 import { adminStart } from './admin.js';
 
 const inhalt = document.getElementById('inhalt');
@@ -246,6 +247,7 @@ function startseite(name) {
     el('div', { class: 'bereiche' }, kacheln),
     el('div', { class: 'start-knoepfe' },
       el('button', { type: 'button', class: 'knopf', onclick: () => meinFortschritt(name) }, '📈 Mein Fortschritt'),
+      abgabeCodes(name).length ? el('button', { type: 'button', class: 'knopf', onclick: () => qrZeigen(abgabeCodes(name), vorname(name)) }, '📷 Ergebnisse zeigen') : null,
       nochGesperrt ? el('button', { type: 'button', class: 'knopf', onclick: () => codeEingeben(name) }, icon('i-schluessel'), 'Code eingeben') : null),
     installTipp());
 }
@@ -525,7 +527,8 @@ function rundenende(name, ergebnis, kannVorher) {
       el('h3', {}, 'Für deine Lehrkraft'),
       el('p', { class: 'leise' }, 'Kopiere den Punktecode und schick ihn deiner Lehrkraft. Du findest ihn später auch unter „Mein Fortschritt“.'),
       el('div', { class: 'code-feld' }, codeText, kopieren),
-      kopierMeldung));
+      kopierMeldung,
+      el('button', { type: 'button', class: 'knopf knopf-leise', onclick: () => qrZeigen(abgabeCodes(name), vorname(name)) }, '📷 Alle Ergebnisse als QR-Code zeigen')));
 }
 
 async function inZwischenablage(textInhalt, knoten) {
@@ -551,6 +554,30 @@ function codeVonRunde(name, p, r, i) {
   return r.code || punktecode({ name, bereich: r.bereich, niveau: r.niveau, punkte: r.punkte, tag: r.tag,
     kurs: r.kurs || p.freigeschaltet[r.bereich] || 'G', erster: r.ersterVersuch || 0, warum: r.warumRichtig || 0,
     kennung: namensKennung(kindEintrag(name)?.anzeige || name), geraet: geraet().kennung, nummer: r.nummer ?? i + 1 });
+}
+
+// Codes der letzten 6 Wochen zum Abgeben (doppelte erkennt die Lehrer-App selbst).
+function abgabeCodes(name) {
+  const p = profil(name);
+  const grenze = tagNummer() - 42;
+  return p.runden.filter((r) => r.art === 'normal').map((r, i) => ({ r, code: codeVonRunde(name, p, r, i) }))
+    .filter(({ r }) => r.tag >= grenze).map(({ code }) => code);
+}
+
+function abgabeKnoepfe(name) {
+  const codes = abgabeCodes(name);
+  if (!codes.length) return null;
+  const meldung = el('span', { class: 'kopier-meldung', 'aria-live': 'polite' });
+  const unsichtbar = el('span', { class: 'nur-vorlesen' }, codes.join('\n'));
+  return el('div', { class: 'abgabe' },
+    el('div', { class: 'zeile' },
+      el('button', { type: 'button', class: 'knopf knopf-haupt', onclick: () => qrZeigen(codes, vorname(name)) }, '📷 Ergebnisse zeigen (QR)'),
+      el('button', { type: 'button', class: 'knopf', onclick: async () => {
+        const ok = await inZwischenablage(codes.join('\n'), unsichtbar);
+        meldung.textContent = ok ? `✓ ${codes.length} Codes kopiert. Füge sie in Classroom ein.` : 'Kopieren ging nicht.';
+      } }, '📋 Alle Codes kopieren')),
+    meldung, unsichtbar,
+    el('p', { class: 'tipp' }, 'In der Stunde zeigst du den QR-Code. Zu Hause kopierst du alle Codes und schickst sie in Classroom.'));
 }
 
 // ---------- Mein Fortschritt ----------
@@ -626,7 +653,8 @@ function meinFortschritt(name) {
   const letzteCodes = normale.map((r, i) => ({ r, code: codeVonRunde(name, p, r, i) })).slice(-20).reverse();
   const codeListe = letzteCodes.length ? el('details', { class: 'karte code-details' },
     el('summary', {}, el('h3', {}, 'Codes für die Lehrkraft')),
-    el('p', { class: 'leise' }, 'Die letzten Runden. Tippe auf „Kopieren“, wenn du einen Code noch nicht abgegeben hast.'),
+    abgabeKnoepfe(name),
+    el('p', { class: 'leise' }, 'Einzelne Codes der letzten Runden:'),
     el('ul', { class: 'code-liste' }, letzteCodes.map(({ r, code }) => {
       const t = el('span', { class: 'code' }, code);
       return el('li', {},

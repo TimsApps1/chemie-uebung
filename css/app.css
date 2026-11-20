@@ -881,3 +881,54 @@ button.bereich { font: inherit; text-align: left; cursor: pointer; width: 100%; 
 .griff:active { cursor: grabbing; background: var(--haupt-hell); }
 @media (orientation: landscape) and (max-height: 820px) { .sortierliste { gap: 6px; } .sortierkarte { min-height: 48px; } .sortierkarte-text small { display: none; } }
 .element-wahl.klein { margin: var(--a3) 0 0; }
+
+/* =====================================================================
+   Etappe 2: Lehrer-Ansicht (Reiter, Einlesen, Übersicht, Beamer, QR)
+   ===================================================================== */
+.reiter { display: flex; flex-wrap: wrap; gap: 6px; }
+.reiter-knopf { min-height: 48px; padding: 8px 14px; border-radius: var(--r-rund); border: 2px solid var(--rand-kraeftig); background: #fff; font: inherit; font-size: 1rem; font-weight: 700; color: var(--haupt-dunkel); cursor: pointer; }
+.reiter-knopf.aktiv { background: var(--haupt); border-color: var(--haupt); color: #fff; }
+.textfeld { font-size: 1rem; font-weight: 500; letter-spacing: 0; min-height: 140px; font-family: var(--schrift); resize: vertical; margin-bottom: var(--a3); }
+.bericht { display: grid; gap: var(--a2); margin-top: var(--a3); }
+.bericht p { margin: 0; }
+.bericht code { font-size: 0.9rem; word-break: break-all; }
+.zuordnen-liste { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--a3); }
+.zuordnen-liste li { border-bottom: 1px solid var(--rand); padding-bottom: var(--a3); }
+.zuordnen-liste p { margin: 0 0 6px; }
+.auswahl-klein { width: auto; min-height: 44px; font-size: 1rem; font-weight: 600; padding: 6px 10px; }
+.uebersicht-tabelle td, .uebersicht-tabelle th { vertical-align: top; }
+.ueb-niveau { white-space: nowrap; font-size: 0.95rem; }
+.ueb-niveau .sterne { min-width: 3.4em; font-size: 0.8rem; padding: 0 6px; }
+.name-knopf { font: inherit; font-weight: 700; color: var(--haupt-dunkel); text-decoration: underline; background: none; border: 0; padding: 10px 0; min-height: 44px; cursor: pointer; text-align: left; }
+.wochen-saeulen { grid-template-columns: repeat(8, minmax(0, 1fr)); height: 150px; }
+.wochen-saeulen .saeule { background: var(--haupt); }
+.kind-detail h4 { margin: var(--a3) 0 var(--a2); }
+.woche-text { font-weight: 700; }
+.vorschau-liste { margin: 0; padding-left: 1.4em; display: grid; gap: 4px; }
+.datei-feld { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.datei-knopf { position: relative; }
+.datei-knopf:focus-within { outline: 3px solid var(--haupt); outline-offset: 3px; }
+.abgabe { display: grid; gap: var(--a2); margin-bottom: var(--a3); }
+
+/* Beamer: ganze Fläche, große Schrift */
+.beamer-flaeche { position: fixed; inset: 0; z-index: 200; background: var(--haupt-zart); display: grid; place-items: center; padding: 2vh 2vw; overflow: auto; }
+.beamer-flaeche .beamer { width: min(100%, calc(96vh * 16 / 9)); aspect-ratio: auto; min-height: 90vh; background: transparent; grid-template-rows: auto auto 1fr auto; }
+.beamer-zu { margin-left: auto; font-size: 1.2rem; min-width: 56px; }
+.beamer-woche { margin: 0; font-size: 0.55em; color: var(--text-leise); font-weight: 600; }
+.beamer-leer { font-size: 0.8em; color: var(--text-leise); text-align: center; align-self: center; }
+.beamer .rangliste { align-content: start; gap: 0.35em; }
+.beamer .rang { font-size: 1em; }
+.platz-2 { background: #d6dce4 !important; color: var(--text) !important; }
+.platz-3 { background: #e8a46c !important; color: #2b1203 !important; }
+.platz-1 { background: var(--stern) !important; color: var(--stern-text) !important; }
+.beamer-umschalten { display: flex; gap: 12px; justify-content: center; font-size: 1rem; }
+
+/* QR */
+.qr-box { display: grid; justify-items: center; gap: var(--a3); text-align: center; }
+.qr-bild { width: min(420px, 80vw); height: auto; image-rendering: pixelated; background: #fff; border: 8px solid #fff; border-radius: var(--r-klein); }
+.qr-info { margin: 0; font-weight: 700; }
+.qr-blaettern { justify-content: center; }
+.scan-box { display: grid; gap: var(--a3); }
+.scan-video { width: 100%; max-height: 55vh; background: #000; border-radius: var(--r-mittel); object-fit: cover; }
+.scan-meldungen { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; max-height: 30vh; overflow: auto; }
+.scan-meldungen li { padding: 8px 12px; border-radius: var(--r-klein); background: var(--gut-flaeche); color: var(--gut-dunkel); font-weight: 700; }

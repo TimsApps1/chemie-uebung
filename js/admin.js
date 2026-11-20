@@ -2,6 +2,7 @@
 import { el, kurzname, datumVonTag } from './hilfen.js';
 import { kopfSetzen, iconKnopf, fenster, fragen, baustein } from './ui.js';
 import { pinPruefen, pinPruefsumme, freischaltcode, KURSE_PRO_BEREICH } from './codes.js';
+import { ergebnisseReiter, uebersichtReiter, beamerReiter, klasseReiter, sicherungReiter, sicherungsHinweis } from './lehrer.js';
 import { anzeigeName, kindLoeschen, kinder, kindUmbenennen, kinderZusammenfuehren, kindSperren, profil, geraet, geraetAendern } from './profil.js';
 
 // Die Lehrer-Ansicht sperrt sich wieder: beim Verlassen (jeder Weg), wenn das iPad in den
@@ -17,12 +18,17 @@ export function adminSperren() {
   clearTimeout(sperrUhr);
 }
 
+// Während die Beamer-Ansicht läuft, sperrt sich nichts automatisch (sie zeigt nur die besten 5).
+let sperrePausiert = false;
+export function sperreAussetzen(ja) { sperrePausiert = ja; }
+
 function sperrUhrNeu(umgebung) {
   clearTimeout(sperrUhr);
+  if (sperrePausiert) return;
   sperrUhr = setTimeout(() => { if (entsperrt) { adminSperren(); umgebung.zurueck(); } }, SPERRE_NACH);
 }
 
-document.addEventListener('visibilitychange', () => { if (document.hidden) adminSperren(); });
+document.addEventListener('visibilitychange', () => { if (document.hidden && !sperrePausiert) adminSperren(); });
 document.addEventListener('pointerdown', () => { if (entsperrt && aktuelleUmgebung) sperrUhrNeu(aktuelleUmgebung); });
 let aktuelleUmgebung = null;
 
@@ -177,11 +183,29 @@ function adminSeite(umgebungRoh) {
     standardPin ? el('p', { class: 'fehler-kasten' }, '⚠ Es gilt noch die Start-PIN aus der Anleitung. Bitte ändere sie (siehe unten).') : null,
     el('h4', {}, 'PIN ändern'), pinTeil);
 
-  const spaeter = abschnitt('Ergebnisse und Rangliste',
-    el('p', { class: 'leise' }, 'Kommt in Etappe 2: Punktecodes einlesen, Übersicht pro Kind, Rangliste für den Beamer, Sicherung.'));
-
-  zeigen(codes, kinderTeil, einstellungen, spaeter);
+  // ----- Reiter -----
+  const REITER = [
+    ['ergebnisse', '📥 Ergebnisse'], ['uebersicht', '📊 Übersicht'], ['beamer', '🏆 Beamer'], ['klasse', '👥 Klasse'],
+    ['sicherung', '💾 Sicherung'], ['codes', '🔑 Codes'], ['ipad', '📱 Dieses iPad'], ['einstellungen', '⚙ Einstellungen']
+  ];
+  const leiste = el('nav', { class: 'reiter', 'aria-label': 'Bereiche der Lehrer-Ansicht' }, REITER.map(([id, titel]) =>
+    el('button', { type: 'button', class: 'reiter-knopf' + (reiter === id ? ' aktiv' : ''), 'aria-current': reiter === id ? 'page' : null,
+      onclick: () => { reiter = id; neu(); } }, titel)));
+  const lehrerUmgebung = { daten, neu };
+  const inhalt = {
+    ergebnisse: () => ergebnisseReiter(lehrerUmgebung),
+    uebersicht: () => uebersichtReiter(lehrerUmgebung),
+    beamer: () => beamerReiter(lehrerUmgebung),
+    klasse: () => klasseReiter(lehrerUmgebung),
+    sicherung: () => sicherungReiter(lehrerUmgebung),
+    codes: () => [codes],
+    ipad: () => [kinderTeil],
+    einstellungen: () => [einstellungen]
+  }[reiter]();
+  zeigen(leiste, sicherungsHinweis(() => { reiter = 'sicherung'; neu(); }), ...[].concat(inhalt));
 }
+
+let reiter = 'ergebnisse';
 
 // Notlösung bis Etappe 2: alle Runden eines Kindes mit Code ansehen und kopieren.
 function rundenZeigen(name) {

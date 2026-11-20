@@ -1,0 +1,32 @@
+Beispielcodes für die Abnahme von Etappe 2 (Bereich B3, Woche 09.11.2026 bis 15.11.2026)
+Klassenliste: Lena Schmidt, Jonas Becker, Elif Yilmaz, Noah Klein, Mira Wolf, Tom Berg
+
+Lena Schmidt: LENASCH-B3-1-0070-0470-G70-6W-T1-001-Y4Y
+Lena Schmidt: LENASCH-B3-1-0060-0470-G60-6W-T1-002-4UG
+Lena Schmidt: LENASCH-B3-1-0080-0470-G80-6W-T1-003-9KE
+Lena Schmidt: LENASCH-B3-1-0050-0470-G50-6W-T1-004-2GT
+Jonas Becker: JONASBEC-B3-1-0080-0470-G80-NQ-T1-005-A27
+Jonas Becker: JONASBEC-B3-1-0080-0470-G80-NQ-T1-006-P5X
+Elif Yilmaz: ELIFYIL-B3-1-0050-0470-G50-QG-T1-007-HDY
+Elif Yilmaz: ELIFYIL-B3-1-0060-0470-G60-QG-T1-008-8GE
+Elif Yilmaz: ELIFYIL-B3-1-0070-0470-G70-QG-T1-009-8A6
+Noah Klein: NOAHKLE-B3-1-0040-0470-G40-Q9-T1-010-B24
+Mira Wolf: MIRAWOL-B3-1-0070-0470-G70-CU-T1-011-8G7
+Mira Wolf: MIRAWOL-B3-1-0070-0470-G70-CU-T1-012-N2C
+Mira Wolf: MIRAWOL-B3-1-0060-0470-G60-CU-T1-013-SJP
+Tom Berg: TOMBER-B3-1-0030-0470-G30-KT-T1-014-AMY
+Tom Berg: TOMBER-B3-1-0030-0470-G30-KT-T1-015-K7Q
+Jonas Becker (★★): JONASBEC-B3-2-0070-0470-G70-NQ-T1-016-9NA
+Lena Schmidt (doppelt abgegeben): LENASCH-B3-1-0080-0470-G80-6W-T1-003-9KE
+Mira Wolf (doppelt abgegeben): MIRAWOL-B3-1-0070-0470-G70-CU-T1-012-N2C
+Noah Klein (Punkte nachträglich geändert): NOAHKLE-B3-1-0080-0470-G40-Q9-T1-010-B24
+Tom Berg (abgeschnitten): TOMBER-B3-1-0030-0470-G30-KT-T1-015
+
+Erwartetes Ergebnis nach dem Einlesen: 16 neu, 2 doppelt, 2 ungültig.
+Die besten 5 in B3 ★ für diese Woche (Wochenwert = 3 beste Runden):
+1. Lena S. – 210
+2. Mira W. – 200
+3. Elif Y. – 180
+4. Jonas B. – 160
+5. Tom B. – 60
+(Noah K. mit 40 ist nicht dabei. Jonas' ★★-Runde zählt nur in der ★★-Liste.)

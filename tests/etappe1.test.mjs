@@ -382,6 +382,7 @@ test('Lehrkraft: PIN, Codes sichtbar, falsche PIN abgelehnt', async () => {
   await seite.getByText('✗ Die PIN stimmt nicht.').waitFor();
   for (const z of '4711') await seite.getByRole('button', { name: z, exact: true }).click();
   await seite.getByRole('button', { name: 'OK' }).click();
+  await seite.getByRole('button', { name: '🔑 Codes' }).click();
   await seite.getByRole('heading', { name: 'Freischaltcodes' }).waitFor();
   await seite.getByText(freischaltcode('B3', 'G', 1)).waitFor();
   await seite.getByText(freischaltcode('B3', 'E', 1)).waitFor();
@@ -455,7 +456,7 @@ test('Lehrer-Ansicht sperrt sich beim Verlassen wieder', async () => {
     await seite.getByRole('button', { name: 'Lehrkraft' }).click();
     for (const z of '4711') await seite.getByRole('button', { name: z, exact: true }).click();
     await seite.getByRole('button', { name: 'OK' }).click();
-    await seite.getByRole('heading', { name: 'Freischaltcodes' }).waitFor();
+    await seite.getByRole('heading', { name: 'Ergebnisse einsammeln' }).waitFor();
   };
   await pin();
   await seite.getByRole('button', { name: 'Zurück' }).click();
