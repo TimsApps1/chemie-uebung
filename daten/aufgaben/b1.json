@@ -319,9 +319,9 @@
     "Al",
     "O"
    ],
-   "denkanstoss": "Al hat 3 Noppen, O hat 2. Die Al-Steine und die O-Steine brauchen zusammen gleich viele Noppen.",
+   "denkanstoss": "Al hat 3 Noppen, O hat 2. Alle Al-Steine zusammen haben so viele Noppen wie alle O-Steine zusammen.",
    "erklaerung": "2 Al-Steine haben 6 Noppen, 3 O-Steine haben auch 6: Al2O3.",
-   "alltag": "Al2O3 schützt Alufolie. Als Kristall heißt es Rubin oder Saphir."
+   "alltag": "Al2O3 schützt Alufolie. Rubin und Saphir sind Kristalle aus Al2O3."
   },
   {
    "id": "b1-2-02",
@@ -371,7 +371,7 @@
    ],
    "denkanstoss": "C hat 4 Noppen, H nur 1.",
    "erklaerung": "C hat 4 Noppen. Dafür brauchst du 4 H-Steine: CH4.",
-   "alltag": "CH4 ist Erdgas."
+   "alltag": "Erdgas besteht vor allem aus CH4."
   },
   {
    "id": "b1-2-05",
@@ -529,7 +529,7 @@
    ],
    "denkanstoss": "Die römische Zahl sagt, welchen Eisen-Stein du brauchst.",
    "erklaerung": "Eisen(III) hat 3 Noppen. 2 Fe-Steine haben 6 Noppen, 3 O-Steine auch 6: Fe2O3.",
-   "alltag": "Fe2O3 ist der rote Rost."
+   "alltag": "Roter Rost besteht vor allem aus Fe2O3."
   },
   {
    "id": "b1-3-02",
@@ -627,7 +627,7 @@
     "Al",
     "S"
    ],
-   "denkanstoss": "Al hat 3 Noppen, S hat 2. Die Al-Steine und die S-Steine brauchen zusammen gleich viele Noppen.",
+   "denkanstoss": "Al hat 3 Noppen, S hat 2. Alle Al-Steine zusammen haben so viele Noppen wie alle S-Steine zusammen.",
    "erklaerung": "2 Al-Steine haben 6 Noppen, 3 S-Steine auch 6: Al2S3."
   },
   {

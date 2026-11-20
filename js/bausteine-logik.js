@@ -179,7 +179,14 @@ export function bauErgebnis(m, zielFormel) {
   };
 }
 
-export const VIELFACHES = 'Das Verhältnis stimmt! Eine Formel schreibt man mit den kleinsten Zahlen. Es geht mit weniger Steinen: Zwei Noppen können zum selben Partner gehen.';
+// Richtiges Verhältnis, aber zu viele Steine. Metall + Nichtmetall: kleinste Zahlen. Moleküle: genau ein Teilchen bauen.
+export function vielfachesText(zielFormel) {
+  if (/^(Na|Mg|Al|Zn|Pb|Cu|Fe|Ag)/.test(zielFormel)) {
+    return 'Das Verhältnis stimmt! Bei Stoffen aus Metall und Nichtmetall schreibt man die kleinsten Zahlen. Es geht mit weniger Steinen.';
+  }
+  const teile = Object.entries(formelZaehlung(zielFormel)).map(([s, n]) => `${n} ${s}`);
+  return `Ein ${zielFormel}-Teilchen hat genau ${teile.join(' und ')}. Baue nur ein Teilchen. Zwei Noppen können zum selben Partner gehen.`;
+}
 
 // Hinweis nach einem Fehlversuch (ohne die Lösung zu verraten).
 // steinarten = alle Steine der Aufgabe (Start + Leiste), name = Aufgabentext (für die römische Zahl),
@@ -192,7 +199,7 @@ export function bauHinweis(m, zielFormel, elemente, { steinarten = [], name = ''
     return s ? s.wertigkeit : elemente.find((x) => x.symbol === sym)?.wertigkeit?.[0];
   };
   if (!m.steine.length) return 'Tippe unten auf einen Stein. Er kommt in die Mitte.';
-  if (e.vielfaches) return VIELFACHES;
+  if (e.vielfaches) return vielfachesText(zielFormel);
   // Falscher Stein bei zwei Wertigkeiten (z. B. Cu(II) statt Cu(I))?
   if (steinarten.length) {
     const loesung = loesungsModell(zielFormel, steinarten, elemente);
@@ -223,7 +230,7 @@ export function bauHinweis(m, zielFormel, elemente, { steinarten = [], name = ''
 export function naechsterSchritt(m) {
   if (!m.steine.length) return 'Tippe unten auf einen Stein. Er kommt in die Mitte.';
   const offen = m.steine.filter((s) => frei(m, s.id) > 0);
-  if (!offen.length) return 'Alle Noppen sind belegt.';
+  if (!offen.length) return 'Alle Noppen sind belegt. Zum Umbauen: ✂ Stein abnehmen oder ↩ Rückgängig.';
   for (const a of offen) {
     const b = offen.find((x) => x.id !== a.id && !verbindungVerboten(m, a.id, x.id));
     if (b) return `${a.beschriftung} und ${b.beschriftung} haben noch freie Noppen. Verbinden: Tippe ${a.beschriftung} an, dann ${b.beschriftung}. Oder nimm unten einen neuen Stein.`;

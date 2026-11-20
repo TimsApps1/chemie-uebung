@@ -338,6 +338,8 @@ test('Bauen: Ein voll belegtes, aber falsches Modell zählt als Fehlversuch (Den
   assert.match(await seite.locator('.rueckmeldung').textContent(), /römische Zahl/);
   await seite.getByRole('button', { name: 'Nochmal versuchen' }).click();
   assert.equal(await seite.locator('.bau-liste li').count(), 2, 'Modell bleibt zum Umbauen stehen');
+  // Der Hinweis bleibt in der Statuszeile stehen, mit Handlungsanweisung
+  assert.match(await seite.locator('.bau-status').textContent(), /römische Zahl.*Stein abnehmen/);
   assert.deepEqual(fehler, []);
   await kontext.close();
 });
@@ -394,7 +396,10 @@ test('Richtiges Verhältnis mit zu vielen Steinen (Fe2O2 statt FeO) ist kein Feh
   const e = L.bauErgebnis(m, 'FeO');
   assert.equal(e.voll, true);
   assert.equal(e.vielfaches, true);
-  assert.match(L.bauHinweis(m, 'FeO', elemente), /Verhältnis stimmt/);
+  assert.match(L.bauHinweis(m, 'FeO', elemente), /Verhältnis stimmt.*Metall und Nichtmetall/);
+  // Moleküle: keine „kleinste Zahlen“-Regel, sondern genau ein Teilchen
+  assert.match(L.vielfachesText('CO2'), /Ein CO2-Teilchen hat genau 1 C und 2 O/);
+  assert.doesNotMatch(L.vielfachesText('CO2'), /kleinsten Zahlen/);
 });
 
 test('Beamer-Namen sind eindeutig: Lena Schmidt und Lena Schneider', async () => {

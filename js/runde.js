@@ -262,7 +262,7 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
         const hinweis = fehlerHinweis(a, wert) || a.denkanstoss;
         const nochmal = el('button', { type: 'button', class: 'knopf knopf-haupt knopf-breit', onclick: () => {
           rueck.replaceChildren();
-          darstellung.nochmal();
+          darstellung.nochmal(hinweis);
           // Fokus auf das erste wieder bedienbare Element (VoiceOver, Tastatur, Schaltersteuerung).
           (darstellung.wurzel.querySelector('.bau-stein-knopf') || darstellung.wurzel.querySelector('button:not([disabled]), [role="button"]'))?.focus();
         } }, 'Nochmal versuchen');

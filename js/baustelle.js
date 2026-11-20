@@ -61,10 +61,19 @@ function symbolTextur(text, symbol) {
   g.fillStyle = farbe(symbol);
   g.fillRect(0, 0, 256, 160);
   g.fillStyle = farbe(symbol, '-text');
-  g.font = `800 ${text.length > 3 ? 64 : 100}px -apple-system, system-ui, sans-serif`;
   g.textAlign = 'center';
   g.textBaseline = 'middle';
-  g.fillText(text, 128, 86);
+  const roemisch = text.match(/^(\w+)(\(.+\))$/);
+  if (roemisch) {
+    // „Fe(III)“ in zwei Zeilen: Symbol groß, römische Zahl darunter, gut lesbar.
+    g.font = '800 84px -apple-system, system-ui, sans-serif';
+    g.fillText(roemisch[1], 128, 56);
+    g.font = '800 54px -apple-system, system-ui, sans-serif';
+    g.fillText(roemisch[2], 128, 122);
+  } else {
+    g.font = `800 ${text.length > 3 ? 64 : 100}px -apple-system, system-ui, sans-serif`;
+    g.fillText(text, 128, 86);
+  }
   const t = new THREE.CanvasTexture(c);
   t.colorSpace = THREE.SRGBColorSpace;
   texturen.set(schluessel, t);
@@ -257,6 +266,8 @@ export function webglMoeglich() {
 // Höhe der Bühne: auf dem iPad groß genug für sichere Tipps, auf kleinen Handys kleiner.
 export function buehnenHoehe(anteil = 0.42) {
   const h = typeof window !== 'undefined' ? window.innerHeight || 800 : 800;
+  // Querformat auf dem iPad: Bühne links neben der Bedienung, dort darf sie höher sein.
+  if (typeof window !== 'undefined' && window.innerWidth > window.innerHeight && window.innerWidth >= 900) anteil = Math.max(anteil, 0.62);
   return Math.round(Math.max(280, Math.min(480, h * anteil)));
 }
 

@@ -991,3 +991,7 @@ button.bereich { font: inherit; text-align: left; cursor: pointer; width: 100%; 
 .bau-stein-knopf small.bau-noppenzahl { font-size: 0.95rem; color: var(--text); }
 .bau-liste-box summary::before { content: '▸'; margin-right: 6px; }
 .bau-liste-box[open] summary::before { content: '▾'; }
+.bau-status.tipp { color: var(--haupt-dunkel); }
+.geschichte-platz.b1 { --farbe: var(--b1); --farbe-hell: var(--b1-hell); }
+.fortschritt-bereich.b1 h3 { color: var(--b1-dunkel); }
+.fortschritt-bereich.b1 .saeule { background: var(--b1); }
