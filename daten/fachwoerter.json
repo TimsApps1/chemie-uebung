@@ -44,7 +44,7 @@
       ],
       "artikel": "das",
       "mehrzahl": "die Symbole",
-      "erklaerung": "Ein kurzes Zeichen aus einem oder zwei Buchstaben für ein Element, zum Beispiel O für Sauerstoff."
+      "erklaerung": "Ein kurzes Zeichen aus einem oder zwei Buchstaben für ein Element."
     },
     {
       "wort": "Formel",
@@ -227,7 +227,7 @@
       ],
       "artikel": "das",
       "mehrzahl": "die Metalle",
-      "erklaerung": "Ein Stoff wie Eisen, Kupfer oder Gold. Metalle glänzen und leiten Strom."
+      "erklaerung": "Ein Stoff, der glänzt und Strom leitet, zum Beispiel Eisen oder Kupfer."
     },
     {
       "wort": "erhitzen",

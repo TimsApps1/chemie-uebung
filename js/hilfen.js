@@ -140,8 +140,12 @@ export function formelZeichen(text) {
 }
 
 // Formel/Symbol buchstabieren: "Na" -> "N klein a", "CO" -> "C O", "H2O" -> "H 2 O".
+// Ziffern in einer Formel sind die kleine Zahl: "Al2O3" -> "A klein l, kleine 2, O, kleine 3".
 export function buchstabieren(wort) {
-  return wort.split('').map((z) => (/[a-zäöü]/.test(z) ? `klein ${z}` : z)).join(' ').replace(/(\d) (?=\d)/g, '$1');
+  return wort.match(/\d+|[A-Za-zÄÖÜäöü]/g)
+    .map((z) => (/^\d+$/.test(z) ? `kleine ${z},` : /[a-zäöü]/.test(z) ? `klein ${z}` : z))
+    .join(' ')
+    .replace(/,$/, '');
 }
 
 function istSymbolFolge(wort) {
@@ -152,7 +156,8 @@ function istSymbolFolge(wort) {
 // Für die Sprachausgabe: Formeln und Symbole werden buchstabiert, "2 H2O" -> "2 mal H 2 O".
 export function vorlesbar(text) {
   return String(text)
-    .replace(/\b(\d+) (?=([A-Z][A-Za-z0-9]*)(?![-\w]))/g, (m, zahl, wort) => (istSymbolFolge(wort) && /[a-z\d]|^[A-Z]{1,3}$/.test(wort) ? `${zahl} mal ` : m))
+    // Die Zahl vor einer Formel heißt in der App "große Zahl" (ohne "mal", das wäre schon die Deutung).
+    .replace(/\b(\d+) (?=([A-Z][A-Za-z0-9]*)(?![-\w]))/g, (m, zahl, wort) => (istSymbolFolge(wort) && /[a-z\d]|^[A-Z]{1,3}$/.test(wort) ? `große ${zahl}, ` : m))
     .replace(/\b[A-Z][A-Za-z0-9]*\b/g, (w) => {
       if (/\d/.test(w) && istFormel(w)) return buchstabieren(w);
       if (w.length <= 4 && istSymbolFolge(w) && (w.length > 1 || bekannteSymbole.has(w))) return buchstabieren(w);

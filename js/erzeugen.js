@@ -208,8 +208,32 @@ function sortierAufgaben() {
   ];
 }
 
+// ★ und ★★: Zählen ohne Zahl davor.
+const FORMELN_EINFACH = { 1: ['H2O', 'CO2', 'O2', 'MgO', 'NaCl', 'CH4', 'H2S'], 2: ['Al2O3', 'Fe2O3', 'NH3', 'MgCl2', 'Na2O', 'CuO', 'ZnS', 'AlCl3'] };
+
+function zahlAufgabenEinfach(vorhanden) {
+  const schonDa = new Set(vorhanden.filter((a) => a.typ === 'zahl').map((a) => `${a.formel}|${a.zaehle}`));
+  const liste = [];
+  for (const [niveau, formeln] of Object.entries(FORMELN_EINFACH)) {
+    formeln.forEach((f, i) => {
+      const symbole = [...new Set(f.match(/[A-Z][a-z]?/g))];
+      const zaehle = i % 2 === 0 ? 'alle' : symbole[i % symbole.length];
+      if (schonDa.has(`${f}|${zaehle}`)) return;
+      const { gesamt } = atomeZaehlen(f, zaehle);
+      liste.push({
+        id: `gen-z1-${f}-${zaehle}`.toLowerCase(), niveau: Number(niveau), typ: 'zahl', symbol: '🔢', kann: 'zaehlen', generiert: true,
+        frage: zaehle === 'alle' ? 'Wie viele Atome sind es insgesamt?' : `Wie viele ${zaehle}-Atome sind es?`,
+        formel: f, zaehle,
+        denkanstoss: 'Die kleine Zahl gehört zum Symbol direkt davor. Steht keine kleine Zahl da, zählt das Symbol einmal.',
+        erklaerung: zaehle === 'alle' ? `In ${f} stecken zusammen ${gesamt} Atome.` : `In ${f} stecken ${gesamt} ${zaehle}-${gesamt === 1 ? 'Atom' : 'Atome'}.`
+      });
+    });
+  }
+  return liste;
+}
+
 export function aufgabenErzeugen(d) {
   if (d.app.aufgaben_erzeugen === false) return;
   if (d.aufgaben.B3 && d.reihe) d.aufgaben.B3.push(...klapptAufgaben(d.reihe, d.aufgaben.B3), ...gleichungsAufgaben(d.reihe, d.aufgaben.B3), ...sortierAufgaben());
-  if (d.aufgaben.B4 && d.elemente.length) d.aufgaben.B4.push(...symbolAufgaben(d.elemente, d.aufgaben.B4), ...zahlAufgaben(d.aufgaben.B4));
+  if (d.aufgaben.B4 && d.elemente.length) d.aufgaben.B4.push(...symbolAufgaben(d.elemente, d.aufgaben.B4), ...zahlAufgaben(d.aufgaben.B4), ...zahlAufgabenEinfach(d.aufgaben.B4));
 }

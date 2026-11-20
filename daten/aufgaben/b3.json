@@ -63,7 +63,7 @@
       "erklaerung": "Magnesium ist von diesen Metallen am unedelsten und hält Sauerstoff am stärksten fest." },
 
     { "id": "b3-1-12", "niveau": 1, "typ": "auswahl", "symbol": "❓", "kann": "klappt",
-      "frage": "Welcher Stoff kann Kupferoxid den Sauerstoff wegnehmen?",
+      "frage": "Welcher Stoff kann dem Kupferoxid den Sauerstoff wegnehmen?",
       "antworten": ["Zink", "Gold", "Silber"], "richtig": "Zink",
       "fehler": { "Gold": "Gold ist edler als Kupfer und hält Sauerstoff schwächer fest.", "Silber": "Silber ist edler als Kupfer und hält Sauerstoff schwächer fest." },
       "denkanstoss": "Du brauchst einen Stoff, der unedler ist als Kupfer.",
@@ -290,7 +290,7 @@
         "richtig": "Magnesium nimmt Sauerstoff auf." } },
 
     { "id": "b3-3-12", "niveau": 3, "typ": "auswahl", "symbol": "❓", "kann": "klappt",
-      "frage": "Welcher Stoff kann Zinkoxid den Sauerstoff wegnehmen?",
+      "frage": "Welcher Stoff kann dem Zinkoxid den Sauerstoff wegnehmen?",
       "antworten": ["Magnesium", "Eisen", "Kupfer", "Blei"], "richtig": "Magnesium",
       "fehler": { "Eisen": "Eisen ist edler als Zink und hält Sauerstoff schwächer fest.", "Blei": "Blei ist edler als Zink und hält Sauerstoff schwächer fest.", "Kupfer": "Kupfer ist edler als Zink und hält Sauerstoff schwächer fest." },
       "denkanstoss": "Du brauchst einen Stoff, der unedler ist als Zink.",

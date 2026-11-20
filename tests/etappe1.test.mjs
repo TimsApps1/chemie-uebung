@@ -77,9 +77,10 @@ test('Kurzname aus Vor- und Nachname', async () => {
 test('Vorlesen: Formeln und Symbole werden buchstabiert', async () => {
   const { vorlesbar } = await import('../js/hilfen.js');
   assert.equal(vorlesbar('Co oder CO?'), 'C klein o oder C O?');
-  assert.equal(vorlesbar('2 H2O'), '2 mal H 2 O');
-  assert.equal(vorlesbar('3 CO2'), '3 mal C O 2');
-  assert.equal(vorlesbar('2 MgCl2'), '2 mal M klein g C klein l 2');
+  assert.equal(vorlesbar('2 H2O'), 'große 2, H kleine 2, O');
+  assert.equal(vorlesbar('3 CO2'), 'große 3, C O kleine 2');
+  assert.equal(vorlesbar('2 MgCl2'), 'große 2, M klein g C klein l kleine 2');
+  assert.doesNotMatch(vorlesbar('Wie viele Atome sind es in 2 Al2O3?'), /\bmal\b/);
   assert.equal(vorlesbar('Klasse 9 Chemie'), 'Klasse 9 Chemie');
   assert.equal(vorlesbar('2 H-Atome und 1 O-Atom'), '2 H-Atome und 1 O-Atom');
   assert.match(vorlesbar('Welches Symbol hat Natrium? Na, NA'), /N klein a, N A/);
@@ -467,7 +468,7 @@ test('Erzeugte Aufgaben sind gültig und passen zur Reihe', async () => {
       const klappt = modul.klapptEs(d.reihe, a.oxid, a.stoff);
       assert.equal(/nicht wegnehmen/.test(a.erklaerung), !klappt, `${a.id}: Erklärung passt nicht`);
     }
-    if (a.typ === 'zahl') assert.match(a.erklaerung, new RegExp(`sind das ${atomeZaehlen(a.formel, a.zaehle).gesamt}\\.`));
+    if (a.typ === 'zahl') assert.match(a.erklaerung, new RegExp(`\\b${atomeZaehlen(a.formel, a.zaehle).gesamt}\\b`), a.id);
   }
 });
 
@@ -684,5 +685,68 @@ test('G-Kind sieht Bereiche nur für den E-Kurs nicht als gesperrt', async () =>
   await seite.getByRole('heading', { name: 'Hallo Mehmet!' }).waitFor();
   assert.equal(await seite.locator('.bereich.b1, .bereich.b2').count(), 0);
   assert.equal(await seite.getByRole('button', { name: 'Code eingeben' }).count(), 0);
+  await kontext.close();
+});
+
+test('Fachwort-Fenster in der Frage verraten nie die Antwort', async () => {
+  const { d } = await datenLaden();
+  const norm = (x) => String(x).toLowerCase().replace(/[.!?]/g, '').replace(/\s+/g, ' ').trim();
+  for (const a of [...d.aufgaben.B3, ...d.aufgaben.B4]) {
+    if (a.hilfe_vorher === false) continue;
+    const frage = [a.frage, a.warum?.frage || ''].join(' ');
+    for (const w of d.fachwoerter) {
+      const formen = w.formen?.length ? w.formen : [w.wort];
+      if (!formen.some((f) => new RegExp(`(^|[^A-Za-zÄÖÜäöüß])${f}(?=$|[^A-Za-zÄÖÜäöüß])`, 'i').test(frage))) continue;
+      for (const r of [a.typ === 'auswahl' ? a.richtig : null, a.warum?.richtig].filter(Boolean)) {
+        if (norm(r).length > 3) assert.ok(!norm(w.erklaerung).includes(norm(r)), `${a.id}: Fachwort „${w.wort}“ verrät „${r}“`);
+      }
+    }
+  }
+});
+
+test('★★★: Warum-Frage nur nach richtig gelöster Aufgabe – alle Codes bleiben gültig', async () => {
+  const { kontext, seite, fehler } = await neueSeite();
+  const ergebnisse = await seite.evaluate(async () => {
+    localStorage.setItem('chemie:kinder', JSON.stringify([{ name: 'EMIL', anzeige: 'Emil Roth', element: 'C', gesperrt: false }]));
+    const { rundeSpielen } = await import('./js/runde.js');
+    const { allesLaden, klapptEs } = await import('./js/daten.js');
+    const d = await allesLaden();
+    const mitWarum = d.aufgaben.B3.filter((x) => x.niveau === 3 && x.warum && x.typ === 'klappt').slice(0, 2);
+    const aus = [];
+    for (const [richtigLoesen, richtigBegruenden] of [[true, true], [true, false], [false, true], [false, false]]) {
+      aus.push(await new Promise((ok) => {
+        rundeSpielen({ ziel: document.getElementById('inhalt'), daten: d, name: 'EMIL', bereich: 'B3', niveau: 3, kurs: 'E',
+          aufgaben: mitWarum, art: 'normal', fertig: ok });
+        const klick = (sel) => document.querySelector(sel)?.click();
+        const weiter = () => [...document.querySelectorAll('button')].find((b) => b.textContent.includes('Weiter'))?.click();
+        for (let schritt = 0; schritt < 12; schritt++) {
+          const warum = document.querySelector('.warum');
+          if (warum) {
+            const knoepfe = [...warum.querySelectorAll('.antwort')];
+            const a = mitWarum.find((x) => knoepfe.some((k) => k.dataset.wert === x.warum.richtig));
+            const ziel = knoepfe.find((k) => (k.dataset.wert === a.warum.richtig) === richtigBegruenden);
+            ziel.click();
+            weiter();
+            continue;
+          }
+          const k = document.querySelector('.antwort:not([disabled])');
+          if (!k) { weiter(); continue; }
+          const aufgabe = mitWarum.find((x) => document.body.textContent.includes(x.oxid + ' + ' + x.stoff) || document.body.textContent.includes(x.oxid));
+          const ja = klapptEs(d.reihe, aufgabe.oxid, aufgabe.stoff);
+          const wahl = richtigLoesen === ja ? 'ja' : 'nein';
+          klick(`.antwort[data-wert="${wahl}"]`);
+          weiter();
+        }
+      }));
+    }
+    return aus;
+  });
+  const { ergebnisMoeglich } = await import('../js/codes.js');
+  for (const e of ergebnisse) {
+    assert.ok(e, 'Runde beendet');
+    assert.ok(ergebnisMoeglich({ bereich: 'B3', niveau: 3, punkte: e.punkte, kurs: 'E', erster: e.ersterVersuch, warum: e.warumRichtig }),
+      `Code wäre ungültig: ${JSON.stringify(e)}`);
+  }
+  assert.deepEqual(fehler, []);
   await kontext.close();
 });

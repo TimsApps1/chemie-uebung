@@ -450,7 +450,7 @@ function rundenende(name, ergebnis, kannVorher) {
   const nummer = naechsteRundenNummer(vorher);
   const code = punktecode({ name, bereich: ergebnis.bereich, niveau: ergebnis.niveau, punkte: ergebnis.punkte, tag,
     kurs: ergebnis.kurs, erster: ergebnis.ersterVersuch, warum: ergebnis.warumRichtig, kennung: namensKennung(kindEintrag(name)?.anzeige || name), nummer });
-  aendern(name, (x) => { x.zuletzt = [...(ergebnis.gesehen || []), ...(x.zuletzt || [])].slice(0, 16); });
+  aendern(name, (x) => { x.zuletzt = [...(ergebnis.gesehen || []), ...(x.zuletzt || [])].slice(0, 30); });
   const p = rundeSpeichern(name, { art: 'normal', bereich: ergebnis.bereich, niveau: ergebnis.niveau, kurs: ergebnis.kurs,
     punkte: ergebnis.punkte, ersterVersuch: ergebnis.ersterVersuch, anzahl: ergebnis.anzahl,
     warumRichtig: ergebnis.warumRichtig, falsch: ergebnis.falsch, nummer, code }, tag);
@@ -484,7 +484,7 @@ function rundenende(name, ergebnis, kannVorher) {
   if (!letzte) neu.push(neuZeile('🚀', 'Deine erste Runde auf diesem Niveau. Gut, dass du angefangen hast!'));
   else if (ergebnis.ersterVersuch > letzte.ersterVersuch) neu.push(neuZeile('↑', `Letztes Mal ${letzte.ersterVersuch}, heute ${ergebnis.ersterVersuch} Aufgaben gleich beim ersten Versuch richtig.`));
   if (ergebnis.ausgebessert) neu.push(neuZeile('✓', `${ergebnis.ausgebessert} ${ergebnis.ausgebessert === 1 ? 'Fehler' : 'Fehler'} am Ende ausgebessert.`));
-  if (neu.length === 0 || (!rekord && medailleNeu <= medailleAlt && !(letzte && ergebnis.ersterVersuch > letzte.ersterVersuch))) {
+  if (neu.length === 0 || (letzte && !rekord && medailleNeu <= medailleAlt && !(ergebnis.ersterVersuch > letzte.ersterVersuch))) {
     neu.push(neuZeile('💪', zweiterVersuch > 0
       ? `${zweiterVersuch} ${zweiterVersuch === 1 ? 'Aufgabe' : 'Aufgaben'} mit Denkanstoß geschafft – genau so lernt man.`
       : 'Du bleibst dran – jede Runde macht dich sicherer.'));
@@ -511,7 +511,7 @@ function rundenende(name, ergebnis, kannVorher) {
         el('div', { class: 'zeile' },
           el('button', { type: 'button', class: 'knopf knopf-haupt', onclick: () => rundeStarten(name, ergebnis.bereich, vorschlag) }, `Ja, ${sterneText(vorschlag)} probieren`),
           el('button', { type: 'button', class: 'knopf', onclick: (e) => {
-            aendern(name, (x) => { x.niveauVorschlagAbgelehnt[`${ergebnis.bereich}-${ergebnis.niveau}`] = x.runden.length; });
+            aendern(name, (x) => { x.niveauVorschlagAbgelehnt[`${ergebnis.bereich}-${ergebnis.niveau}`] = normaleRunden(x, ergebnis.bereich, ergebnis.niveau).length; });
             e.currentTarget.closest('.vorschlag').remove();
           } }, 'Lieber hier bleiben'))) : null,
       el('div', { class: 'zeile' },

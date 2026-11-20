@@ -165,9 +165,12 @@ export function sterneFuer(punkte) {
 }
 
 // Niveau vorschlagen: die letzten 2 Runden auf diesem Niveau je mindestens 60 Punkte.
+// Nur, wenn das nächste Niveau noch kaum geübt ist; nach "Lieber hier bleiben" 3 Runden Ruhe.
 export function niveauVorschlag(p, bereich, niveau) {
   if (niveau >= 3) return null;
-  if (p.niveauVorschlagAbgelehnt[`${bereich}-${niveau}`] === p.runden.length) return null;
+  if (normaleRunden(p, bereich, niveau + 1).length >= 2) return null;
+  const abgelehnt = p.niveauVorschlagAbgelehnt[`${bereich}-${niveau}`];
+  if (abgelehnt !== undefined && normaleRunden(p, bereich, niveau).length < abgelehnt + 3) return null;
   const letzte = normaleRunden(p, bereich, niveau).slice(-2);
   if (letzte.length === 2 && letzte.every((r) => r.punkte >= 60)) return niveau + 1;
   return null;

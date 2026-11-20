@@ -1,5 +1,5 @@
 // Ablauf einer Übungsrunde: 8 Aufgaben, Denkanstoß, 2. Versuch, Lösung, Wiederholung am Ende.
-import { el, mischen, sterneText } from './hilfen.js';
+import { el, mischen, sterneText, formelKnoten } from './hilfen.js';
 import { kopfSetzen, icon, iconKnopf, text, vorlesenKnopf, vorlesenStoppen, fenster, fragen, tonSpielen } from './ui.js';
 import { aufgabeDarstellen, pruefen, fehlerHinweis, loesungsText, vorleseText } from './aufgaben.js';
 import { fehlerMerken, fehlerWiederholt, kannZaehlen, geraet } from './profil.js';
@@ -179,7 +179,7 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
 
   // Kurzer Konzept-Hinweis für "Erklär's mir" VOR der Antwort (verrät die Lösung nicht).
   function konzeptHilfe(a) {
-    if (a.hilfe_vorher === false) return 'Lies die Frage genau. Tippe auf ein unterstrichenes Wort, wenn du es nicht kennst. Nach deiner Antwort bekommst du hier die ganze Erklärung.';
+    if (a.hilfe_vorher === false) return 'Lies die Frage genau und überlege in Ruhe. Nach deiner Antwort bekommst du hier die ganze Erklärung.';
     const kann = daten.bereiche.flatMap((b) => b.ich_kann || []).find((k) => k.id === a.kann);
     if (kann?.hilfe && (!kann.kurs || kurs === 'E')) return kann.hilfe;
     return a.denkanstoss;
@@ -208,7 +208,7 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
 
     const karte = el('section', { class: 'karte aufgabe' },
       el('div', { class: 'anweisung-zeile' },
-        el('p', { class: 'anweisung' }, el('span', { class: 'anweisung-zeichen', 'aria-hidden': 'true' }, a.symbol || '❓'), el('span', {}, text(a.frage))),
+        el('p', { class: 'anweisung' }, el('span', { class: 'anweisung-zeichen', 'aria-hidden': 'true' }, a.symbol || '❓'), el('span', {}, a.hilfe_vorher === false ? formelKnoten(a.frage) : text(a.frage))),
         vorlesenKnopf(() => vorleseText(a, typeof darstellung.reihenfolge === 'function' ? darstellung.reihenfolge() : darstellung.reihenfolge))),
       zeitlimit && !wiederholung ? zeitbalken() : null,
       darstellung.wurzel,
@@ -243,7 +243,7 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
         // Ich-kann zählt nur echte Erstversuche (nicht die Wiederholung kurz nach der gezeigten Lösung).
         if (versuch === 1 && !wiederholung && art === 'normal') kannZaehlen(name, a.kann);
         rueck.replaceChildren(rueckmeldung(true, lobText, null, plus));
-        weiterKnopf(a);
+        weiterKnopf(a, true);
         return;
       }
       if (!endgueltig) {
@@ -273,14 +273,15 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
           el('p', {}, text(a.erklaerung)),
           art === 'normal' && !wiederholung ? el('p', { class: 'leise' }, '↻ Diese Aufgabe kommt am Ende der Runde noch einmal.') : null),
         `Lösung: ${loesung}. ${a.erklaerung}`));
-      weiterKnopf(a);
+      weiterKnopf(a, false);
     }
 
-    function weiterKnopf(aufgabe) {
+    // Die Warum-Frage kommt nur nach richtig gelösten Aufgaben (sonst passt sie inhaltlich nicht).
+    function weiterKnopf(aufgabe, geloest) {
       const knopfWeiter = el('button', { type: 'button', class: 'knopf knopf-haupt knopf-gross knopf-breit', onclick: () => {
         if (!wiederholung) stand.beantwortet += 1;
         index += 1;
-        if (mitWarum && !wiederholung && aufgabe.warum && stand.beantwortet % 2 === 0) warumFrage(aufgabe);
+        if (mitWarum && geloest && !wiederholung && aufgabe.warum && stand.beantwortet % 2 === 0) warumFrage(aufgabe);
         else naechste();
       } }, 'Weiter ➜');
       rueck.append(knopfWeiter);
@@ -300,7 +301,8 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
       if (richtig) { stand.punkte += PUNKTE.warum; stand.warumRichtig += 1; }
       rueck.replaceChildren(
         rueckmeldung(richtig, richtig ? 'Gute Begründung!' : 'Diese Begründung passt nicht.', null, richtig ? PUNKTE.warum : 0,
-          richtig ? null : el('div', { class: 'loesung' }, el('p', {}, el('b', {}, '💡 Richtig ist: '), text(w.richtig)), el('p', {}, text(aufgabe.erklaerung)))),
+          richtig ? null : el('div', { class: 'loesung' }, el('p', {}, el('b', {}, '💡 Richtig ist: '), text(w.richtig)), el('p', {}, text(aufgabe.erklaerung))),
+          richtig ? null : `Richtig ist: ${w.richtig} ${aufgabe.erklaerung}`),
         el('button', { type: 'button', class: 'knopf knopf-haupt knopf-gross knopf-breit', onclick: naechste }, 'Weiter ➜'));
     }, daten);
     const bezug = aufgabe.typ === 'klappt' ? `${aufgabe.oxid} + ${aufgabe.stoff}`
@@ -311,7 +313,7 @@ export function rundeSpielen({ ziel, daten, name, bereich, niveau, kurs, aufgabe
       el('p', { class: 'warum-bezug' }, 'Zur Aufgabe: ', el('b', {}, text(bezug))),
       el('div', { class: 'anweisung-zeile' },
         el('p', { class: 'anweisung' }, el('span', { class: 'anweisung-zeichen', 'aria-hidden': 'true' }, '💡'),
-          el('span', {}, text(aufgabe.warum.frage || 'Warum?'))),
+          el('span', {}, formelKnoten(aufgabe.warum.frage || 'Warum?'))),
         vorlesenKnopf(() => vorleseText({ ...w, frage: `${aufgabe.warum.frage || 'Warum?'} Zur Aufgabe: ${bezug}` }, darstellung.reihenfolge))),
       el('p', { class: 'tipp' }, `Extrapunkte: +${PUNKTE.warum} für die richtige Begründung.`),
       darstellung.wurzel, rueck));
