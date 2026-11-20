@@ -123,7 +123,7 @@ export function aliasSetzen(schluessel, kindId) {
   const d = lehrerDaten();
   if (kindId) d.alias[schluessel] = kindId;
   else delete d.alias[schluessel];
-  speichern(d);
+  return speichern(d);
 }
 
 // Wer hat diese Runde gespielt? Liefert die Kind-ID oder null (= nicht zugeordnet).
@@ -251,14 +251,46 @@ export function uebersicht(d = lehrerDaten(), { abTag = null } = {}) {
   }).sort((a, b) => a.name.localeCompare(b.name));
 }
 
-// Verlauf: Wochenwerte der letzten Wochen für ein Kind (je Bereich das höchste Niveau der Woche).
-export function verlauf(runden, wochen = 8) {
+// Lernverlauf eines Kindes für einen Bereich und ein Niveau: je Woche Bestwert, Schnitt und
+// Anteil beim 1. Versuch richtig. (Misst Können, nicht Fleiß – die Zahl der Runden steht getrennt.)
+export function verlauf(runden, { bereich, niveau, wochen = 8 } = {}) {
   const heute = aktuelleWoche();
+  const passend = runden.filter((r) => (!bereich || r.bereich === bereich) && (!niveau || r.niveau === niveau));
   return Array.from({ length: wochen }, (_, i) => {
     const w = heute - wochen + 1 + i;
-    const rw = runden.filter((r) => wocheVonTag(r.tag) === w);
-    return { woche: w, runden: rw.length, punkte: rw.reduce((s, r) => s + r.punkte, 0), erster: rw.reduce((s, r) => s + (r.erster || 0), 0) };
+    const rw = passend.filter((r) => wocheVonTag(r.tag) === w);
+    const mitErst = rw.filter((r) => r.erster !== null && r.erster !== undefined);
+    return {
+      woche: w, runden: rw.length,
+      best: rw.length ? Math.max(...rw.map((r) => r.punkte)) : null,
+      schnitt: rw.length ? Math.round(rw.reduce((s, r) => s + r.punkte, 0) / rw.length) : null,
+      ersterQuote: mitErst.length ? Math.round((mitErst.reduce((s, r) => s + r.erster, 0) / (mitErst.length * 8)) * 100) : null
+    };
   });
+}
+
+// Welche Bereich/Niveau-Kombinationen hat ein Kind gespielt?
+export function gespielteNiveaus(runden) {
+  const s = new Set(runden.map((r) => `${r.bereich}|${r.niveau}`));
+  return [...s].map((x) => { const [bereich, n] = x.split('|'); return { bereich, niveau: Number(n) }; })
+    .sort((a, b) => a.bereich.localeCompare(b.bereich) || a.niveau - b.niveau);
+}
+
+// Eine ganze Gruppe nicht zugeordneter Runden verwerfen (Quatschnamen, Testnamen, Abgänge).
+export function gruppeVerwerfen(schluessel) {
+  const d = lehrerDaten();
+  const weg = d.runden.filter((r) => rundenSchluessel(r) === schluessel).map((r) => r.code);
+  d.runden = d.runden.filter((r) => rundenSchluessel(r) !== schluessel);
+  d.geloescht = [...new Set([...(d.geloescht || []), ...weg])];
+  delete d.alias[schluessel];
+  return speichern(d) ? weg.length : 0;
+}
+
+export function zuordnungen(d = lehrerDaten()) {
+  return Object.entries(d.alias).map(([schluessel, id]) => ({
+    schluessel, id, name: kindName(d, id), gueltig: d.klasse.some((k) => k.id === id),
+    runden: d.runden.filter((r) => rundenSchluessel(r) === schluessel).length
+  }));
 }
 
 // ---------- Tabelle (CSV) ----------

@@ -940,3 +940,6 @@ button.bereich { font: inherit; text-align: left; cursor: pointer; width: 100%; 
 .vorschau-liste { list-style: none; padding-left: 0; margin-bottom: var(--a4); }
 .scan-meldungen li.ungueltig { background: var(--schlecht-flaeche); color: var(--schlecht-dunkel); }
 .ergebnis-punkte.ergebnis-klein { font-size: 2.2rem; }
+.wochen-saeulen { height: 170px; }
+.wochen-saeulen li.leer .saeule { background: transparent; }
+.verlauf-box { display: grid; gap: var(--a2); }
