@@ -1,7 +1,7 @@
 // Ansicht für die Lehrkraft (hinter der PIN).
 import { el, kurzname, datumVonTag } from './hilfen.js';
 import { kopfSetzen, iconKnopf, fenster, fragen, baustein } from './ui.js';
-import { pinPruefen, pinPruefsumme, freischaltcode, KURSE_PRO_BEREICH } from './codes.js';
+import { pinPruefen, pinPruefsumme, pinErlaubt, freischaltcode, KURSE_PRO_BEREICH } from './codes.js';
 import { ergebnisseReiter, uebersichtReiter, beamerReiter, klasseReiter, sicherungReiter, sicherungsHinweis, dateiSpeichern } from './lehrer.js';
 import { anzeigeName, kindLoeschen, kinder, kindUmbenennen, kinderZusammenfuehren, kindSperren, profil, geraet, geraetAendern,
   ipadSicherungErstellen, ipadSicherungGespeichert, ipadSicherungEinlesen } from './profil.js';
@@ -79,10 +79,22 @@ function pinAbfrage(umgebung) {
     }
   }, z));
   zeichnen();
+  // PIN mit Buchstaben (sicherer): normale Tastatur statt Zifferntasten.
+  const textFeld = el('input', { type: 'password', class: 'eingabe', autocomplete: 'off', autocapitalize: 'none', spellcheck: false,
+    maxlength: 40, 'aria-label': 'PIN mit Buchstaben', placeholder: 'PIN eingeben' });
+  const textTeil = el('div', { class: 'zeile', hidden: true }, textFeld,
+    el('button', { type: 'button', class: 'knopf knopf-haupt', onclick: () => { eingabe = textFeld.value.trim(); textFeld.value = ''; pruefen(); } }, 'OK'));
+  textFeld.addEventListener('keydown', (e) => { if (e.key === 'Enter') { eingabe = textFeld.value.trim(); textFeld.value = ''; pruefen(); } });
+  const umschalten = el('button', { type: 'button', class: 'knopf knopf-leise', onclick: () => {
+    textTeil.hidden = !textTeil.hidden;
+    umschalten.textContent = textTeil.hidden ? '⌨ PIN mit Buchstaben eingeben' : '🔢 Zifferntasten';
+    if (!textTeil.hidden) textFeld.focus();
+  } }, '⌨ PIN mit Buchstaben eingeben');
   zeigen(el('section', { class: 'karte pin-karte' },
     el('h2', { class: 'titel' }, 'PIN eingeben'),
     punkte, meldung,
-    el('div', { class: 'tastenfeld pin-tasten' }, tasten)));
+    el('div', { class: 'tastenfeld pin-tasten' }, tasten),
+    textTeil, umschalten));
 }
 
 function abschnitt(titel, ...inhalt) {
@@ -198,13 +210,14 @@ function adminSeite(umgebungRoh) {
     el('input', { type: 'checkbox', checked: !g.zeitlimitAus, onchange: (e) => { geraetAendern((x) => { x.zeitlimitAus = !e.target.checked; }); } }),
     el('span', {}, 'Zeitbalken bei ★★★ (auf diesem iPad)'));
 
-  const pinFeld = el('input', { type: 'text', inputmode: 'numeric', class: 'eingabe', maxlength: 8, placeholder: 'neue PIN (6–8 Ziffern)', 'aria-label': 'Neue PIN' });
+  const pinFeld = el('input', { type: 'text', class: 'eingabe', maxlength: 40, autocapitalize: 'none', autocomplete: 'off', spellcheck: false,
+    placeholder: 'neue PIN (am besten 8+ Zeichen mit Buchstaben)', 'aria-label': 'Neue PIN' });
   const pinAusgabe = el('div', { 'aria-live': 'polite' });
   const pinTeil = el('div', {},
-    el('p', { class: 'leise' }, 'Die PIN gilt für alle iPads. So änderst du sie:'),
+    el('p', { class: 'leise' }, 'Die PIN gilt für alle iPads. Sicherer ist eine PIN mit mindestens 8 Zeichen und Buchstaben, z. B. „Kupfer7Oxid“. So änderst du sie:'),
     el('div', { class: 'zeile' }, pinFeld, el('button', { type: 'button', class: 'knopf', onclick: () => {
       const pin = pinFeld.value.trim();
-      if (!/^\d{6,8}$/.test(pin)) { pinAusgabe.replaceChildren(el('p', { class: 'meldung' }, 'Bitte 6 bis 8 Ziffern.')); return; }
+      if (!pinErlaubt(pin)) { pinAusgabe.replaceChildren(el('p', { class: 'meldung' }, 'Bitte mindestens 8 Zeichen mit Buchstaben (sicherer) oder 6 bis 8 Ziffern. Keine Leerzeichen.')); return; }
       const zeile = `"admin_pin_pruefsumme": "${pinPruefsumme(pin)}",`;
       pinAusgabe.replaceChildren(
         el('p', {}, 'Öffne auf github.com die Datei ', el('b', {}, 'daten/app.json'), ', tippe auf den Stift und ersetze die Zeile mit admin_pin_pruefsumme durch:'),

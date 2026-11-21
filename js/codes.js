@@ -41,6 +41,11 @@ export function pinPruefsumme(pin) {
   return pruefzeichen(`pin|${String(pin).trim()}`, 10);
 }
 
+// Erlaubt: 6–8 Ziffern (wie bisher) oder – sicherer – mindestens 8 Zeichen mit Buchstaben.
+export function pinErlaubt(pin) {
+  return /^\d{6,8}$/.test(pin) || (pin.length >= 8 && /[A-Za-zÄÖÜäöüß]/.test(pin) && !/\s/.test(pin));
+}
+
 export function pinPruefen(pin, gespeichert) {
   return pinPruefsumme(pin) === gespeichert;
 }

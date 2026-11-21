@@ -63,7 +63,7 @@
         {
           "id": "reihe",
           "text": "Ich kann Metalle von edel nach unedel sortieren.",
-          "hilfe": "Edle Metalle halten Sauerstoff schwach fest, unedle Metalle halten Sauerstoff stark fest."
+          "hilfe": "Unedle Stoffe halten Sauerstoff stark fest, edle schwach. Kohlenstoff ist kein Metall, steht aber zwischen Eisen und Zink."
         },
         {
           "id": "klappt",
@@ -141,9 +141,9 @@
         "bild": null
       },
       "niveaus": {
-        "1": "Prüfen mit der Waage und Zahlen davor bis 2.",
-        "2": "Zahlen davor bei zwei Stoffen gleichzeitig.",
-        "3": "Thermit, Hochofen und mehr. Die Waage zeigt sich erst beim Wiegen."
+        "1": "Metalle verbrennen, Oxide geben Sauerstoff ab: prüfen und Zahlen davor bis 2.",
+        "2": "Zahlen davor bei zwei Stoffen gleichzeitig, auch mit Schwefel.",
+        "3": "Thermit, Hochofen, Knallgas, Chlor und mehr. Die Waage zeigt sich erst beim Wiegen."
       },
       "ich_kann": [
         {

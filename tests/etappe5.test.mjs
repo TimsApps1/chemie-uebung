@@ -330,3 +330,40 @@ test('„Code eingeben“ gibt es immer – auch wenn B3 und B4 schon mit G-Code
   assert.deepEqual(fehler, []);
   await kontext.close();
 });
+
+test('PIN mit Buchstaben: erlaubt ab 8 Zeichen, Eingabe über die Tastatur, alte Zahlen-PIN geht weiter', async () => {
+  const { pinErlaubt } = await import('../js/codes.js');
+  assert.equal(pinErlaubt('123456'), true);
+  assert.equal(pinErlaubt('Kupfer7Oxid'), true);
+  assert.equal(pinErlaubt('abc123'), false, 'zu kurz');
+  assert.equal(pinErlaubt('12345678901'), false, 'nur Ziffern, zu lang');
+  const kontext = await browser.newContext({ viewport: { width: 820, height: 1180 }, serviceWorkers: 'block' });
+  await kontext.route('**/daten/app.json', async (route) => {
+    const antwort = await route.fetch();
+    const daten = await antwort.json();
+    daten.admin_pin_pruefsumme = pinPruefsumme('Kupfer7Oxid');
+    await route.fulfill({ response: antwort, json: daten });
+  });
+  const seite = await kontext.newPage();
+  await seite.goto(basis);
+  await seite.getByRole('button', { name: 'Lehrkraft' }).click();
+  await seite.getByRole('button', { name: /PIN mit Buchstaben/ }).click();
+  await seite.getByLabel('PIN mit Buchstaben').fill('Kupfer7Oxid');
+  await seite.getByLabel('PIN mit Buchstaben').press('Enter');
+  await seite.getByRole('button', { name: '📱 Dieses iPad' }).waitFor();
+  await kontext.close();
+});
+
+test('Bereich 2: ★ nur Sauerstoff-Reaktionen, keine NH3-Synthese, Fallentexte ehrlich', async () => {
+  const fs = await import('node:fs');
+  const b2 = JSON.parse(fs.readFileSync(new URL('../daten/aufgaben/b2.json', import.meta.url), 'utf8')).aufgaben;
+  const stoffe = (a) => [...(a.edukte || []), ...(a.produkte || [])].map((s) => s.formel);
+  for (const a of b2.filter((x) => x.niveau === 1 && x.typ === 'ausgleichen')) {
+    assert.ok(stoffe(a).every((f) => !/^(H2|Cl2|N2|NH3|CH4|HCl|NaCl)$/.test(f)), `${a.id}: ${stoffe(a)}`);
+  }
+  assert.ok(!b2.some((a) => stoffe(a).includes('N2')), 'keine Reaktion mit N2');
+  const falle = (f) => b2.flatMap((a) => [...(a.edukte || []), ...(a.produkte || [])]).find((s) => s.formel === f).falle.text;
+  assert.match(falle('Al2O3'), /Diesen Stoff gibt es nicht/);
+  assert.match(falle('PbO'), /gibt es wirklich.*Bausteinmodell/);
+  assert.match(falle('Cu2O'), /wie CuO/);
+});

@@ -35,7 +35,10 @@ Die Ansicht sperrt sich wieder, sobald du sie verlässt, das iPad weglegst oder 
 | ⚙ Einstellungen | Zeitbalken bei ★★★, PIN ändern |
 
 ### PIN ändern
-Im Reiter ⚙ eine neue PIN (6–8 Ziffern) eingeben und auf **„Zeile erzeugen“** tippen.
+Im Reiter ⚙ eine neue PIN eingeben und auf **„Zeile erzeugen“** tippen.
+**Empfehlung:** mindestens 8 Zeichen mit Buchstaben (z. B. `Kupfer7Oxid`) – das errät kein Kind beim Zuschauen.
+Reine Zahlen-PINs mit 6–8 Ziffern gehen weiterhin. Eine PIN mit Buchstaben gibst du über
+**„⌨ PIN mit Buchstaben eingeben“** unter den Zifferntasten ein.
 Dann auf github.com die Datei **daten/app.json** öffnen, auf den Stift tippen und die Zeile mit
 `admin_pin_pruefsumme` ersetzen. Auf **„Commit changes“** tippen.
 Die neue PIN gilt, sobald die iPads die App mit Internet öffnen.

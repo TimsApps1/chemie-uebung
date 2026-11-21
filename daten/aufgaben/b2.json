@@ -55,58 +55,6 @@
    "erklaerung": "Links 1 Cu, 1 O, 1 Fe. Rechts auch. Die Gleichung ist ausgeglichen."
   },
   {
-   "id": "b2-1-02",
-   "niveau": 1,
-   "typ": "ausgleichen",
-   "symbol": "⚖",
-   "kann": "waage",
-   "frage": "Ist die Gleichung ausgeglichen?",
-   "edukte": [
-    {
-     "formel": "Zn",
-     "name": "Zink"
-    },
-    {
-     "formel": "CuO",
-     "name": "Kupfer(II)-oxid",
-     "falle": {
-      "formel": "Cu2O",
-      "text": "Aus CuO würde Cu2O. Das ist Kupfer(I)-oxid, ein anderer Stoff: rot statt schwarz. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
-     }
-    }
-   ],
-   "produkte": [
-    {
-     "formel": "ZnO",
-     "name": "Zinkoxid",
-     "falle": {
-      "formel": "ZnO2",
-      "text": "Aus ZnO würde ZnO2. Das ist ein anderer Stoff, nicht mehr Zinkoxid. Zinkoxid ist immer ZnO. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
-     }
-    },
-    {
-     "formel": "Cu",
-     "name": "Kupfer"
-    }
-   ],
-   "loesung": [
-    1,
-    1,
-    1,
-    1
-   ],
-   "start": [
-    1,
-    1,
-    1,
-    1
-   ],
-   "pruefen": true,
-   "leicht": true,
-   "denkanstoss": "Zähl jedes Element links und rechts.",
-   "erklaerung": "Links 1 Zn, 1 Cu, 1 O. Rechts auch. Ausgeglichen."
-  },
-  {
    "id": "b2-1-03",
    "niveau": 1,
    "typ": "ausgleichen",
@@ -129,7 +77,7 @@
      "name": "Kohlenstoffdioxid",
      "falle": {
       "formel": "CO3",
-      "text": "Aus CO2 würde CO3. Das ist kein Kohlenstoffdioxid mehr – Kohlenstoffdioxid ist immer CO2. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus CO2 würde CO3. Einen Stoff CO3 gibt es nicht. Die Noppen passen nicht zusammen: C hat 4 Noppen, 3 O-Steine bräuchten 6. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     }
    ],
@@ -190,47 +138,6 @@
    "erklaerung": "Links 2 O, rechts nur 1 O. Nicht ausgeglichen. Richtig ist 2 Mg + O2 → 2 MgO."
   },
   {
-   "id": "b2-1-05",
-   "niveau": 1,
-   "typ": "ausgleichen",
-   "symbol": "⚖",
-   "kann": "waage",
-   "frage": "Ist die Gleichung ausgeglichen?",
-   "edukte": [
-    {
-     "formel": "H2",
-     "name": "Wasserstoff"
-    },
-    {
-     "formel": "O2",
-     "name": "Sauerstoff"
-    }
-   ],
-   "produkte": [
-    {
-     "formel": "H2O",
-     "name": "Wasser",
-     "falle": {
-      "formel": "H2O2",
-      "text": "Aus H2O würde H2O2. Das ist Wasserstoffperoxid, ein ganz anderer Stoff: Er bleicht Haare. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
-     }
-    }
-   ],
-   "loesung": [
-    2,
-    1,
-    2
-   ],
-   "start": [
-    1,
-    1,
-    1
-   ],
-   "pruefen": true,
-   "denkanstoss": "Zähl die O-Atome links und rechts.",
-   "erklaerung": "Links 2 O, rechts nur 1 O. Nicht ausgeglichen. Richtig ist 2 H2 + O2 → 2 H2O."
-  },
-  {
    "id": "b2-1-06",
    "niveau": 1,
    "typ": "ausgleichen",
@@ -266,42 +173,6 @@
    "denkanstoss": "O2 bringt 2 O-Atome mit. Wie viele MgO brauchst du dafür?",
    "erklaerung": "2 Mg + O2 → 2 MgO: links 2 Mg und 2 O, rechts auch.",
    "alltag": "Magnesium verbrennt mit grellweißem Licht."
-  },
-  {
-   "id": "b2-1-07",
-   "niveau": 1,
-   "typ": "ausgleichen",
-   "symbol": "⚖",
-   "kann": "teilchen",
-   "frage": "Gleiche die Gleichung aus.",
-   "edukte": [
-    {
-     "formel": "H2",
-     "name": "Wasserstoff"
-    },
-    {
-     "formel": "O2",
-     "name": "Sauerstoff"
-    }
-   ],
-   "produkte": [
-    {
-     "formel": "H2O",
-     "name": "Wasser",
-     "falle": {
-      "formel": "H2O2",
-      "text": "Aus H2O würde H2O2. Das ist Wasserstoffperoxid, ein ganz anderer Stoff: Er bleicht Haare. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
-     }
-    }
-   ],
-   "loesung": [
-    2,
-    1,
-    2
-   ],
-   "denkanstoss": "Erst die O-Atome ausgleichen, dann die H-Atome.",
-   "erklaerung": "2 H2 + O2 → 2 H2O: links 4 H und 2 O, rechts auch.",
-   "alltag": "Das ist die Knallgasprobe."
   },
   {
    "id": "b2-1-08",
@@ -375,77 +246,6 @@
    "erklaerung": "2 Zn + O2 → 2 ZnO: links 2 Zn und 2 O, rechts auch."
   },
   {
-   "id": "b2-1-10",
-   "niveau": 1,
-   "typ": "ausgleichen",
-   "symbol": "⚖",
-   "kann": "teilchen",
-   "frage": "Gleiche die Gleichung aus.",
-   "edukte": [
-    {
-     "formel": "H2",
-     "name": "Wasserstoff"
-    },
-    {
-     "formel": "Cl2",
-     "name": "Chlor"
-    }
-   ],
-   "produkte": [
-    {
-     "formel": "HCl",
-     "name": "Chlorwasserstoff",
-     "falle": {
-      "formel": "HCl2",
-      "text": "Aus HCl würde HCl2. Das ist ein anderer Stoff, nicht mehr Chlorwasserstoff. Es passt auch nicht zu den Noppen: H hat nur 1 Noppe. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
-     }
-    }
-   ],
-   "loesung": [
-    1,
-    1,
-    2
-   ],
-   "denkanstoss": "Links sind 2 H und 2 Cl. Wie viele HCl brauchst du?",
-   "erklaerung": "H2 + Cl2 → 2 HCl: links 2 H und 2 Cl, rechts auch."
-  },
-  {
-   "id": "b2-1-11",
-   "niveau": 1,
-   "typ": "ausgleichen",
-   "symbol": "⚖",
-   "kann": "teilchen",
-   "frage": "Gleiche die Gleichung aus.",
-   "edukte": [
-    {
-     "formel": "Na",
-     "name": "Natrium"
-    },
-    {
-     "formel": "Cl2",
-     "name": "Chlor"
-    }
-   ],
-   "produkte": [
-    {
-     "formel": "NaCl",
-     "name": "Natriumchlorid",
-     "falle": {
-      "formel": "NaCl2",
-      "text": "Aus NaCl würde NaCl2. Das ist kein Kochsalz mehr – Kochsalz ist immer NaCl. Es passt auch nicht zu den Noppen: Na hat nur 1 Noppe. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
-     }
-    }
-   ],
-   "loesung": [
-    2,
-    1,
-    2
-   ],
-   "denkanstoss": "Cl2 bringt 2 Cl-Atome mit. Wie viele NaCl brauchst du?",
-   "erklaerung": "2 Na + Cl2 → 2 NaCl: links 2 Na und 2 Cl, rechts auch.",
-   "alltag": "NaCl ist Kochsalz."
-  },
-  {
    "id": "b2-1-12",
    "niveau": 1,
    "typ": "auswahl",
@@ -489,7 +289,7 @@
   },
   {
    "id": "b2-2-01",
-   "niveau": 2,
+   "niveau": 1,
    "typ": "ausgleichen",
    "symbol": "⚖",
    "kann": "teilchen",
@@ -518,7 +318,7 @@
      "name": "Kohlenstoffdioxid",
      "falle": {
       "formel": "CO3",
-      "text": "Aus CO2 würde CO3. Das ist kein Kohlenstoffdioxid mehr – Kohlenstoffdioxid ist immer CO2. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus CO2 würde CO3. Einen Stoff CO3 gibt es nicht. Die Noppen passen nicht zusammen: C hat 4 Noppen, 3 O-Steine bräuchten 6. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     }
    ],
@@ -531,6 +331,108 @@
    "denkanstoss": "CO2 braucht 2 O. Woher kommen sie?",
    "erklaerung": "2 CuO + C → 2 Cu + CO2: links 2 Cu, 2 O, 1 C, rechts auch.",
    "alltag": "So gewann man schon vor 5000 Jahren Kupfer."
+  },
+  {
+   "id": "b2-2-12",
+   "niveau": 1,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "waage",
+   "frage": "Ist die Gleichung ausgeglichen?",
+   "edukte": [
+    {
+     "formel": "CuO",
+     "name": "Kupfer(II)-oxid",
+     "falle": {
+      "formel": "Cu2O",
+      "text": "Aus CuO würde Cu2O. Das ist Kupfer(I)-oxid, ein anderer Stoff: rot statt schwarz. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    },
+    {
+     "formel": "C",
+     "name": "Kohlenstoff"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "Cu",
+     "name": "Kupfer"
+    },
+    {
+     "formel": "CO2",
+     "name": "Kohlenstoffdioxid",
+     "falle": {
+      "formel": "CO3",
+      "text": "Aus CO2 würde CO3. Einen Stoff CO3 gibt es nicht. Die Noppen passen nicht zusammen: C hat 4 Noppen, 3 O-Steine bräuchten 6. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    }
+   ],
+   "loesung": [
+    2,
+    1,
+    2,
+    1
+   ],
+   "start": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "pruefen": true,
+   "denkanstoss": "Zähl die O-Atome links und rechts.",
+   "erklaerung": "Links 1 O, rechts 2 O. Nicht ausgeglichen. Richtig ist 2 CuO + C → 2 Cu + CO2."
+  },
+  {
+   "id": "b2-1-02",
+   "niveau": 2,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "waage",
+   "frage": "Ist die Gleichung ausgeglichen?",
+   "edukte": [
+    {
+     "formel": "Zn",
+     "name": "Zink"
+    },
+    {
+     "formel": "CuO",
+     "name": "Kupfer(II)-oxid",
+     "falle": {
+      "formel": "Cu2O",
+      "text": "Aus CuO würde Cu2O. Das ist Kupfer(I)-oxid, ein anderer Stoff: rot statt schwarz. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "ZnO",
+     "name": "Zinkoxid",
+     "falle": {
+      "formel": "ZnO2",
+      "text": "Aus ZnO würde ZnO2. Das ist ein anderer Stoff, nicht mehr Zinkoxid. Zinkoxid ist immer ZnO. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    },
+    {
+     "formel": "Cu",
+     "name": "Kupfer"
+    }
+   ],
+   "loesung": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "start": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "pruefen": true,
+   "denkanstoss": "Zähl jedes Element links und rechts.",
+   "erklaerung": "Links 1 Zn, 1 Cu, 1 O. Rechts auch. Ausgeglichen."
   },
   {
    "id": "b2-2-02",
@@ -563,7 +465,7 @@
      "name": "Eisen(III)-oxid",
      "falle": {
       "formel": "Fe2O4",
-      "text": "Aus Fe2O3 würde Fe2O4. Das ist nicht mehr Eisen(III)-oxid – Eisen(III)-oxid ist immer Fe2O3. Es passt auch nicht zu den Noppen: 2 Fe(III) haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus Fe2O3 würde Fe2O4. Diesen Stoff gibt es nicht. Die Noppen passen nicht zusammen: 2 Fe(III) haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     }
    ],
@@ -599,7 +501,7 @@
      "name": "Aluminiumoxid",
      "falle": {
       "formel": "Al2O4",
-      "text": "Aus Al2O3 würde Al2O4. Das ist nicht mehr Aluminiumoxid – Aluminiumoxid ist immer Al2O3. Es passt auch nicht zu den Noppen: 2 Al haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus Al2O3 würde Al2O4. Diesen Stoff gibt es nicht. Die Noppen passen nicht zusammen: 2 Al haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     }
    ],
@@ -660,7 +562,7 @@
      "name": "Bleioxid",
      "falle": {
       "formel": "PbO2",
-      "text": "Aus PbO würde PbO2. Das gibt es wirklich: Bleidioxid, ein anderer Stoff. Er steckt in Autobatterien. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus PbO würde PbO2. Diesen Stoff gibt es wirklich (Bleidioxid), er passt aber nicht in unser Bausteinmodell: Pb hat hier 2 Noppen. Es ist ein anderer Stoff, nicht mehr Bleioxid. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     },
     {
@@ -678,7 +580,7 @@
      "name": "Kohlenstoffdioxid",
      "falle": {
       "formel": "CO3",
-      "text": "Aus CO2 würde CO3. Das ist kein Kohlenstoffdioxid mehr – Kohlenstoffdioxid ist immer CO2. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus CO2 würde CO3. Einen Stoff CO3 gibt es nicht. Die Noppen passen nicht zusammen: C hat 4 Noppen, 3 O-Steine bräuchten 6. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     }
    ],
@@ -690,127 +592,6 @@
    ],
    "denkanstoss": "CO2 braucht 2 O. Wie viele PbO geben 2 O ab?",
    "erklaerung": "2 PbO + C → 2 Pb + CO2: links 2 Pb, 2 O, 1 C, rechts auch."
-  },
-  {
-   "id": "b2-2-06",
-   "niveau": 2,
-   "typ": "ausgleichen",
-   "symbol": "⚖",
-   "kann": "teilchen",
-   "frage": "Gleiche die Gleichung aus.",
-   "edukte": [
-    {
-     "formel": "CH4",
-     "name": "Methan",
-     "falle": {
-      "formel": "CH5",
-      "text": "Aus CH4 würde CH5. Das ist kein Methan mehr – Methan ist immer CH4. Es passt auch nicht zu den Noppen: C hat nur 4 Noppen. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
-     }
-    },
-    {
-     "formel": "O2",
-     "name": "Sauerstoff"
-    }
-   ],
-   "produkte": [
-    {
-     "formel": "CO2",
-     "name": "Kohlenstoffdioxid",
-     "falle": {
-      "formel": "CO3",
-      "text": "Aus CO2 würde CO3. Das ist kein Kohlenstoffdioxid mehr – Kohlenstoffdioxid ist immer CO2. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
-     }
-    },
-    {
-     "formel": "H2O",
-     "name": "Wasser",
-     "falle": {
-      "formel": "H2O2",
-      "text": "Aus H2O würde H2O2. Das ist Wasserstoffperoxid, ein ganz anderer Stoff: Er bleicht Haare. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
-     }
-    }
-   ],
-   "loesung": [
-    1,
-    2,
-    1,
-    2
-   ],
-   "denkanstoss": "Erst C, dann H, zuletzt O ausgleichen.",
-   "erklaerung": "CH4 + 2 O2 → CO2 + 2 H2O: links 1 C, 4 H, 4 O, rechts auch.",
-   "alltag": "So verbrennt Erdgas im Gasherd."
-  },
-  {
-   "id": "b2-2-07",
-   "niveau": 2,
-   "typ": "ausgleichen",
-   "symbol": "⚖",
-   "kann": "teilchen",
-   "frage": "Gleiche die Gleichung aus.",
-   "edukte": [
-    {
-     "formel": "N2",
-     "name": "Stickstoff"
-    },
-    {
-     "formel": "H2",
-     "name": "Wasserstoff"
-    }
-   ],
-   "produkte": [
-    {
-     "formel": "NH3",
-     "name": "Ammoniak",
-     "falle": {
-      "formel": "NH4",
-      "text": "Aus NH3 würde NH4. Das ist kein Ammoniak mehr – Ammoniak ist immer NH3. Es passt auch nicht zu den Noppen: N hat nur 3 Noppen. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
-     }
-    }
-   ],
-   "loesung": [
-    1,
-    3,
-    2
-   ],
-   "denkanstoss": "N2 bringt 2 N-Atome mit. Wie viele NH3 brauchst du? Dann die H-Atome zählen.",
-   "erklaerung": "N2 + 3 H2 → 2 NH3: links 2 N und 6 H, rechts auch.",
-   "alltag": "Aus Ammoniak macht man Dünger für die Felder."
-  },
-  {
-   "id": "b2-2-08",
-   "niveau": 2,
-   "typ": "ausgleichen",
-   "symbol": "⚖",
-   "kann": "teilchen",
-   "frage": "Gleiche die Gleichung aus.",
-   "edukte": [
-    {
-     "formel": "H2O",
-     "name": "Wasser",
-     "falle": {
-      "formel": "H2O2",
-      "text": "Aus H2O würde H2O2. Das ist Wasserstoffperoxid, ein ganz anderer Stoff: Er bleicht Haare. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
-     }
-    }
-   ],
-   "produkte": [
-    {
-     "formel": "H2",
-     "name": "Wasserstoff"
-    },
-    {
-     "formel": "O2",
-     "name": "Sauerstoff"
-    }
-   ],
-   "loesung": [
-    2,
-    2,
-    1
-   ],
-   "denkanstoss": "O2 braucht 2 O. Wie viele H2O brauchst du dafür?",
-   "erklaerung": "2 H2O → 2 H2 + O2: links 4 H und 2 O, rechts auch.",
-   "alltag": "Mit Strom kann man Wasser zerlegen."
   },
   {
    "id": "b2-2-09",
@@ -835,7 +616,7 @@
      "name": "Kupfer(I)-sulfid",
      "falle": {
       "formel": "Cu2S2",
-      "text": "Aus Cu2S würde Cu2S2. Das ist ein anderer Stoff, nicht mehr Kupfer(I)-sulfid. Kupfer(I)-sulfid ist immer Cu2S. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus Cu2S würde Cu2S2. Das wäre wie CuS, also Kupfer(II)-sulfid – ein anderer Stoff, nicht mehr Kupfer(I)-sulfid. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     }
    ],
@@ -847,41 +628,6 @@
    "denkanstoss": "Cu2S braucht 2 Cu-Atome.",
    "erklaerung": "2 Cu + S → Cu2S: links 2 Cu und 1 S, rechts auch.",
    "alltag": "Kupfer glüht mit Schwefel auf. Das ist ein bekannter Versuch."
-  },
-  {
-   "id": "b2-2-10",
-   "niveau": 2,
-   "typ": "ausgleichen",
-   "symbol": "⚖",
-   "kann": "teilchen",
-   "frage": "Gleiche die Gleichung aus.",
-   "edukte": [
-    {
-     "formel": "C",
-     "name": "Kohlenstoff"
-    },
-    {
-     "formel": "H2",
-     "name": "Wasserstoff"
-    }
-   ],
-   "produkte": [
-    {
-     "formel": "CH4",
-     "name": "Methan",
-     "falle": {
-      "formel": "CH5",
-      "text": "Aus CH4 würde CH5. Das ist kein Methan mehr – Methan ist immer CH4. Es passt auch nicht zu den Noppen: C hat nur 4 Noppen. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
-     }
-    }
-   ],
-   "loesung": [
-    1,
-    2,
-    1
-   ],
-   "denkanstoss": "CH4 braucht 4 H-Atome. Ein H2 hat 2.",
-   "erklaerung": "C + 2 H2 → CH4: links 1 C und 4 H, rechts auch."
   },
   {
    "id": "b2-2-11",
@@ -906,7 +652,7 @@
      "name": "Eisen(II)-sulfid",
      "falle": {
       "formel": "FeS2",
-      "text": "Aus FeS würde FeS2. Das gibt es wirklich: Pyrit, auch Katzengold genannt – ein anderer Stoff. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+      "text": "Aus FeS würde FeS2. Diesen Stoff gibt es wirklich (Pyrit, „Katzengold“), er passt aber nicht in unser Bausteinmodell. Es ist ein anderer Stoff, nicht mehr Eisen(II)-sulfid. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
      }
     }
    ],
@@ -923,519 +669,6 @@
    "pruefen": true,
    "denkanstoss": "Zähl Fe und S links und rechts.",
    "erklaerung": "Links 1 Fe und 1 S, rechts auch. Ausgeglichen."
-  },
-  {
-   "id": "b2-2-12",
-   "niveau": 2,
-   "typ": "ausgleichen",
-   "symbol": "⚖",
-   "kann": "waage",
-   "frage": "Ist die Gleichung ausgeglichen?",
-   "edukte": [
-    {
-     "formel": "CuO",
-     "name": "Kupfer(II)-oxid",
-     "falle": {
-      "formel": "Cu2O",
-      "text": "Aus CuO würde Cu2O. Das ist Kupfer(I)-oxid, ein anderer Stoff: rot statt schwarz. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
-     }
-    },
-    {
-     "formel": "C",
-     "name": "Kohlenstoff"
-    }
-   ],
-   "produkte": [
-    {
-     "formel": "Cu",
-     "name": "Kupfer"
-    },
-    {
-     "formel": "CO2",
-     "name": "Kohlenstoffdioxid",
-     "falle": {
-      "formel": "CO3",
-      "text": "Aus CO2 würde CO3. Das ist kein Kohlenstoffdioxid mehr – Kohlenstoffdioxid ist immer CO2. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
-     }
-    }
-   ],
-   "loesung": [
-    2,
-    1,
-    2,
-    1
-   ],
-   "start": [
-    1,
-    1,
-    1,
-    1
-   ],
-   "pruefen": true,
-   "denkanstoss": "Zähl die O-Atome links und rechts.",
-   "erklaerung": "Links 1 O, rechts 2 O. Nicht ausgeglichen. Richtig ist 2 CuO + C → 2 Cu + CO2."
-  },
-  {
-   "id": "b2-3-01",
-   "niveau": 3,
-   "typ": "ausgleichen",
-   "symbol": "⚖",
-   "kann": "teilchen",
-   "frage": "Gleiche die Gleichung aus.",
-   "edukte": [
-    {
-     "formel": "Fe2O3",
-     "name": "Eisen(III)-oxid",
-     "falle": {
-      "formel": "Fe2O4",
-      "text": "Aus Fe2O3 würde Fe2O4. Das ist nicht mehr Eisen(III)-oxid – Eisen(III)-oxid ist immer Fe2O3. Es passt auch nicht zu den Noppen: 2 Fe(III) haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
-     }
-    },
-    {
-     "formel": "Al",
-     "name": "Aluminium"
-    }
-   ],
-   "produkte": [
-    {
-     "formel": "Fe",
-     "name": "Eisen"
-    },
-    {
-     "formel": "Al2O3",
-     "name": "Aluminiumoxid",
-     "falle": {
-      "formel": "Al2O4",
-      "text": "Aus Al2O3 würde Al2O4. Das ist nicht mehr Aluminiumoxid – Aluminiumoxid ist immer Al2O3. Es passt auch nicht zu den Noppen: 2 Al haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
-     }
-    }
-   ],
-   "loesung": [
-    1,
-    2,
-    2,
-    1
-   ],
-   "denkanstoss": "Erst Fe, dann Al ausgleichen. O stimmt schon.",
-   "erklaerung": "Fe2O3 + 2 Al → 2 Fe + Al2O3: links 2 Fe, 3 O, 2 Al, rechts auch.",
-   "alltag": "Das ist Thermit. Damit schweißt man Bahnschienen."
-  },
-  {
-   "id": "b2-3-02",
-   "niveau": 3,
-   "typ": "ausgleichen",
-   "symbol": "⚖",
-   "kann": "teilchen",
-   "frage": "Gleiche die Gleichung aus.",
-   "edukte": [
-    {
-     "formel": "Fe2O3",
-     "name": "Eisen(III)-oxid",
-     "falle": {
-      "formel": "Fe2O4",
-      "text": "Aus Fe2O3 würde Fe2O4. Das ist nicht mehr Eisen(III)-oxid – Eisen(III)-oxid ist immer Fe2O3. Es passt auch nicht zu den Noppen: 2 Fe(III) haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
-     }
-    },
-    {
-     "formel": "C",
-     "name": "Kohlenstoff"
-    }
-   ],
-   "produkte": [
-    {
-     "formel": "Fe",
-     "name": "Eisen"
-    },
-    {
-     "formel": "CO2",
-     "name": "Kohlenstoffdioxid",
-     "falle": {
-      "formel": "CO3",
-      "text": "Aus CO2 würde CO3. Das ist kein Kohlenstoffdioxid mehr – Kohlenstoffdioxid ist immer CO2. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
-     }
-    }
-   ],
-   "loesung": [
-    2,
-    3,
-    4,
-    3
-   ],
-   "denkanstoss": "Fe2O3 hat 3 O, CO2 hat 2 O. Bei welcher Zahl passen beide zusammen?",
-   "erklaerung": "2 Fe2O3 + 3 C → 4 Fe + 3 CO2: links 4 Fe, 6 O, 3 C, rechts auch.",
-   "alltag": "So ähnlich gewinnt man Eisen im Hochofen."
-  },
-  {
-   "id": "b2-3-03",
-   "niveau": 3,
-   "typ": "ausgleichen",
-   "symbol": "⚖",
-   "kann": "teilchen",
-   "frage": "Gleiche die Gleichung aus.",
-   "edukte": [
-    {
-     "formel": "Mg",
-     "name": "Magnesium"
-    },
-    {
-     "formel": "CO2",
-     "name": "Kohlenstoffdioxid",
-     "falle": {
-      "formel": "CO3",
-      "text": "Aus CO2 würde CO3. Das ist kein Kohlenstoffdioxid mehr – Kohlenstoffdioxid ist immer CO2. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
-     }
-    }
-   ],
-   "produkte": [
-    {
-     "formel": "MgO",
-     "name": "Magnesiumoxid",
-     "falle": {
-      "formel": "MgO2",
-      "text": "Aus MgO würde MgO2. Das ist ein anderer Stoff, nicht mehr Magnesiumoxid. Magnesiumoxid ist immer MgO. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
-     }
-    },
-    {
-     "formel": "C",
-     "name": "Kohlenstoff"
-    }
-   ],
-   "loesung": [
-    2,
-    1,
-    2,
-    1
-   ],
-   "denkanstoss": "CO2 gibt 2 O ab. Wie viele MgO entstehen?",
-   "erklaerung": "2 Mg + CO2 → 2 MgO + C: links 2 Mg, 1 C, 2 O, rechts auch.",
-   "alltag": "Magnesium brennt sogar in Kohlenstoffdioxid weiter."
-  },
-  {
-   "id": "b2-3-04",
-   "niveau": 3,
-   "typ": "ausgleichen",
-   "symbol": "⚖",
-   "kann": "teilchen",
-   "frage": "Gleiche die Gleichung aus.",
-   "edukte": [
-    {
-     "formel": "FeO",
-     "name": "Eisen(II)-oxid",
-     "falle": {
-      "formel": "Fe2O3",
-      "text": "Aus FeO würde Fe2O3. Das ist Eisen(III)-oxid, ein anderer Stoff (roter Rost). Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
-     }
-    },
-    {
-     "formel": "Al",
-     "name": "Aluminium"
-    }
-   ],
-   "produkte": [
-    {
-     "formel": "Fe",
-     "name": "Eisen"
-    },
-    {
-     "formel": "Al2O3",
-     "name": "Aluminiumoxid",
-     "falle": {
-      "formel": "Al2O4",
-      "text": "Aus Al2O3 würde Al2O4. Das ist nicht mehr Aluminiumoxid – Aluminiumoxid ist immer Al2O3. Es passt auch nicht zu den Noppen: 2 Al haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
-     }
-    }
-   ],
-   "loesung": [
-    3,
-    2,
-    3,
-    1
-   ],
-   "denkanstoss": "Al2O3 braucht 3 O. Wie viele FeO geben 3 O ab?",
-   "erklaerung": "3 FeO + 2 Al → 3 Fe + Al2O3: links 3 Fe, 3 O, 2 Al, rechts auch."
-  },
-  {
-   "id": "b2-3-05",
-   "niveau": 3,
-   "typ": "ausgleichen",
-   "symbol": "⚖",
-   "kann": "teilchen",
-   "frage": "Gleiche die Gleichung aus.",
-   "edukte": [
-    {
-     "formel": "CuO",
-     "name": "Kupfer(II)-oxid",
-     "falle": {
-      "formel": "Cu2O",
-      "text": "Aus CuO würde Cu2O. Das ist Kupfer(I)-oxid, ein anderer Stoff: rot statt schwarz. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
-     }
-    },
-    {
-     "formel": "Al",
-     "name": "Aluminium"
-    }
-   ],
-   "produkte": [
-    {
-     "formel": "Cu",
-     "name": "Kupfer"
-    },
-    {
-     "formel": "Al2O3",
-     "name": "Aluminiumoxid",
-     "falle": {
-      "formel": "Al2O4",
-      "text": "Aus Al2O3 würde Al2O4. Das ist nicht mehr Aluminiumoxid – Aluminiumoxid ist immer Al2O3. Es passt auch nicht zu den Noppen: 2 Al haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
-     }
-    }
-   ],
-   "loesung": [
-    3,
-    2,
-    3,
-    1
-   ],
-   "denkanstoss": "Al2O3 braucht 3 O. Wie viele CuO geben 3 O ab?",
-   "erklaerung": "3 CuO + 2 Al → 3 Cu + Al2O3: links 3 Cu, 3 O, 2 Al, rechts auch."
-  },
-  {
-   "id": "b2-3-06",
-   "niveau": 3,
-   "typ": "ausgleichen",
-   "symbol": "⚖",
-   "kann": "teilchen",
-   "frage": "Gleiche die Gleichung aus.",
-   "edukte": [
-    {
-     "formel": "PbO",
-     "name": "Bleioxid",
-     "falle": {
-      "formel": "PbO2",
-      "text": "Aus PbO würde PbO2. Das gibt es wirklich: Bleidioxid, ein anderer Stoff. Er steckt in Autobatterien. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
-     }
-    },
-    {
-     "formel": "Al",
-     "name": "Aluminium"
-    }
-   ],
-   "produkte": [
-    {
-     "formel": "Pb",
-     "name": "Blei"
-    },
-    {
-     "formel": "Al2O3",
-     "name": "Aluminiumoxid",
-     "falle": {
-      "formel": "Al2O4",
-      "text": "Aus Al2O3 würde Al2O4. Das ist nicht mehr Aluminiumoxid – Aluminiumoxid ist immer Al2O3. Es passt auch nicht zu den Noppen: 2 Al haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
-     }
-    }
-   ],
-   "loesung": [
-    3,
-    2,
-    3,
-    1
-   ],
-   "denkanstoss": "Al2O3 braucht 3 O. Wie viele PbO geben 3 O ab?",
-   "erklaerung": "3 PbO + 2 Al → 3 Pb + Al2O3: links 3 Pb, 3 O, 2 Al, rechts auch."
-  },
-  {
-   "id": "b2-3-07",
-   "niveau": 3,
-   "typ": "ausgleichen",
-   "symbol": "⚖",
-   "kann": "teilchen",
-   "frage": "Gleiche die Gleichung aus.",
-   "edukte": [
-    {
-     "formel": "Fe2O3",
-     "name": "Eisen(III)-oxid",
-     "falle": {
-      "formel": "Fe2O4",
-      "text": "Aus Fe2O3 würde Fe2O4. Das ist nicht mehr Eisen(III)-oxid – Eisen(III)-oxid ist immer Fe2O3. Es passt auch nicht zu den Noppen: 2 Fe(III) haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
-     }
-    },
-    {
-     "formel": "Mg",
-     "name": "Magnesium"
-    }
-   ],
-   "produkte": [
-    {
-     "formel": "Fe",
-     "name": "Eisen"
-    },
-    {
-     "formel": "MgO",
-     "name": "Magnesiumoxid",
-     "falle": {
-      "formel": "MgO2",
-      "text": "Aus MgO würde MgO2. Das ist ein anderer Stoff, nicht mehr Magnesiumoxid. Magnesiumoxid ist immer MgO. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
-     }
-    }
-   ],
-   "loesung": [
-    1,
-    3,
-    2,
-    3
-   ],
-   "denkanstoss": "Fe2O3 gibt 3 O ab. Jedes MgO nimmt 1 O.",
-   "erklaerung": "Fe2O3 + 3 Mg → 2 Fe + 3 MgO: links 2 Fe, 3 O, 3 Mg, rechts auch."
-  },
-  {
-   "id": "b2-3-08",
-   "niveau": 3,
-   "typ": "ausgleichen",
-   "symbol": "⚖",
-   "kann": "teilchen",
-   "frage": "Gleiche die Gleichung aus.",
-   "edukte": [
-    {
-     "formel": "Fe",
-     "name": "Eisen"
-    },
-    {
-     "formel": "Cl2",
-     "name": "Chlor"
-    }
-   ],
-   "produkte": [
-    {
-     "formel": "FeCl3",
-     "name": "Eisen(III)-chlorid",
-     "falle": {
-      "formel": "FeCl4",
-      "text": "Aus FeCl3 würde FeCl4. Das ist nicht mehr Eisen(III)-chlorid. Es passt auch nicht zu den Noppen: Fe(III) hat nur 3 Noppen. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
-     }
-    }
-   ],
-   "loesung": [
-    2,
-    3,
-    2
-   ],
-   "denkanstoss": "Cl2 hat 2 Cl, FeCl3 hat 3 Cl. Bei welcher Zahl passen beide zusammen?",
-   "erklaerung": "2 Fe + 3 Cl2 → 2 FeCl3: links 2 Fe und 6 Cl, rechts auch."
-  },
-  {
-   "id": "b2-3-09",
-   "niveau": 3,
-   "typ": "ausgleichen",
-   "symbol": "⚖",
-   "kann": "teilchen",
-   "frage": "Gleiche die Gleichung aus.",
-   "edukte": [
-    {
-     "formel": "Cu2O",
-     "name": "Kupfer(I)-oxid",
-     "falle": {
-      "formel": "Cu2O2",
-      "text": "Aus Cu2O würde Cu2O2. Dann käme auf jedes Cu-Atom ein O-Atom wie bei CuO – das ist ein anderer Stoff, nicht mehr Kupfer(I)-oxid. Kupfer(I)-oxid ist immer Cu2O. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
-     }
-    },
-    {
-     "formel": "C",
-     "name": "Kohlenstoff"
-    }
-   ],
-   "produkte": [
-    {
-     "formel": "Cu",
-     "name": "Kupfer"
-    },
-    {
-     "formel": "CO2",
-     "name": "Kohlenstoffdioxid",
-     "falle": {
-      "formel": "CO3",
-      "text": "Aus CO2 würde CO3. Das ist kein Kohlenstoffdioxid mehr – Kohlenstoffdioxid ist immer CO2. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
-     }
-    }
-   ],
-   "loesung": [
-    2,
-    1,
-    4,
-    1
-   ],
-   "denkanstoss": "CO2 braucht 2 O. Wie viele Cu2O geben 2 O ab? Dann Cu zählen.",
-   "erklaerung": "2 Cu2O + C → 4 Cu + CO2: links 4 Cu, 2 O, 1 C, rechts auch."
-  },
-  {
-   "id": "b2-3-10",
-   "niveau": 3,
-   "typ": "ausgleichen",
-   "symbol": "⚖",
-   "kann": "teilchen",
-   "frage": "Gleiche die Gleichung aus.",
-   "edukte": [
-    {
-     "formel": "Fe",
-     "name": "Eisen"
-    },
-    {
-     "formel": "O2",
-     "name": "Sauerstoff"
-    }
-   ],
-   "produkte": [
-    {
-     "formel": "Fe2O3",
-     "name": "Eisen(III)-oxid",
-     "falle": {
-      "formel": "Fe2O4",
-      "text": "Aus Fe2O3 würde Fe2O4. Das ist nicht mehr Eisen(III)-oxid – Eisen(III)-oxid ist immer Fe2O3. Es passt auch nicht zu den Noppen: 2 Fe(III) haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
-     }
-    }
-   ],
-   "loesung": [
-    4,
-    3,
-    2
-   ],
-   "denkanstoss": "O2 hat 2 O, Fe2O3 hat 3 O. Bei welcher Zahl passen beide zusammen?",
-   "erklaerung": "4 Fe + 3 O2 → 2 Fe2O3: links 4 Fe und 6 O, rechts auch.",
-   "alltag": "So rostet Eisen, vereinfacht. Roter Rost besteht vor allem aus Fe2O3."
-  },
-  {
-   "id": "b2-3-11",
-   "niveau": 3,
-   "typ": "ausgleichen",
-   "symbol": "⚖",
-   "kann": "teilchen",
-   "frage": "Gleiche die Gleichung aus.",
-   "edukte": [
-    {
-     "formel": "Al2O3",
-     "name": "Aluminiumoxid",
-     "falle": {
-      "formel": "Al2O4",
-      "text": "Aus Al2O3 würde Al2O4. Das ist nicht mehr Aluminiumoxid – Aluminiumoxid ist immer Al2O3. Es passt auch nicht zu den Noppen: 2 Al haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
-     }
-    }
-   ],
-   "produkte": [
-    {
-     "formel": "Al",
-     "name": "Aluminium"
-    },
-    {
-     "formel": "O2",
-     "name": "Sauerstoff"
-    }
-   ],
-   "loesung": [
-    2,
-    4,
-    3
-   ],
-   "denkanstoss": "Al2O3 hat 3 O, O2 hat 2 O. Bei welcher Zahl passen beide zusammen?",
-   "erklaerung": "2 Al2O3 → 4 Al + 3 O2: links 4 Al und 6 O, rechts auch.",
-   "alltag": "So ähnlich gewinnt man Aluminium, mit sehr viel Strom."
   },
   {
    "id": "b2-2-13",
@@ -1499,6 +732,736 @@
    "denkanstoss": "Die große Zahl ändert nur die Anzahl. Die kleine Zahl ändert den Stoff.",
    "erklaerung": "Cu2O ist Kupfer(I)-oxid. Die kleine 2 macht einen anderen Stoff daraus.",
    "hilfe_vorher": false
+  },
+  {
+   "id": "b2-1-05",
+   "niveau": 3,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "waage",
+   "frage": "Ist die Gleichung ausgeglichen?",
+   "edukte": [
+    {
+     "formel": "H2",
+     "name": "Wasserstoff"
+    },
+    {
+     "formel": "O2",
+     "name": "Sauerstoff"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "H2O",
+     "name": "Wasser",
+     "falle": {
+      "formel": "H2O2",
+      "text": "Aus H2O würde H2O2. Das ist Wasserstoffperoxid, ein ganz anderer Stoff: Er bleicht Haare. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    }
+   ],
+   "loesung": [
+    2,
+    1,
+    2
+   ],
+   "start": [
+    1,
+    1,
+    1
+   ],
+   "pruefen": true,
+   "denkanstoss": "Zähl die O-Atome links und rechts.",
+   "erklaerung": "Links 2 O, rechts nur 1 O. Nicht ausgeglichen. Richtig ist 2 H2 + O2 → 2 H2O."
+  },
+  {
+   "id": "b2-1-07",
+   "niveau": 3,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "H2",
+     "name": "Wasserstoff"
+    },
+    {
+     "formel": "O2",
+     "name": "Sauerstoff"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "H2O",
+     "name": "Wasser",
+     "falle": {
+      "formel": "H2O2",
+      "text": "Aus H2O würde H2O2. Das ist Wasserstoffperoxid, ein ganz anderer Stoff: Er bleicht Haare. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    }
+   ],
+   "loesung": [
+    2,
+    1,
+    2
+   ],
+   "denkanstoss": "Erst die O-Atome ausgleichen, dann die H-Atome.",
+   "erklaerung": "2 H2 + O2 → 2 H2O: links 4 H und 2 O, rechts auch.",
+   "alltag": "Das ist die Knallgasprobe."
+  },
+  {
+   "id": "b2-1-10",
+   "niveau": 3,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "H2",
+     "name": "Wasserstoff"
+    },
+    {
+     "formel": "Cl2",
+     "name": "Chlor"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "HCl",
+     "name": "Chlorwasserstoff",
+     "falle": {
+      "formel": "HCl2",
+      "text": "Aus HCl würde HCl2. Diesen Stoff gibt es nicht. Die Noppen passen nicht zusammen: H hat nur 1 Noppe. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    }
+   ],
+   "loesung": [
+    1,
+    1,
+    2
+   ],
+   "denkanstoss": "Links sind 2 H und 2 Cl. Wie viele HCl brauchst du?",
+   "erklaerung": "H2 + Cl2 → 2 HCl: links 2 H und 2 Cl, rechts auch."
+  },
+  {
+   "id": "b2-1-11",
+   "niveau": 3,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "Na",
+     "name": "Natrium"
+    },
+    {
+     "formel": "Cl2",
+     "name": "Chlor"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "NaCl",
+     "name": "Natriumchlorid",
+     "falle": {
+      "formel": "NaCl2",
+      "text": "Aus NaCl würde NaCl2. Diesen Stoff gibt es nicht. Die Noppen passen nicht zusammen: Na hat nur 1 Noppe. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    }
+   ],
+   "loesung": [
+    2,
+    1,
+    2
+   ],
+   "denkanstoss": "Cl2 bringt 2 Cl-Atome mit. Wie viele NaCl brauchst du?",
+   "erklaerung": "2 Na + Cl2 → 2 NaCl: links 2 Na und 2 Cl, rechts auch.",
+   "alltag": "NaCl ist Kochsalz."
+  },
+  {
+   "id": "b2-2-06",
+   "niveau": 3,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "CH4",
+     "name": "Methan",
+     "falle": {
+      "formel": "CH5",
+      "text": "Aus CH4 würde CH5. Diesen Stoff gibt es nicht. Die Noppen passen nicht zusammen: C hat nur 4 Noppen. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    },
+    {
+     "formel": "O2",
+     "name": "Sauerstoff"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "CO2",
+     "name": "Kohlenstoffdioxid",
+     "falle": {
+      "formel": "CO3",
+      "text": "Aus CO2 würde CO3. Einen Stoff CO3 gibt es nicht. Die Noppen passen nicht zusammen: C hat 4 Noppen, 3 O-Steine bräuchten 6. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    },
+    {
+     "formel": "H2O",
+     "name": "Wasser",
+     "falle": {
+      "formel": "H2O2",
+      "text": "Aus H2O würde H2O2. Das ist Wasserstoffperoxid, ein ganz anderer Stoff: Er bleicht Haare. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    }
+   ],
+   "loesung": [
+    1,
+    2,
+    1,
+    2
+   ],
+   "denkanstoss": "Erst C, dann H, zuletzt O ausgleichen.",
+   "erklaerung": "CH4 + 2 O2 → CO2 + 2 H2O: links 1 C, 4 H, 4 O, rechts auch.",
+   "alltag": "So verbrennt Erdgas im Gasherd."
+  },
+  {
+   "id": "b2-2-08",
+   "niveau": 3,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "H2O",
+     "name": "Wasser",
+     "falle": {
+      "formel": "H2O2",
+      "text": "Aus H2O würde H2O2. Das ist Wasserstoffperoxid, ein ganz anderer Stoff: Er bleicht Haare. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "H2",
+     "name": "Wasserstoff"
+    },
+    {
+     "formel": "O2",
+     "name": "Sauerstoff"
+    }
+   ],
+   "loesung": [
+    2,
+    2,
+    1
+   ],
+   "denkanstoss": "O2 braucht 2 O. Wie viele H2O brauchst du dafür?",
+   "erklaerung": "2 H2O → 2 H2 + O2: links 4 H und 2 O, rechts auch.",
+   "alltag": "Mit Strom kann man Wasser zerlegen."
+  },
+  {
+   "id": "b2-2-10",
+   "niveau": 3,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "C",
+     "name": "Kohlenstoff"
+    },
+    {
+     "formel": "H2",
+     "name": "Wasserstoff"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "CH4",
+     "name": "Methan",
+     "falle": {
+      "formel": "CH5",
+      "text": "Aus CH4 würde CH5. Diesen Stoff gibt es nicht. Die Noppen passen nicht zusammen: C hat nur 4 Noppen. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    }
+   ],
+   "loesung": [
+    1,
+    2,
+    1
+   ],
+   "denkanstoss": "CH4 braucht 4 H-Atome. Ein H2 hat 2.",
+   "erklaerung": "C + 2 H2 → CH4: links 1 C und 4 H, rechts auch."
+  },
+  {
+   "id": "b2-3-01",
+   "niveau": 3,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "Fe2O3",
+     "name": "Eisen(III)-oxid",
+     "falle": {
+      "formel": "Fe2O4",
+      "text": "Aus Fe2O3 würde Fe2O4. Diesen Stoff gibt es nicht. Die Noppen passen nicht zusammen: 2 Fe(III) haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    },
+    {
+     "formel": "Al",
+     "name": "Aluminium"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "Fe",
+     "name": "Eisen"
+    },
+    {
+     "formel": "Al2O3",
+     "name": "Aluminiumoxid",
+     "falle": {
+      "formel": "Al2O4",
+      "text": "Aus Al2O3 würde Al2O4. Diesen Stoff gibt es nicht. Die Noppen passen nicht zusammen: 2 Al haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    }
+   ],
+   "loesung": [
+    1,
+    2,
+    2,
+    1
+   ],
+   "denkanstoss": "Erst Fe, dann Al ausgleichen. O stimmt schon.",
+   "erklaerung": "Fe2O3 + 2 Al → 2 Fe + Al2O3: links 2 Fe, 3 O, 2 Al, rechts auch.",
+   "alltag": "Das ist Thermit. Damit schweißt man Bahnschienen."
+  },
+  {
+   "id": "b2-3-02",
+   "niveau": 3,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "Fe2O3",
+     "name": "Eisen(III)-oxid",
+     "falle": {
+      "formel": "Fe2O4",
+      "text": "Aus Fe2O3 würde Fe2O4. Diesen Stoff gibt es nicht. Die Noppen passen nicht zusammen: 2 Fe(III) haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    },
+    {
+     "formel": "C",
+     "name": "Kohlenstoff"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "Fe",
+     "name": "Eisen"
+    },
+    {
+     "formel": "CO2",
+     "name": "Kohlenstoffdioxid",
+     "falle": {
+      "formel": "CO3",
+      "text": "Aus CO2 würde CO3. Einen Stoff CO3 gibt es nicht. Die Noppen passen nicht zusammen: C hat 4 Noppen, 3 O-Steine bräuchten 6. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    }
+   ],
+   "loesung": [
+    2,
+    3,
+    4,
+    3
+   ],
+   "denkanstoss": "Fe2O3 hat 3 O, CO2 hat 2 O. Bei welcher Zahl passen beide zusammen?",
+   "erklaerung": "2 Fe2O3 + 3 C → 4 Fe + 3 CO2: links 4 Fe, 6 O, 3 C, rechts auch.",
+   "alltag": "So ähnlich gewinnt man Eisen im Hochofen."
+  },
+  {
+   "id": "b2-3-03",
+   "niveau": 3,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "Mg",
+     "name": "Magnesium"
+    },
+    {
+     "formel": "CO2",
+     "name": "Kohlenstoffdioxid",
+     "falle": {
+      "formel": "CO3",
+      "text": "Aus CO2 würde CO3. Einen Stoff CO3 gibt es nicht. Die Noppen passen nicht zusammen: C hat 4 Noppen, 3 O-Steine bräuchten 6. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "MgO",
+     "name": "Magnesiumoxid",
+     "falle": {
+      "formel": "MgO2",
+      "text": "Aus MgO würde MgO2. Das ist ein anderer Stoff, nicht mehr Magnesiumoxid. Magnesiumoxid ist immer MgO. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    },
+    {
+     "formel": "C",
+     "name": "Kohlenstoff"
+    }
+   ],
+   "loesung": [
+    2,
+    1,
+    2,
+    1
+   ],
+   "denkanstoss": "CO2 gibt 2 O ab. Wie viele MgO entstehen?",
+   "erklaerung": "2 Mg + CO2 → 2 MgO + C: links 2 Mg, 1 C, 2 O, rechts auch.",
+   "alltag": "Magnesium brennt sogar in Kohlenstoffdioxid weiter."
+  },
+  {
+   "id": "b2-3-04",
+   "niveau": 3,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "FeO",
+     "name": "Eisen(II)-oxid",
+     "falle": {
+      "formel": "Fe2O3",
+      "text": "Aus FeO würde Fe2O3. Das ist Eisen(III)-oxid, ein anderer Stoff (roter Rost). Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    },
+    {
+     "formel": "Al",
+     "name": "Aluminium"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "Fe",
+     "name": "Eisen"
+    },
+    {
+     "formel": "Al2O3",
+     "name": "Aluminiumoxid",
+     "falle": {
+      "formel": "Al2O4",
+      "text": "Aus Al2O3 würde Al2O4. Diesen Stoff gibt es nicht. Die Noppen passen nicht zusammen: 2 Al haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    }
+   ],
+   "loesung": [
+    3,
+    2,
+    3,
+    1
+   ],
+   "denkanstoss": "Al2O3 braucht 3 O. Wie viele FeO geben 3 O ab?",
+   "erklaerung": "3 FeO + 2 Al → 3 Fe + Al2O3: links 3 Fe, 3 O, 2 Al, rechts auch."
+  },
+  {
+   "id": "b2-3-05",
+   "niveau": 3,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "CuO",
+     "name": "Kupfer(II)-oxid",
+     "falle": {
+      "formel": "Cu2O",
+      "text": "Aus CuO würde Cu2O. Das ist Kupfer(I)-oxid, ein anderer Stoff: rot statt schwarz. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    },
+    {
+     "formel": "Al",
+     "name": "Aluminium"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "Cu",
+     "name": "Kupfer"
+    },
+    {
+     "formel": "Al2O3",
+     "name": "Aluminiumoxid",
+     "falle": {
+      "formel": "Al2O4",
+      "text": "Aus Al2O3 würde Al2O4. Diesen Stoff gibt es nicht. Die Noppen passen nicht zusammen: 2 Al haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    }
+   ],
+   "loesung": [
+    3,
+    2,
+    3,
+    1
+   ],
+   "denkanstoss": "Al2O3 braucht 3 O. Wie viele CuO geben 3 O ab?",
+   "erklaerung": "3 CuO + 2 Al → 3 Cu + Al2O3: links 3 Cu, 3 O, 2 Al, rechts auch."
+  },
+  {
+   "id": "b2-3-06",
+   "niveau": 3,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "PbO",
+     "name": "Bleioxid",
+     "falle": {
+      "formel": "PbO2",
+      "text": "Aus PbO würde PbO2. Diesen Stoff gibt es wirklich (Bleidioxid), er passt aber nicht in unser Bausteinmodell: Pb hat hier 2 Noppen. Es ist ein anderer Stoff, nicht mehr Bleioxid. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    },
+    {
+     "formel": "Al",
+     "name": "Aluminium"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "Pb",
+     "name": "Blei"
+    },
+    {
+     "formel": "Al2O3",
+     "name": "Aluminiumoxid",
+     "falle": {
+      "formel": "Al2O4",
+      "text": "Aus Al2O3 würde Al2O4. Diesen Stoff gibt es nicht. Die Noppen passen nicht zusammen: 2 Al haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    }
+   ],
+   "loesung": [
+    3,
+    2,
+    3,
+    1
+   ],
+   "denkanstoss": "Al2O3 braucht 3 O. Wie viele PbO geben 3 O ab?",
+   "erklaerung": "3 PbO + 2 Al → 3 Pb + Al2O3: links 3 Pb, 3 O, 2 Al, rechts auch."
+  },
+  {
+   "id": "b2-3-07",
+   "niveau": 3,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "Fe2O3",
+     "name": "Eisen(III)-oxid",
+     "falle": {
+      "formel": "Fe2O4",
+      "text": "Aus Fe2O3 würde Fe2O4. Diesen Stoff gibt es nicht. Die Noppen passen nicht zusammen: 2 Fe(III) haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    },
+    {
+     "formel": "Mg",
+     "name": "Magnesium"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "Fe",
+     "name": "Eisen"
+    },
+    {
+     "formel": "MgO",
+     "name": "Magnesiumoxid",
+     "falle": {
+      "formel": "MgO2",
+      "text": "Aus MgO würde MgO2. Das ist ein anderer Stoff, nicht mehr Magnesiumoxid. Magnesiumoxid ist immer MgO. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    }
+   ],
+   "loesung": [
+    1,
+    3,
+    2,
+    3
+   ],
+   "denkanstoss": "Fe2O3 gibt 3 O ab. Jedes MgO nimmt 1 O.",
+   "erklaerung": "Fe2O3 + 3 Mg → 2 Fe + 3 MgO: links 2 Fe, 3 O, 3 Mg, rechts auch."
+  },
+  {
+   "id": "b2-3-08",
+   "niveau": 3,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "Fe",
+     "name": "Eisen"
+    },
+    {
+     "formel": "Cl2",
+     "name": "Chlor"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "FeCl3",
+     "name": "Eisen(III)-chlorid",
+     "falle": {
+      "formel": "FeCl4",
+      "text": "Aus FeCl3 würde FeCl4. Diesen Stoff gibt es nicht. Die Noppen passen nicht zusammen: Fe(III) hat nur 3 Noppen. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    }
+   ],
+   "loesung": [
+    2,
+    3,
+    2
+   ],
+   "denkanstoss": "Cl2 hat 2 Cl, FeCl3 hat 3 Cl. Bei welcher Zahl passen beide zusammen?",
+   "erklaerung": "2 Fe + 3 Cl2 → 2 FeCl3: links 2 Fe und 6 Cl, rechts auch."
+  },
+  {
+   "id": "b2-3-09",
+   "niveau": 3,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "Cu2O",
+     "name": "Kupfer(I)-oxid",
+     "falle": {
+      "formel": "Cu2O2",
+      "text": "Aus Cu2O würde Cu2O2. Das wäre wie CuO, also Kupfer(II)-oxid – ein anderer Stoff, nicht mehr Kupfer(I)-oxid. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    },
+    {
+     "formel": "C",
+     "name": "Kohlenstoff"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "Cu",
+     "name": "Kupfer"
+    },
+    {
+     "formel": "CO2",
+     "name": "Kohlenstoffdioxid",
+     "falle": {
+      "formel": "CO3",
+      "text": "Aus CO2 würde CO3. Einen Stoff CO3 gibt es nicht. Die Noppen passen nicht zusammen: C hat 4 Noppen, 3 O-Steine bräuchten 6. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    }
+   ],
+   "loesung": [
+    2,
+    1,
+    4,
+    1
+   ],
+   "denkanstoss": "CO2 braucht 2 O. Wie viele Cu2O geben 2 O ab? Dann Cu zählen.",
+   "erklaerung": "2 Cu2O + C → 4 Cu + CO2: links 4 Cu, 2 O, 1 C, rechts auch."
+  },
+  {
+   "id": "b2-3-10",
+   "niveau": 3,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "Fe",
+     "name": "Eisen"
+    },
+    {
+     "formel": "O2",
+     "name": "Sauerstoff"
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "Fe2O3",
+     "name": "Eisen(III)-oxid",
+     "falle": {
+      "formel": "Fe2O4",
+      "text": "Aus Fe2O3 würde Fe2O4. Diesen Stoff gibt es nicht. Die Noppen passen nicht zusammen: 2 Fe(III) haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    }
+   ],
+   "loesung": [
+    4,
+    3,
+    2
+   ],
+   "denkanstoss": "O2 hat 2 O, Fe2O3 hat 3 O. Bei welcher Zahl passen beide zusammen?",
+   "erklaerung": "4 Fe + 3 O2 → 2 Fe2O3: links 4 Fe und 6 O, rechts auch.",
+   "alltag": "So rostet Eisen, vereinfacht. Roter Rost besteht vor allem aus Fe2O3."
+  },
+  {
+   "id": "b2-3-11",
+   "niveau": 3,
+   "typ": "ausgleichen",
+   "symbol": "⚖",
+   "kann": "teilchen",
+   "frage": "Gleiche die Gleichung aus.",
+   "edukte": [
+    {
+     "formel": "Al2O3",
+     "name": "Aluminiumoxid",
+     "falle": {
+      "formel": "Al2O4",
+      "text": "Aus Al2O3 würde Al2O4. Diesen Stoff gibt es nicht. Die Noppen passen nicht zusammen: 2 Al haben 6 Noppen, 4 O-Steine bräuchten 8. Die kleinen Zahlen gehören zum Stoff. Ändern darfst du nur die große Zahl davor."
+     }
+    }
+   ],
+   "produkte": [
+    {
+     "formel": "Al",
+     "name": "Aluminium"
+    },
+    {
+     "formel": "O2",
+     "name": "Sauerstoff"
+    }
+   ],
+   "loesung": [
+    2,
+    4,
+    3
+   ],
+   "denkanstoss": "Al2O3 hat 3 O, O2 hat 2 O. Bei welcher Zahl passen beide zusammen?",
+   "erklaerung": "2 Al2O3 → 4 Al + 3 O2: links 4 Al und 6 O, rechts auch.",
+   "alltag": "So ähnlich gewinnt man Aluminium, mit sehr viel Strom."
   },
   {
    "id": "b2-3-12",
